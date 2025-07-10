@@ -1,27 +1,37 @@
-
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: #fefefe;
 }
 
+h1, h2.section-title {
+  text-align: center;
+  font-weight: 500;
+  margin: 1.5em 0 1em;
+}
+
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
   padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .gallery img {
   width: 100%;
-  height: auto;
-  border-radius: 8px;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 12px;
   cursor: zoom-in;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .gallery img:hover {
-  transform: scale(1.02);
+  transform: scale(1.015);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
 .lightbox {
