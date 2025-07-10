@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>aparfenen.art</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1 style="text-align:center; padding: 20px 0;">aparfenen.art</h1>
+
+  <h2 class="section-title">animalia</h2>
+  <div class="gallery">
+    <img src="img/animalia/DSC08450.JPG" alt="Art 1" />
+    <img src="img/animalia/DSC08009.JPG" alt="Art 2" />
+    <img src="img/animalia/IMG_4915.jpeg" alt="Art 3" />
+    <img src="img/animalia/IMG_5118.JPG" alt="Art 4" />
+    <img src="img/animalia/IMG_6531.HEIC" alt="Art 5" />
+    <img src="img/animalia/IMG_6662.HEIC" alt="Art 6" />
+    <img src="img/animalia/IMG_8284.jpeg" alt="Art 7" />
+    <img src="img/animalia/IMG_9519.JPG" alt="Art 8" />
+    <img src="img/animalia/PicsArt_1408479042123.jpg" alt="Art 9" />
+  </div>
+
+  <div id="lightbox" class="lightbox">
+    <img src="" alt="Large View" />
+  </div>
+
+  <script>
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = lightbox.querySelector("img");
+
+    document.querySelectorAll(".gallery img").forEach(img => {
+      img.addEventListener("click", () => {
+        lightboxImg.src = img.src;
+        lightbox.classList.add("active");
+      });
+    });
+
+    lightbox.addEventListener("click", () => {
+      lightbox.classList.remove("active");
+    });
+  </script>
+</body>
+</html>
