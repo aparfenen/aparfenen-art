@@ -1,0 +1,14 @@
+
+# macOS system files
+.DS_Store
+
+# JetBrains IDE
+.idea/
+
+# VSCode settings
+.vscode/
+
+# Logs and temp files
+*.log
+*.swp
+*~
