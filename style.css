@@ -23,14 +23,13 @@
     color: #222;
 
     max-width: 1000px;
+    margin: 40px auto;
     padding: 36px;
-    margin: 0 auto 0 auto; /* center horizontally */
     box-sizing: border-box;
 
-    /* Align visually with the gallery */
-    display: block;
-    padding-left: 36px;
-    padding-right: 36px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    background-color: #fdfdfd;
   }
 
 
