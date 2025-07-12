@@ -1,86 +1,89 @@
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&display=swap" rel="stylesheet">
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,500&display=swap');
 
-<style>
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    background-color: #fefefe;
-  }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #fefefe;
+}
 
-  h1, h2.section-title {
-    text-align: center;
-    font-weight: 500;
-    margin: 1.5em 0 1em;
-  }
+/* Headings */
+h1, h2.section-title {
+  text-align: center;
+  font-weight: 500;
+  margin: 1.5em 0 1em;
+}
 
-  /* Artist statement block aligned with gallery */
-  .statement {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-weight: 500;
-    font-size: 1.1em;
-    line-height: 1.7;
-    color: #222;
+/* Optional tighter h1 spacing */
+h1 {
+  margin-bottom: 10px;
+}
 
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 36px;
-    box-sizing: border-box;
+/* Artist statement */
+.statement {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 1.1em;
+  line-height: 1.7;
+  color: #222;
 
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 8px;
-    background-color: #fdfdfd;
-  }
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 36px;
+  box-sizing: border-box;
 
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  background-color: #fdfdfd;
+}
 
-  /* Gallery layout */
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
-    padding: 36px;
-    max-width: 1000px;
-    margin: 0 auto;
-  }
+/* Image grid */
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  padding: 36px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
 
-  .gallery img {
-    width: 100%;
-    height: 340px;
-    object-fit: cover;
-    border-radius: 12px;
-    cursor: zoom-in;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
+.gallery img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
 
-  .gallery img:hover {
-    transform: scale(1.015);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
-  }
+.gallery img:hover {
+  transform: scale(1.015);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
 
-  /* Lightbox overlay */
-  .lightbox {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
+/* Lightbox */
+.lightbox {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
 
-  .lightbox.active {
-    opacity: 1;
-    pointer-events: auto;
-  }
+.lightbox.active {
+  opacity: 1;
+  pointer-events: auto;
+}
 
-  .lightbox img {
-    max-width: 90%;
-    max-height: 90%;
-    border-radius: 10px;
-    cursor: zoom-out;
-  }
-</style>
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 10px;
+  cursor: zoom-out;
+}
