@@ -13,7 +13,7 @@ END_MARKER = "<!-- END GALLERY -->"
 
 
 # 􁾤􁾤􁾤 LOAD CSV 􁾤􁾤􁾤
-df = pd.read_csv(CSV_PATH)
+df = pd.read_csv(CSV_PATH, sep=';')
 df['category'] = df['category'].str.strip()
 df['filename'] = df['filename'].str.strip()
 
