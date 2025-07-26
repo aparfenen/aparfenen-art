@@ -6,6 +6,15 @@ body {
   background-color: #fefefe;
 }
 
+/* Название сайта */
+.site-title {
+  text-align: center;
+  font-size: 2.8em;
+  font-weight: 600;
+  margin: 40px 0 10px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 /* Headings */
 h1, h2.section-title {
   text-align: center;
@@ -18,9 +27,11 @@ h1 {
   margin-bottom: 10px;
 }
 
+/* Artist statement */
+#statement.section-title {
+  margin-top: 60px;
 }
 
-/* Artist statement */
 .statement {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
