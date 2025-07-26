@@ -88,6 +88,14 @@ h1 {
   cursor: zoom-out;
 }
 
+
+.footer-separator {
+  margin: 60px auto 30px auto;
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  width: 80%;
+}
+
 footer.contact-info {
   max-width: 1000px;
   margin: 60px auto;
