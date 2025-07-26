@@ -87,3 +87,34 @@ h1 {
   border-radius: 10px;
   cursor: zoom-out;
 }
+
+.contact-footer {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1em;
+  color: #222;
+  background-color: #fdfdfd;
+  max-width: 1000px;
+  margin: 60px auto 40px;
+  padding: 32px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.contact-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.contact-footer li {
+  margin-bottom: 8px;
+}
+
+.contact-footer a {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+.contact-footer a:hover {
+  text-decoration: underline;
+}
