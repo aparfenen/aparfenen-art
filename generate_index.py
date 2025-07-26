@@ -1,7 +1,6 @@
 import pandas as pd
 from collections import defaultdict
 
-
 # 􁾤􁾤􁾤 CONFIG 􁾤􁾤􁾤
 CSV_PATH = "gallery_metadata.csv"
 INDEX_PATH = "index.html"
@@ -10,13 +9,10 @@ OUTPUT_PATH = "index.html"
 START_MARKER = "<!-- START GALLERY -->"
 END_MARKER = "<!-- END GALLERY -->"
 
-
-
 # 􁾤􁾤􁾤 LOAD CSV 􁾤􁾤􁾤
 df = pd.read_csv(CSV_PATH, sep=';')
 df['category'] = df['category'].str.strip()
 df['filename'] = df['filename'].str.strip()
-
 
 # 􁾤􁾤􁾤 BUILD GALLERY HTML 􁾤􁾤􁾤
 grouped = defaultdict(list)
@@ -32,12 +28,13 @@ for _, row in df.iterrows():
     </div>'''
     grouped[row["category"]].append(block)
 
+
 gallery_html = ""
 for category, blocks in grouped.items():
-    gallery_html += f'\n  <h2 class="section-title">{category}</h2>\n  <div class="gallery">\n'
+    anchor = category.lower().replace(" ", "-")
+    gallery_html += f'\n  <h2 id="{anchor}" class="section-title">{category}</h2>\n  <div class="gallery">\n'
     gallery_html += "\n".join(blocks)
     gallery_html += "\n  </div>\n"
-
 
 # 􁾤􁾤􁾤 READ INDEX.HTML 􁾤􁾤􁾤
 with open(INDEX_PATH, "r", encoding="utf-8") as f:
@@ -50,9 +47,8 @@ before = content.split(START_MARKER)[0]
 after = content.split(END_MARKER)[1]
 new_content = f"{before}{START_MARKER}\n{gallery_html}\n{END_MARKER}{after}"
 
-
 # 􁾤􁾤􁾤 SAVE 􁾤􁾤􁾤
 with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
     f.write(new_content)
 
-print("✔ index.html updated from gallery_metadata.csv")
+print("✔ index.html updated from gallery_metadata.csv with anchor tags")
