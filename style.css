@@ -88,45 +88,44 @@ h1 {
   cursor: zoom-out;
 }
 
-.contact-footer {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3em;
-  color: #222;
-  background-color: #fdfdfd;
+footer.contact-info {
   max-width: 1000px;
-  margin: 60px auto 40px;
-  padding: 36px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 60px auto;
   text-align: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1em;
 }
 
-.contact-footer ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 auto;
-  max-width: 600px;
+footer.contact-info h2 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  font-style: italic;
 }
 
-.contact-footer li {
+.contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.contact-row a {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 8px;
+  text-decoration: none;
+  color: #2a2a2a;
+  font-weight: 500;
+  transition: color 0.2s ease;
 }
 
-.contact-footer img {
+.contact-row a:hover {
+  color: #3366cc;
+}
+
+.contact-row img {
   width: 20px;
   height: 20px;
-  vertical-align: middle;
-  opacity: 0.8;
-}
-
-.contact-footer a {
-  color: #0056b3;
-  text-decoration: none;
-}
-
-.contact-footer a:hover {
-  text-decoration: underline;
 }
