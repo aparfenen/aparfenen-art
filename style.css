@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Xanh+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Unna&display=swap');
 
 
 body {
@@ -6,6 +6,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: #fefefe;
 }
+
 
 /* Website Title */
 .site-title {
@@ -16,12 +17,14 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+
 /* Headings */
 h1, h2.section-title {
   text-align: center;
   font-weight: 500;
   margin: 1.5em 0 1em;
 }
+
 
 /* Optional tighter h1 spacing */
 h1 {
@@ -35,7 +38,7 @@ h1 {
 }
 
 .statement {
-  font-family: 'Xanh Mono', monospace;
+  font-family: 'Unna', serif;
   font-style: normal;
   font-weight: 400;
   font-size: 1.3em;
