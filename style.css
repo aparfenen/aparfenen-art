@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Unna&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Unna&display=swap');*/
 
 
 body {
@@ -38,22 +38,40 @@ h1 {
 }
 
 .statement {
-  font-family: 'Unna', serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 1.3em;
-  line-height: 1.75;
+  font-size: 1.15em;
+  line-height: 1.7;
   color: #222;
 
   max-width: 1000px;
-  margin: 20px auto;
-  padding: 28px;
+  margin: 40px auto;
+  padding: 36px;
   box-sizing: border-box;
 
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: #fdfdfd;
 }
+
+/*.statement {*/
+/*  font-family: 'Unna', serif;*/
+/*  font-style: normal;*/
+/*  font-weight: 400;*/
+/*  font-size: 1.3em;*/
+/*  line-height: 1.75;*/
+/*  color: #222;*/
+
+/*  max-width: 1000px;*/
+/*  margin: 20px auto;*/
+/*  padding: 28px;*/
+/*  box-sizing: border-box;*/
+
+/*  border: 1px solid rgba(0, 0, 0, 0.1);*/
+/*  border-radius: 8px;*/
+/*  background-color: #fdfdfd;*/
+/*}*/
 
 
 /* Image grid */
