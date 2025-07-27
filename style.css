@@ -34,7 +34,7 @@ h1 {
 
 /* Artist statement */
 #statement.section-title {
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
 .statement {
@@ -46,8 +46,8 @@ h1 {
   color: #222;
 
   max-width: 1000px;
-  margin: 40px auto;
-  padding: 36px;
+  margin: 30px auto;
+  padding: 10px;
   box-sizing: border-box;
 
   border: 1px solid rgba(0, 0, 0, 0.1);
