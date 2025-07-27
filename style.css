@@ -121,9 +121,10 @@ footer.contact-info {
   max-width: 1000px;
   margin: 60px auto;
   text-align: center;
-  font-family: 'Cormorant Garamond', serif;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.1em;
 }
+
 
 footer.contact-info h2 {
   font-size: 1.5em;
