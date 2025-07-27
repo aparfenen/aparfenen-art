@@ -52,7 +52,7 @@ h1 {
 
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  background-color: #fdfdfd;
+  background-color: #fafafa;
 }
 
 .statement-heading {
@@ -269,3 +269,8 @@ nav.main-nav .sub-menu a {
 .commissions a:hover {
   text-decoration: underline;
 }
+
+.commissions p {
+  margin: 8px 0;
+}
+
