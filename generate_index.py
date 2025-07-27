@@ -32,7 +32,7 @@ for _, row in df.iterrows():
 gallery_html = ""
 for category, blocks in grouped.items():
     anchor = category.lower().replace(" ", "-")
-    gallery_html += f'\n  <h2 id="{anchor}" class="section-title">{category}</h2>\n  <div class="gallery">\n'
+    gallery_html += f'\n  <h3 id="{anchor}" class="section-title">{category}</h3>\n  <div class="gallery">\n'
     gallery_html += "\n".join(blocks)
     gallery_html += "\n  </div>\n"
 
