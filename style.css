@@ -55,24 +55,6 @@ h1 {
   background-color: #fdfdfd;
 }
 
-/*.statement {*/
-/*  font-family: 'Unna', serif;*/
-/*  font-style: normal;*/
-/*  font-weight: 400;*/
-/*  font-size: 1.3em;*/
-/*  line-height: 1.75;*/
-/*  color: #222;*/
-
-/*  max-width: 1000px;*/
-/*  margin: 20px auto;*/
-/*  padding: 28px;*/
-/*  box-sizing: border-box;*/
-
-/*  border: 1px solid rgba(0, 0, 0, 0.1);*/
-/*  border-radius: 8px;*/
-/*  background-color: #fdfdfd;*/
-/*}*/
-
 
 /* Image grid */
 .gallery {
@@ -126,11 +108,13 @@ h1 {
 }
 
 
+/* FOOTER */
 .footer-separator {
   margin: 60px auto 30px auto;
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  width: 80%;
+  max-width: 1000px;
+  width: 100%;
 }
 
 footer.contact-info {
