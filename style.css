@@ -55,19 +55,10 @@ h1 {
   background-color: #fdfdfd;
 }
 
-/* Statement heading */
 .statement-heading {
   margin-top: 60px;
   font-size: 1.7em;
   font-weight: 600;
-}
-
-/* Separator under Statement title */
-.statement-separator {
-  border: none;
-  border-top: 1px solid rgba(0,0,0,0.1);
-  width: 50%;
-  margin: 0 auto 20px auto;
 }
 
 
