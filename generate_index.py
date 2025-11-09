@@ -3,11 +3,25 @@ from collections import defaultdict
 
 # 􁾤􁾤􁾤 CONFIG 􁾤􁾤􁾤
 CSV_PATH = "gallery_metadata.csv"
+CATEGORY_DESC_PATH = "category_descriptions.csv"
 INDEX_PATH = "index.html"
 OUTPUT_PATH = "index.html"
 
 START_MARKER = "<!-- START GALLERY -->"
 END_MARKER = "<!-- END GALLERY -->"
+
+# 􁾤􁾤􁾤 LOAD CATEGORY DESCRIPTIONS 􁾤􁾤􁾤
+category_descriptions = {}
+try:
+    desc_df = pd.read_csv(CATEGORY_DESC_PATH, sep=',')
+    desc_df['category'] = desc_df['category'].str.strip()
+    desc_df['description'] = desc_df['description'].str.strip()
+    category_descriptions = dict(zip(desc_df['category'], desc_df['description']))
+    print(f"✔ Loaded descriptions for {len(category_descriptions)} categories")
+except FileNotFoundError:
+    print("⚠ category_descriptions.csv not found - categories will have no descriptions")
+except Exception as e:
+    print(f"⚠ Error loading category descriptions: {e}")
 
 # 􁾤􁾤􁾤 LOAD CSV 􁾤􁾤􁾤
 df = pd.read_csv(CSV_PATH, sep=',')
@@ -41,7 +55,16 @@ for _, row in df.iterrows():
 gallery_html = ""
 for category, blocks in grouped.items():
     anchor = category.lower().replace(" ", "-")
-    gallery_html += f'\n  <h3 id="{anchor}" class="section-title">{category}</h3>\n  <div class="gallery">\n'
+    
+    # Build category header with optional description
+    gallery_html += f'\n  <h3 id="{anchor}" class="section-title">{category}</h3>\n'
+    
+    # Add category description if available
+    if category in category_descriptions:
+        gallery_html += f'  <p class="category-description">{category_descriptions[category]}</p>\n'
+    
+    # Add gallery grid
+    gallery_html += '  <div class="gallery">\n'
     gallery_html += "\n".join(blocks)
     gallery_html += "\n  </div>\n"
 
