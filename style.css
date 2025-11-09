@@ -1,5 +1,9 @@
 /*@import url('https://fonts.googleapis.com/css2?family=Unna&display=swap');*/
 
+/* ===== SMOOTH SCROLL ===== */
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   margin: 0;
@@ -127,6 +131,44 @@ h3.section-title {
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
+/* ===== LIKE BUTTON ===== */
+.art-block {
+  position: relative;
+}
+
+.like-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 5;
+}
+
+.like-button:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 1);
+}
+
+.like-button.liked {
+  background: rgba(255, 100, 100, 0.95);
+  color: white;
+}
+
+.like-button.liked:hover {
+  background: rgba(255, 100, 100, 1);
+}
+
 
 /* Lightbox with metadata - redesigned for elegance */
 .lightbox {
@@ -211,6 +253,51 @@ h3.section-title {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+/* ===== SHARE BUTTONS IN LIGHTBOX ===== */
+.share-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.share-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 500;
+  color: #333;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.share-button:hover {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+.share-button.facebook { background: #1877f2; color: white; }
+.share-button.facebook:hover { background: #0d65d9; }
+
+.share-button.twitter { background: #1da1f2; color: white; }
+.share-button.twitter:hover { background: #0c88d4; }
+
+.share-button.pinterest { background: #e60023; color: white; }
+.share-button.pinterest:hover { background: #c5001e; }
+
+.share-button.copy { background: #5cb85c; color: white; }
+.share-button.copy:hover { background: #4cae4c; }
+.share-button.copy.copied { background: #4cae4c; }
+
 /* Mobile optimization for lightbox */
 @media (max-width: 768px) {
   .lightbox-content {
@@ -239,6 +326,90 @@ h3.section-title {
   
   .lightbox-metadata {
     font-size: 0.75em;
+  }
+  
+  .share-buttons {
+    gap: 8px;
+  }
+  
+  .share-button {
+    padding: 6px 10px;
+    font-size: 0.8em;
+  }
+}
+
+
+/* ===== BACK TO TOP BUTTON ===== */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: rgba(51, 102, 204, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: rgba(51, 102, 204, 1);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+/* ===== CURRENT CATEGORY INDICATOR ===== */
+.category-indicator {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 8px 20px;
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  font-size: 0.9em;
+  font-weight: 500;
+  color: #333;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 99;
+}
+
+.category-indicator.visible {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+  
+  .category-indicator {
+    top: 60px;
+    font-size: 0.85em;
+    padding: 6px 16px;
   }
 }
 
@@ -339,17 +510,17 @@ nav.main-nav .sub-menu {
   border-radius: 4px;
   padding: 8px 0;
   z-index: 99;
-  min-width: 220px; /* Увеличена с 180px */
+  min-width: 220px;
 }
 nav.main-nav li:hover > .sub-menu {
   display: block;
 }
 nav.main-nav .sub-menu li {
-  width: 100%; /* Вместо фиксированной ширины */
+  width: 100%;
 }
 nav.main-nav .sub-menu a {
   display: block;
   padding: 8px 16px;
   color: #222;
-  white-space: nowrap; /* Текст не переносится */
+  white-space: nowrap;
 }
