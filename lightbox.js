@@ -5,6 +5,7 @@ const lightboxImg = lightbox.querySelector("img");
 const lightboxTitle = lightbox.querySelector(".lightbox-title");
 const lightboxDate = lightbox.querySelector(".lightbox-date");
 const lightboxDescription = lightbox.querySelector(".lightbox-description");
+const lightboxMetadata = lightbox.querySelector(".lightbox-metadata");
 
 // Add click listener to all gallery images
 document.querySelectorAll(".gallery img").forEach(img => {
@@ -16,6 +17,27 @@ document.querySelectorAll(".gallery img").forEach(img => {
     lightboxTitle.textContent = img.dataset.title || "Untitled";
     lightboxDate.textContent = img.dataset.date || "";
     lightboxDescription.textContent = img.dataset.description || "";
+    
+    // Build metadata string (dimensions and medium)
+    const dimensions = img.dataset.dimensions || "";
+    const medium = img.dataset.medium || "";
+    
+    let metadataText = "";
+    if (dimensions && medium) {
+      metadataText = `${dimensions} • ${medium}`;
+    } else if (dimensions) {
+      metadataText = dimensions;
+    } else if (medium) {
+      metadataText = medium;
+    }
+    
+    // Show or hide metadata section
+    if (metadataText) {
+      lightboxMetadata.textContent = metadataText;
+      lightboxMetadata.style.display = "block";
+    } else {
+      lightboxMetadata.style.display = "none";
+    }
     
     // Show lightbox
     lightbox.classList.add("active");

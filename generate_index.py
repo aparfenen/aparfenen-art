@@ -44,13 +44,23 @@ for _, row in df.iterrows():
     # Escape quotes in description for data attribute
     desc_escaped = str(row["description"]).replace('"', '&quot;')
     
+    # Get dimensions and medium (optional fields)
+    dimensions = str(row.get("dimensions", "")).strip() if "dimensions" in row and pd.notna(row.get("dimensions")) else ""
+    medium = str(row.get("medium", "")).strip() if "medium" in row and pd.notna(row.get("medium")) else ""
+    
+    # Escape for data attributes
+    dimensions_escaped = dimensions.replace('"', '&quot;')
+    medium_escaped = medium.replace('"', '&quot;')
+    
     block = f'''    <div class="art-block">
       <img src="img/{row["category"]}/{row["filename"]}"
            alt="{row["title"]}"
            title="{row["title"]} ({row["show_date"]})"
            data-title="{row["title"]}"
            data-date="{row["show_date"]}"
-           data-description="{desc_escaped}" />
+           data-description="{desc_escaped}"
+           data-dimensions="{dimensions_escaped}"
+           data-medium="{medium_escaped}" />
       <div class="caption">
         <strong>{row["title"]}</strong><br>{row["show_date"]}<br>{row["description"]}
       </div>
