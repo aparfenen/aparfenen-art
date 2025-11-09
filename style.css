@@ -131,44 +131,6 @@ h3.section-title {
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
-/* ===== LIKE BUTTON ===== */
-.art-block {
-  position: relative;
-}
-
-.like-button {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
-  font-size: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  z-index: 5;
-}
-
-.like-button:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 255, 1);
-}
-
-.like-button.liked {
-  background: rgba(255, 100, 100, 0.95);
-  color: white;
-}
-
-.like-button.liked:hover {
-  background: rgba(255, 100, 100, 1);
-}
-
 
 /* Lightbox with metadata - redesigned for elegance */
 .lightbox {

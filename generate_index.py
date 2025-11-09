@@ -1,5 +1,6 @@
 import pandas as pd
 from collections import defaultdict
+import re
 
 # 􁾤􁾤􁾤 CONFIG 􁾤􁾤􁾤
 CSV_PATH = "gallery_metadata.csv"
@@ -52,7 +53,11 @@ for _, row in df.iterrows():
     dimensions_escaped = dimensions.replace('"', '&quot;')
     medium_escaped = medium.replace('"', '&quot;')
     
-    block = f'''    <div class="art-block">
+    # Generate unique ID from title (lowercase, replace spaces/special chars with hyphens)
+    unique_id = re.sub(r'[^\w\s-]', '', str(row["title"]).lower())
+    unique_id = re.sub(r'[-\s]+', '-', unique_id).strip('-')
+    
+    block = f'''    <div class="art-block" id="{unique_id}">
       <img src="img/{row["category"]}/{row["filename"]}"
            alt="{row["title"]}"
            title="{row["title"]} ({row["show_date"]})"
@@ -60,7 +65,8 @@ for _, row in df.iterrows():
            data-date="{row["show_date"]}"
            data-description="{desc_escaped}"
            data-dimensions="{dimensions_escaped}"
-           data-medium="{medium_escaped}" />
+           data-medium="{medium_escaped}"
+           data-id="{unique_id}" />
       <div class="caption">
         <strong>{row["title"]}</strong><br>{row["show_date"]}<br>{row["description"]}
       </div>
