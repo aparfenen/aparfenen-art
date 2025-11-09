@@ -14,6 +14,15 @@ df = pd.read_csv(CSV_PATH, sep=',')
 df['category'] = df['category'].str.strip()
 df['filename'] = df['filename'].str.strip()
 
+# 􁾤􁾤􁾤 FILTER BY VISIBILITY 􁾤􁾤􁾤
+# Only include rows where 'visible' column is 'yes' (case-insensitive)
+if 'visible' in df.columns:
+    df['visible'] = df['visible'].str.strip().str.lower()
+    df = df[df['visible'] == 'yes']
+    print(f"✔ Filtered to {len(df)} visible artworks")
+else:
+    print("⚠ No 'visible' column found - showing all artworks")
+
 # 􁾤􁾤􁾤 BUILD GALLERY HTML 􁾤􁾤􁾤
 grouped = defaultdict(list)
 
