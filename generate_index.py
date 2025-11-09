@@ -41,10 +41,16 @@ else:
 grouped = defaultdict(list)
 
 for _, row in df.iterrows():
+    # Escape quotes in description for data attribute
+    desc_escaped = str(row["description"]).replace('"', '&quot;')
+    
     block = f'''    <div class="art-block">
       <img src="img/{row["category"]}/{row["filename"]}"
            alt="{row["title"]}"
-           title="{row["title"]} ({row["show_date"]})" />
+           title="{row["title"]} ({row["show_date"]})"
+           data-title="{row["title"]}"
+           data-date="{row["show_date"]}"
+           data-description="{desc_escaped}" />
       <div class="caption">
         <strong>{row["title"]}</strong><br>{row["show_date"]}<br>{row["description"]}
       </div>
@@ -83,4 +89,4 @@ new_content = f"{before}{START_MARKER}\n{gallery_html}\n{END_MARKER}{after}"
 with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
     f.write(new_content)
 
-print("✔ index.html updated from gallery_metadata.csv with anchor tags")
+print("✔ index.html updated from gallery_metadata.csv with anchor tags and lightbox data attributes")
