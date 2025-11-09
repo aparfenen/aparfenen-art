@@ -117,15 +117,29 @@ h3.section-title {
   max-width: 1000px;
   margin: 0 auto;
 }
+
 .gallery img {
   width: 100%;
   height: 340px;
   object-fit: cover;
   border-radius: 12px;
   cursor: zoom-in;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.4s ease;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  background: #f0f0f0;
 }
+
+/* Lazy loading states */
+.gallery img.lazy-loading {
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.gallery img.lazy-loaded {
+  opacity: 1;
+  filter: blur(0);
+}
+
 .gallery img:hover {
   transform: scale(1.015);
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
@@ -213,6 +227,88 @@ h3.section-title {
   margin: 0;
   padding-top: 6px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* ===== LIGHTBOX NAVIGATION ARROWS ===== */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  z-index: 1001;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lightbox.active .lightbox-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-nav.prev {
+  left: 20px;
+}
+
+.lightbox-nav.next {
+  right: 20px;
+}
+
+/* Counter */
+.lightbox-counter {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9em;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox.active .lightbox-counter {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .lightbox-nav.prev {
+    left: 10px;
+  }
+  
+  .lightbox-nav.next {
+    right: 10px;
+  }
+  
+  .lightbox-counter {
+    font-size: 0.85em;
+    padding: 6px 12px;
+  }
 }
 
 /* ===== SHARE BUTTONS IN LIGHTBOX ===== */

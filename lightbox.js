@@ -10,9 +10,21 @@ const lightboxMetadata = lightbox.querySelector(".lightbox-metadata");
 let currentImageSrc = "";
 let currentImageTitle = "";
 let currentImageId = "";
+let allGalleryImages = [];
+let currentImageIndex = -1;
+
+// Get all gallery images on load
+document.addEventListener("DOMContentLoaded", () => {
+  allGalleryImages = Array.from(document.querySelectorAll(".gallery img"));
+});
 
 // Function to open lightbox for a specific image
 function openLightbox(img) {
+  // Find index of current image
+  currentImageIndex = allGalleryImages.indexOf(img);
+  // Find index of current image
+  currentImageIndex = allGalleryImages.indexOf(img);
+  
   // Set image
   lightboxImg.src = img.src;
   currentImageSrc = img.src;
@@ -52,8 +64,35 @@ function openLightbox(img) {
     history.replaceState(null, null, `#${currentImageId}`);
   }
   
+  // Update counter
+  updateCounter();
+  
   // Show lightbox
   lightbox.classList.add("active");
+}
+
+// Function to navigate to next/previous image
+function navigateImage(direction) {
+  if (allGalleryImages.length === 0) return;
+  
+  // Calculate new index with wrapping
+  if (direction === 'next') {
+    currentImageIndex = (currentImageIndex + 1) % allGalleryImages.length;
+  } else if (direction === 'prev') {
+    currentImageIndex = (currentImageIndex - 1 + allGalleryImages.length) % allGalleryImages.length;
+  }
+  
+  // Open lightbox with new image
+  const newImg = allGalleryImages[currentImageIndex];
+  openLightbox(newImg);
+}
+
+// Update counter display
+function updateCounter() {
+  const counter = document.querySelector('.lightbox-counter');
+  if (counter && allGalleryImages.length > 0) {
+    counter.textContent = `${currentImageIndex + 1} / ${allGalleryImages.length}`;
+  }
 }
 
 // Add click listener to all gallery images
@@ -79,13 +118,22 @@ function closeLightbox() {
 
 // Also close on ESC key
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && lightbox.classList.contains("active")) {
-    closeLightbox();
+  if (lightbox.classList.contains("active")) {
+    if (e.key === "Escape") {
+      closeLightbox();
+    } else if (e.key === "ArrowRight") {
+      navigateImage('next');
+    } else if (e.key === "ArrowLeft") {
+      navigateImage('prev');
+    }
   }
 });
 
 // Check if URL has hash on page load and open corresponding lightbox
 window.addEventListener("DOMContentLoaded", () => {
+  // Initialize gallery images array
+  allGalleryImages = Array.from(document.querySelectorAll(".gallery img"));
+  
   const hash = window.location.hash.substring(1); // Remove #
   if (hash) {
     // Find the artwork with this ID
@@ -206,3 +254,93 @@ function updateCategoryIndicator() {
 
 window.addEventListener('scroll', updateCategoryIndicator);
 updateCategoryIndicator(); // Initial check
+
+
+// ===== TOUCH/SWIPE SUPPORT FOR MOBILE =====
+let touchStartX = 0;
+let touchEndX = 0;
+let touchStartY = 0;
+let touchEndY = 0;
+
+const handleSwipeGesture = () => {
+  const swipeThreshold = 50; // Minimum distance for swipe
+  const swipeDistanceX = touchEndX - touchStartX;
+  const swipeDistanceY = touchEndY - touchStartY;
+  
+  // Check if horizontal swipe is dominant
+  if (Math.abs(swipeDistanceX) > Math.abs(swipeDistanceY)) {
+    if (Math.abs(swipeDistanceX) > swipeThreshold) {
+      if (swipeDistanceX > 0) {
+        // Swipe right - previous image
+        navigateImage('prev');
+      } else {
+        // Swipe left - next image
+        navigateImage('next');
+      }
+    }
+  }
+};
+
+lightboxImg.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+  touchStartY = e.changedTouches[0].screenY;
+}, { passive: true });
+
+lightboxImg.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  touchEndY = e.changedTouches[0].screenY;
+  handleSwipeGesture();
+}, { passive: true });
+
+
+// ===== LAZY LOADING WITH INTERSECTION OBSERVER =====
+const lazyLoadImages = () => {
+  const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        
+        // Set loading class
+        img.classList.add('lazy-loading');
+        
+        // Create a new image to preload
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          // Once loaded, update src and add loaded class
+          img.src = tempImg.src;
+          img.classList.remove('lazy-loading');
+          img.classList.add('lazy-loaded');
+        };
+        
+        // Start loading the actual image
+        tempImg.src = img.dataset.src || img.src;
+        
+        // Stop observing this image
+        observer.unobserve(img);
+      }
+    });
+  }, {
+    root: null,
+    rootMargin: '50px', // Start loading 50px before entering viewport
+    threshold: 0.01
+  });
+  
+  // Observe all gallery images
+  document.querySelectorAll('.gallery img').forEach(img => {
+    // Store original src in data attribute if not already there
+    if (!img.dataset.src) {
+      img.dataset.src = img.src;
+      // Set a tiny placeholder or keep the src for now
+      // img.src can stay as is for initial load, or use data-src approach
+    }
+    img.classList.add('lazy-loading');
+    imageObserver.observe(img);
+  });
+};
+
+// Initialize lazy loading when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', lazyLoadImages);
+} else {
+  lazyLoadImages();
+}
