@@ -4100,20 +4100,16 @@ What if we almost found each other?"
 </div> <!-- End content-with-sidebar -->
 
 
-<!--***** LIGHTBOX *****-->
-<div id="lightbox" class="lightbox">
-  <button class="lightbox-nav prev" onclick="navigateImage('prev')" aria-label="Previous">â—€</button>
-  <button class="lightbox-nav next" onclick="navigateImage('next')" aria-label="Next">â–¶</button>
-  <div class="lightbox-counter"></div>
-  
-  <div class="lightbox-content">
-    <img src="" alt="">
-    <div class="lightbox-info">
-      <div class="lightbox-title"></div>
-      <div class="lightbox-date"></div>
-      <div class="lightbox-description"></div>
-      <div class="lightbox-metadata"></div>
-      <div class="share-buttons">
-        <button class="share-button" onclick="shareOnFacebook()">Facebook</button>
-        <button class="share-button" onclick="shareOnTwitter()">Twitter</button>
-        <button class="share-button" 
+<!--***** Lightbox *****-->
+  <div id="lightbox" class="lightbox">
+    <div class="lightbox-content">
+      <img src="" alt="Large View" />
+      <div class="lightbox-info">
+        <h3 class="lightbox-title"></h3>
+        <p class="lightbox-date"></p>
+        <p class="lightbox-description"></p>
+        <p class="lightbox-metadata"></p>
+      </div>
+    </div>
+  </div>
+  <script src="lightbox.js"></script>
