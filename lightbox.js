@@ -206,15 +206,36 @@ backToTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Show/hide back to top button on scroll
+// ===== SCROLL DOWN BUTTON =====
+const scrollDownBtn = document.createElement('button');
+scrollDownBtn.className = 'scroll-down';
+scrollDownBtn.innerHTML = '↓';
+scrollDownBtn.setAttribute('aria-label', 'Scroll down');
+document.body.appendChild(scrollDownBtn);
+
+scrollDownBtn.addEventListener('click', () => {
+  window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+});
+
+// Show/hide navigation buttons on scroll
 let lastScrollTop = 0;
 window.addEventListener('scroll', () => {
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight;
+  const clientHeight = document.documentElement.clientHeight;
   
+  // Back to top button - show when scrolled down
   if (scrollTop > 300) {
     backToTopBtn.classList.add('visible');
   } else {
     backToTopBtn.classList.remove('visible');
+  }
+  
+  // Scroll down button - hide when near bottom
+  if (scrollTop + clientHeight >= scrollHeight - 200) {
+    scrollDownBtn.classList.add('hidden');
+  } else {
+    scrollDownBtn.classList.remove('hidden');
   }
   
   lastScrollTop = scrollTop;

@@ -1,10 +1,11 @@
 import pandas as pd
 from collections import defaultdict
 import re
+from datetime import datetime
 
-# 􁾤􁾤􁾤 CONFIG 􁾤􁾤􁾤
+# 🎨🎨🎨 CONFIG 🎨🎨🎨
 CSV_PATH = "gallery_metadata.csv"
-CATEGORY_DESC_PATH = "category_descriptions.csv"
+THEMES_DESC_PATH = "themes_descriptions.csv"
 INDEX_PATH = "index.html"
 OUTPUT_PATH = "index.html"
 
@@ -13,20 +14,20 @@ END_MARKER = "<!-- END GALLERY -->"
 FILTER_START_MARKER = "<!-- START FILTERS -->"
 FILTER_END_MARKER = "<!-- END FILTERS -->"
 
-# 􁾤􁾤􁾤 LOAD CATEGORY DESCRIPTIONS 􁾤􁾤􁾤
-category_descriptions = {}
+# 🎨🎨🎨 LOAD THEME DESCRIPTIONS 🎨🎨🎨
+theme_descriptions = {}
 try:
-    desc_df = pd.read_csv(CATEGORY_DESC_PATH, sep=',')
-    desc_df['category'] = desc_df['category'].str.strip()
+    desc_df = pd.read_csv(THEMES_DESC_PATH, sep=',')
+    desc_df['theme'] = desc_df['theme'].str.strip()
     desc_df['description'] = desc_df['description'].str.strip()
-    category_descriptions = dict(zip(desc_df['category'], desc_df['description']))
-    print(f"✔ Loaded descriptions for {len(category_descriptions)} categories")
+    theme_descriptions = dict(zip(desc_df['theme'], desc_df['description']))
+    print(f"✓ Loaded descriptions for {len(theme_descriptions)} themes")
 except FileNotFoundError:
-    print("⚠ category_descriptions.csv not found - categories will have no descriptions")
+    print("⚠ themes_descriptions.csv not found - themes will have no descriptions")
 except Exception as e:
-    print(f"⚠ Error loading category descriptions: {e}")
+    print(f"⚠ Error loading theme descriptions: {e}")
 
-# 􁾤􁾤􁾤 LOAD CSV 􁾤􁾤􁾤
+# 🎨🎨🎨 LOAD CSV 🎨🎨🎨
 df = pd.read_csv(CSV_PATH, sep=',')
 df['category'] = df['category'].str.strip()
 df['filename'] = df['filename'].str.strip()
@@ -37,15 +38,49 @@ for col in filter_columns:
     if col in df.columns:
         df[col] = df[col].fillna('').astype(str).str.strip()
 
-# 􁾤􁾤􁾤 FILTER BY VISIBILITY 􁾤􁾤􁾤
+# 🎨🎨🎨 FILTER BY VISIBILITY 🎨🎨🎨
 if 'visible' in df.columns:
     df['visible'] = df['visible'].str.strip().str.lower()
     df = df[df['visible'] == 'yes']
-    print(f"✔ Filtered to {len(df)} visible artworks")
+    print(f"✓ Filtered to {len(df)} visible artworks")
 else:
     print("⚠ No 'visible' column found - showing all artworks")
 
-# 􁾤􁾤􁾤 COLLECT UNIQUE FILTER VALUES IN SPECIFIC ORDER 􁾤􁾤􁾤
+# 🎨🎨🎨 PARSE DATES FOR CHRONOLOGICAL SORTING 🎨🎨🎨
+def parse_date(date_str):
+    """Parse various date formats and return a sortable datetime object."""
+    if pd.isna(date_str) or not date_str:
+        return datetime(1900, 1, 1)
+    
+    date_str = str(date_str).strip()
+    
+    # Try different formats
+    formats = [
+        '%m/%d/%Y',  # 07/28/2025
+        '%m/%d/%y',  # 7/28/25
+        '%m/%d',     # 7/21
+        '%m/%y',     # 8/25
+    ]
+    
+    for fmt in formats:
+        try:
+            parsed = datetime.strptime(date_str, fmt)
+            # If year is missing, assume 2020s
+            if parsed.year < 1950:
+                parsed = parsed.replace(year=2020 + (parsed.year % 100))
+            return parsed
+        except:
+            continue
+    
+    # If all parsing fails, return minimum date
+    return datetime(1900, 1, 1)
+
+df['parsed_date'] = df['date_created'].apply(parse_date)
+df = df.sort_values('parsed_date', ascending=False)  # Most recent first
+
+print(f"✓ Sorted {len(df)} artworks chronologically")
+
+# 🎨🎨🎨 COLLECT UNIQUE FILTER VALUES IN SPECIFIC ORDER 🎨🎨🎨
 # Define order of categories
 SUBJECT_ORDER = [
     'Abstract & Structures',
@@ -94,17 +129,17 @@ unique_themes = [t for t in THEMES_ORDER if t in unique_themes_in_data and t]
 unique_years = sorted(df['year'].unique(), reverse=True) if 'year' in df.columns else []
 unique_years = [y for y in unique_years if y]
 
-print(f"\n✔ Found filter values:")
+print(f"\n✓ Found filter values:")
 print(f"  Subjects: {len(unique_subjects)}")
 print(f"  Moods: {len(unique_moods)}")
 print(f"  Themes: {len(unique_themes)}")
 print(f"  Years: {len(unique_years)}")
 
-# 􁾤􁾤􁾤 GENERATE FILTER SIDEBAR HTML 􁾤􁾤􁾤
+# 🎨🎨🎨 GENERATE FILTER SIDEBAR HTML 🎨🎨🎨
 def generate_filter_sidebar():
     html = '    <div class="filter-header">\n'
     html += '      <h2>Filters</h2>\n'
-    html += '      <span id="artwork-counter">127 works</span>\n'
+    html += f'      <span id="artwork-counter">{len(df)} works</span>\n'
     html += '    </div>\n'
     html += '    <button id="clear-filters">Clear All</button>\n\n'
     
@@ -162,10 +197,9 @@ def generate_filter_sidebar():
     
     return html
 
-# 􁾤􁾤􁾤 BUILD GALLERY HTML 􁾤􁾤􁾤
-grouped = defaultdict(list)
-
-for _, row in df.iterrows():
+# 🎨🎨🎨 GENERATE ARTWORK BLOCK 🎨🎨🎨
+def generate_artwork_block(row):
+    """Generate HTML for a single artwork block."""
     # Escape quotes in description for data attribute
     desc_escaped = str(row["description"]).replace('"', '&quot;')
     
@@ -211,27 +245,55 @@ for _, row in df.iterrows():
            data-year="{year_escaped}"
            data-id="{unique_id}" />
     </div>'''
-    grouped[row["category"]].append(block)
+    return block
 
-gallery_html = ""
-for category, blocks in grouped.items():
-    anchor = category.lower().replace(" ", "-")
+# 🎨🎨🎨 BUILD CHRONOLOGICAL GALLERY HTML 🎨🎨🎨
+gallery_html = '\n  <div class="gallery-view-controls">\n'
+gallery_html += '    <button id="chronological-view-btn" class="view-btn active">Chronological</button>\n'
+gallery_html += '    <button id="thematic-view-btn" class="view-btn">By Themes</button>\n'
+gallery_html += '  </div>\n\n'
+
+# Chronological view (default)
+gallery_html += '  <div id="chronological-gallery" class="gallery-container active">\n'
+gallery_html += '    <div class="gallery">\n'
+for _, row in df.iterrows():
+    gallery_html += generate_artwork_block(row) + '\n'
+gallery_html += '    </div>\n'
+gallery_html += '  </div>\n\n'
+
+# Thematic view (grouped by themes)
+gallery_html += '  <div id="thematic-gallery" class="gallery-container">\n'
+
+grouped_by_theme = defaultdict(list)
+for _, row in df.iterrows():
+    theme = row.get("themes", "").strip()
+    if theme:
+        grouped_by_theme[theme].append(row)
+
+# Sort themes by the order defined
+sorted_themes = [t for t in THEMES_ORDER if t in grouped_by_theme]
+
+for theme in sorted_themes:
+    rows = grouped_by_theme[theme]
+    anchor = theme.lower().replace(" ", "-").replace("&", "and")
     
-    # Build category section with class for visibility control
-    gallery_html += f'\n  <div class="category-section">\n'
-    gallery_html += f'    <h3 id="{anchor}" class="section-title">{category}</h3>\n'
+    gallery_html += f'  <div class="theme-section">\n'
+    gallery_html += f'    <h3 id="{anchor}" class="section-title">{theme}</h3>\n'
     
-    # Add category description if available
-    if category in category_descriptions:
-        gallery_html += f'    <p class="category-description">{category_descriptions[category]}</p>\n'
+    # Add theme description if available
+    if theme in theme_descriptions:
+        gallery_html += f'    <p class="category-description">{theme_descriptions[theme]}</p>\n'
     
     # Add gallery grid
     gallery_html += '    <div class="gallery">\n'
-    gallery_html += "\n".join(blocks)
-    gallery_html += "\n    </div>\n"
-    gallery_html += '  </div>\n'
+    for row in rows:
+        gallery_html += generate_artwork_block(row) + '\n'
+    gallery_html += '    </div>\n'
+    gallery_html += '  </div>\n\n'
 
-# 􁾤􁾤􁾤 READ INDEX.HTML 􁾤􁾤􁾤
+gallery_html += '  </div>\n'
+
+# 🎨🎨🎨 READ INDEX.HTML 🎨🎨🎨
 with open(INDEX_PATH, "r", encoding="utf-8") as f:
     content = f.read()
 
@@ -256,8 +318,10 @@ else:
     new_content = f"{before_gallery}{START_MARKER}\n{gallery_html}\n{END_MARKER}{after_gallery}"
     print("⚠ Filter markers not found - only gallery updated")
 
-# 􁾤􁾤􁾤 SAVE 􁾤􁾤􁾤
+# 🎨🎨🎨 SAVE 🎨🎨🎨
 with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
     f.write(new_content)
 
-print("✔ index.html updated with filters and gallery content")
+print("✓ index.html updated with chronological gallery and thematic view")
+print(f"  - {len(df)} artworks in chronological order")
+print(f"  - {len(sorted_themes)} theme sections")

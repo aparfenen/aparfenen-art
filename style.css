@@ -109,6 +109,49 @@ h3.section-title {
   font-size: 1.15em;
   color: #222;
 }
+
+/* Gallery view controls */
+.gallery-view-controls {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px auto 30px auto;
+  max-width: 1000px;
+}
+
+.view-btn {
+  padding: 12px 28px;
+  background: rgba(0, 0, 0, 0.05);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  color: #444;
+  transition: all 0.2s ease;
+}
+
+.view-btn:hover {
+  background: rgba(0, 0, 0, 0.08);
+  border-color: rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+.view-btn.active {
+  background: rgba(51, 102, 204, 0.1);
+  border-color: rgba(51, 102, 204, 0.4);
+  color: #3366cc;
+}
+
+/* Gallery containers */
+.gallery-container {
+  display: none;
+}
+
+.gallery-container.active {
+  display: block;
+}
+
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -116,6 +159,11 @@ h3.section-title {
   padding: 24px;
   max-width: 1000px;
   margin: 0 auto;
+}
+
+/* Theme sections (for thematic view) */
+.theme-section {
+  margin-bottom: 60px;
 }
 
 .gallery img {
@@ -427,6 +475,39 @@ h3.section-title {
   box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
+/* ===== SCROLL DOWN BUTTON ===== */
+.scroll-down {
+  position: fixed;
+  bottom: 90px;
+  right: 30px;
+  background: rgba(51, 102, 204, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 100;
+}
+
+.scroll-down.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.scroll-down:hover {
+  background: rgba(51, 102, 204, 1);
+  transform: translateY(3px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
 /* ===== CURRENT CATEGORY INDICATOR ===== */
 .category-indicator {
   position: fixed;
@@ -460,10 +541,23 @@ h3.section-title {
     font-size: 20px;
   }
   
+  .scroll-down {
+    bottom: 75px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+  
   .category-indicator {
     top: 60px;
     font-size: 0.85em;
     padding: 6px 16px;
+  }
+  
+  .view-btn {
+    padding: 10px 20px;
+    font-size: 0.9em;
   }
 }
 

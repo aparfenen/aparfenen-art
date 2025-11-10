@@ -9,6 +9,7 @@ class GalleryFilter {
       themes: [],
       year: []
     };
+    this.currentView = 'chronological'; // 'chronological' or 'thematic'
     
     this.init();
   }
@@ -39,7 +40,66 @@ class GalleryFilter {
     // Setup collapse/expand for filter sections
     this.setupCollapsibleSections();
     
-    console.log(`✔ Gallery Filter initialized with ${this.allArtworks.length} artworks`);
+    // Setup view switcher buttons
+    this.setupViewSwitcher();
+    
+    console.log(`✓ Gallery Filter initialized with ${this.allArtworks.length} artworks`);
+  }
+  
+  setupViewSwitcher() {
+    const chronoBtn = document.getElementById('chronological-view-btn');
+    const thematicBtn = document.getElementById('thematic-view-btn');
+    const chronoGallery = document.getElementById('chronological-gallery');
+    const thematicGallery = document.getElementById('thematic-gallery');
+    
+    if (!chronoBtn || !thematicBtn) return;
+    
+    chronoBtn.addEventListener('click', () => {
+      this.currentView = 'chronological';
+      chronoBtn.classList.add('active');
+      thematicBtn.classList.remove('active');
+      chronoGallery.classList.add('active');
+      thematicGallery.classList.remove('active');
+      
+      // Re-collect artworks from current view
+      this.collectArtworks();
+      this.applyFilters();
+    });
+    
+    thematicBtn.addEventListener('click', () => {
+      this.currentView = 'thematic';
+      thematicBtn.classList.add('active');
+      chronoBtn.classList.remove('active');
+      thematicGallery.classList.add('active');
+      chronoGallery.classList.remove('active');
+      
+      // Re-collect artworks from current view
+      this.collectArtworks();
+      this.applyFilters();
+    });
+  }
+  
+  collectArtworks() {
+    // Re-collect artworks from the currently active gallery
+    this.allArtworks = [];
+    const activeGallery = this.currentView === 'chronological' 
+      ? document.getElementById('chronological-gallery')
+      : document.getElementById('thematic-gallery');
+    
+    if (activeGallery) {
+      activeGallery.querySelectorAll('.art-block').forEach(block => {
+        const img = block.querySelector('img');
+        if (img) {
+          this.allArtworks.push({
+            element: block,
+            subject: img.dataset.subject || '',
+            mood: img.dataset.mood || '',
+            themes: img.dataset.themes || '',
+            year: img.dataset.year || ''
+          });
+        }
+      });
+    }
   }
   
   setupCheckboxes() {
@@ -78,6 +138,9 @@ class GalleryFilter {
   }
   
   applyFilters() {
+    // Re-collect artworks in case view changed
+    this.collectArtworks();
+    
     let visibleCount = 0;
     
     this.allArtworks.forEach(artwork => {
@@ -92,8 +155,19 @@ class GalleryFilter {
     });
     
     // Update gallery images array for lightbox navigation
-    window.allGalleryImages = Array.from(document.querySelectorAll('.gallery img'))
-      .filter(img => img.closest('.art-block').style.display !== 'none');
+    const activeGallery = this.currentView === 'chronological' 
+      ? document.getElementById('chronological-gallery')
+      : document.getElementById('thematic-gallery');
+    
+    if (activeGallery) {
+      window.allGalleryImages = Array.from(activeGallery.querySelectorAll('.gallery img'))
+        .filter(img => img.closest('.art-block').style.display !== 'none');
+    }
+    
+    // Update theme sections visibility in thematic view
+    if (this.currentView === 'thematic') {
+      this.updateThemeSectionsVisibility();
+    }
     
     return visibleCount;
   }
@@ -138,18 +212,19 @@ class GalleryFilter {
     if (counterElement) {
       counterElement.textContent = `${visibleCount} work${visibleCount !== 1 ? 's' : ''}`;
     }
-    
-    // Update category headers visibility
-    this.updateCategoryVisibility();
   }
   
-  updateCategoryVisibility() {
-    document.querySelectorAll('.category-section').forEach(section => {
+  updateThemeSectionsVisibility() {
+    // In thematic view, hide theme sections with no visible works
+    const thematicGallery = document.getElementById('thematic-gallery');
+    if (!thematicGallery) return;
+    
+    thematicGallery.querySelectorAll('.theme-section').forEach(section => {
       const gallery = section.querySelector('.gallery');
       const visibleWorks = Array.from(gallery.querySelectorAll('.art-block'))
         .filter(block => block.style.display !== 'none');
       
-      // Hide entire category section if no visible works
+      // Hide entire theme section if no visible works
       if (visibleWorks.length === 0) {
         section.style.display = 'none';
       } else {
