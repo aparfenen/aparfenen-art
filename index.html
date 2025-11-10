@@ -1851,6 +1851,61 @@ and be embraced by drugs.
 <!-- END GALLERY -->
 
 
+<!--***** ACTIVITY GRAPH *****-->
+  <h2 id="activity" class="section-title">Creative Journey</h2>
+  <p class="gallery-intro">
+    Visual timeline of creative activity · 2014-2025
+  </p>
+  
+  <div class="activity-container">
+    <div class="activity-legend">
+      <span style="opacity: 0.6;">Less</span>
+      <div class="legend-box empty"></div>
+      <div class="legend-box level-1"></div>
+      <div class="legend-box level-2"></div>
+      <div class="legend-box level-3"></div>
+      <div class="legend-box level-4"></div>
+      <div class="legend-box level-5"></div>
+      <span style="opacity: 0.6;">More</span>
+    </div>
+    
+    <div class="month-labels">
+      <div></div>
+      <div class="month-label">Jan</div>
+      <div class="month-label">Feb</div>
+      <div class="month-label">Mar</div>
+      <div class="month-label">Apr</div>
+      <div class="month-label">May</div>
+      <div class="month-label">Jun</div>
+      <div class="month-label">Jul</div>
+      <div class="month-label">Aug</div>
+      <div class="month-label">Sep</div>
+      <div class="month-label">Oct</div>
+      <div class="month-label">Nov</div>
+      <div class="month-label">Dec</div>
+    </div>
+    
+    <div id="activity-heatmap" class="activity-heatmap"></div>
+    
+    <div class="activity-stats">
+      <div class="stat-item">
+        <div class="stat-number" id="total-works">123</div>
+        <div class="stat-label">Total Works</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="most-productive">Aug 2025</div>
+        <div class="stat-label">Most Productive</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="active-years">6</div>
+        <div class="stat-label">Active Years</div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="activity-tooltip" class="activity-tooltip"></div>
+
+
 <!--***** FOOTER *****-->
   <hr class="footer-separator" />
   <footer id="contact" class="contact-info">
@@ -1901,6 +1956,136 @@ and be embraced by drugs.
     </div>
   </div>
   <script src="lightbox.js"></script>
+  
+  <!-- Activity Graph Script -->
+  <script>
+    // Activity data from CSV
+    const activityData = {
+      "2014-05": { count: 1, works: ["The Anatomist's Horse"] },
+      "2014-06": { count: 1, works: ["Equine Dreams"] },
+      "2014-10": { count: 1, works: ["Hold Yourself"] },
+      "2014-11": { count: 1, works: ["Form Before Light"] },
+      "2021-07": { count: 1, works: ["Snail No. 1"] },
+      "2021-08": { count: 1, works: ["Crux Crustacea"] },
+      "2021-12": { count: 1, works: ["Blue Shell Study"] },
+      "2022-09": { count: 2, works: ["Black Sea, Batumi", "Silent Lantern"] },
+      "2023-07": { count: 1, works: ["Nowhere Fish"] },
+      "2023-08": { count: 1, works: ["Give Signal"] },
+      "2023-09": { count: 2, works: ["Dead Center", "Light Came Back"] },
+      "2024-05": { count: 1, works: ["Internal Escape Route"] },
+      "2024-08": { count: 1, works: ["The Waiting Phase"] },
+      "2024-11": { count: 2, works: ["Thanksgiving card", "Autumn Draft"] },
+      "2024-12": { count: 3, works: ["Snail No. 2", "Frozen", "Noise Made Visible"] },
+      "2025-03": { count: 6, works: ["Lobster", "Edge", "Aquarium Mind", "Memory in Infrared", "The Mist", "Becoming"] },
+      "2025-04": { count: 5, works: ["Heaven Is Also an Ocean", "False Light", "Anatomy of Want", "No One Waits", "Faultlines"] },
+      "2025-05": { count: 2, works: ["Trypanosoma brucei", "Dark City"] },
+      "2025-06": { count: 10, works: ["Spiraling", "Inheritance", "Invasion", "Overgeneralization", "Smoking Kills", "Citgo Sign", "Memory of a Place That Never Was", "Background Noise", "Bloomline", "Velvet Sky"] },
+      "2025-07": { count: 21, works: ["The Fall Was Internal", "False Window", "Entanglement", "A Bit Too Alive", "Rooted", "Three Birds", "Dead Flowers", "Soft Ashes", "Underexposed", "The Watcher", "Inward", "Alone", "Inner Spectrum", "Warmth Knows the Way", "Soft Rift", "Veil", "Canyon Landscape", "Survival mode", "A new way to bleed", "PostIt Notes"] },
+      "2025-08": { count: 25, works: ["Decorative despair", "Tactile fear", "Focused", "Cradle of Collapse", "Orbital dysphoria", "Burnt Sugar", "A memory you shouldn't trust", "Liquid serotonin cosplay", "Supergirl", "Reality Maintenance Department", "Contact", "Echo Hand", "Topographical Regret", "Planet's Mood Swing", "It looks like rescue", "Into the Wave", "Riverbed", "Malfunction", "MIT at Dusk", "The Witness of Tempests", "Stillness on the Dock", "This is how Boston feels to me", "Sunrise of Empathy", "Inheritance Box"] },
+      "2025-09": { count: 18, works: ["Scream", "Fishing for Certainty", "The McUniverse expands", "Last Known Backup", "Liberty Flooded", "Hour of Stillness", "Blind to Noise", "Neural Elegance", "Dream Axolotl", "The Observer Inside", "Sleeping Fields", "Molten Dusk", "Afterglow", "Washington Street", "Andoma", "River of Memory", "Fields of Silence", "Threefold Vision"] },
+      "2025-10": { count: 13, works: ["Horned Serenity", "Velvet Poison", "Flutter of a Sleeping Nerve", "Before the Implosion", "Cubism of Memory", "Spectral Geography", "Mirror of an Unlived Life", "When Radiance Breaches Flesh"] },
+      "2025-11": { count: 3, works: ["Lanterns of Downtown"] }
+    };
+    
+    const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+    const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    
+    function getLevel(count) {
+      if (count === 0) return 'empty';
+      if (count === 1) return 'level-1';
+      if (count <= 3) return 'level-2';
+      if (count <= 7) return 'level-3';
+      if (count <= 15) return 'level-4';
+      return 'level-5';
+    }
+    
+    const heatmap = document.getElementById('activity-heatmap');
+    const tooltip = document.getElementById('activity-tooltip');
+    
+    years.forEach(year => {
+      const yearLabel = document.createElement('div');
+      yearLabel.className = 'year-label';
+      yearLabel.textContent = year;
+      heatmap.appendChild(yearLabel);
+      
+      months.forEach(month => {
+        const key = `${year}-${month}`;
+        const data = activityData[key] || { count: 0, works: [] };
+        
+        const cell = document.createElement('div');
+        cell.className = `activity-cell ${getLevel(data.count)}`;
+        
+        if (data.count > 0) {
+          cell.addEventListener('mouseenter', (e) => {
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const monthName = monthNames[parseInt(month) - 1];
+            
+            let html = `<div class="tooltip-header">${monthName} ${year}</div>`;
+            html += `<div class="tooltip-count">${data.count} work${data.count > 1 ? 's' : ''}</div>`;
+            
+            if (data.works.length <= 5) {
+              data.works.forEach(work => {
+                html += `<div class="tooltip-work">• ${work}</div>`;
+              });
+            } else {
+              data.works.slice(0, 3).forEach(work => {
+                html += `<div class="tooltip-work">• ${work}</div>`;
+              });
+              html += `<div class="tooltip-work">...and ${data.works.length - 3} more</div>`;
+            }
+            
+            tooltip.innerHTML = html;
+            tooltip.classList.add('visible');
+            updateTooltipPosition(e);
+          });
+          
+          cell.addEventListener('mousemove', updateTooltipPosition);
+          cell.addEventListener('mouseleave', () => {
+            tooltip.classList.remove('visible');
+          });
+        }
+        
+        heatmap.appendChild(cell);
+      });
+    });
+    
+    function updateTooltipPosition(e) {
+      const tooltipRect = tooltip.getBoundingClientRect();
+      let left = e.clientX + 15;
+      let top = e.clientY + 15;
+      
+      if (left + tooltipRect.width > window.innerWidth) {
+        left = e.clientX - tooltipRect.width - 15;
+      }
+      if (top + tooltipRect.height > window.innerHeight) {
+        top = e.clientY - tooltipRect.height - 15;
+      }
+      
+      tooltip.style.left = left + 'px';
+      tooltip.style.top = top + 'px';
+    }
+    
+    // Calculate stats
+    const totalWorks = Object.values(activityData).reduce((sum, data) => sum + data.count, 0);
+    document.getElementById('total-works').textContent = totalWorks;
+    
+    let maxMonth = null;
+    let maxCount = 0;
+    for (const [key, data] of Object.entries(activityData)) {
+      if (data.count > maxCount) {
+        maxCount = data.count;
+        maxMonth = key;
+      }
+    }
+    if (maxMonth) {
+      const [year, month] = maxMonth.split('-');
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      document.getElementById('most-productive').textContent = `${monthNames[parseInt(month) - 1]} ${year}`;
+    }
+    
+    const activeYears = new Set(Object.keys(activityData).map(k => k.split('-')[0])).size;
+    document.getElementById('active-years').textContent = activeYears;
+  </script>
 
 
 </body>
