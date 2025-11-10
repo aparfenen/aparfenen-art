@@ -9,40 +9,65 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Collect all artworks with dates
+  // Collect artworks with dates
   const artworks = Array.from(document.querySelectorAll('.gallery img')).map(img => {
-    const dateCreated = img.dataset.dateCreated || '';
-    const title = img.dataset.title || 'Untitled';
-    const year = img.dataset.year || '';
-    
-    return { dateCreated, title, year };
-  }).filter(a => a.dateCreated && a.year);
+    return {
+      dateCreated: img.dataset.dateCreated || '',
+      showDate: img.dataset.date || '', // This is show_date from CSV
+      title: img.dataset.title || 'Untitled',
+      year: img.dataset.year || ''
+    };
+  }).filter(a => a.showDate && a.year);
   
-  // Parse dates and group by month
+  console.log(`Found ${artworks.length} artworks with dates`);
+  
+  if (artworks.length === 0) {
+    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">No date data available</p>';
+    return;
+  }
+  
+  // Parse dates from show_date (e.g., "March 2025")
   const monthCounts = {};
   let minDate = null;
   let maxDate = null;
   
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                      'July', 'August', 'September', 'October', 'November', 'December'];
+  
   artworks.forEach(artwork => {
-    const date = parseDateWithYear(artwork.dateCreated, artwork.year);
-    if (!date) return;
+    const showDate = artwork.showDate.trim(); // "March 2025"
+    const year = parseInt(artwork.year);
     
-    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-    
-    if (!monthCounts[monthKey]) {
-      monthCounts[monthKey] = { count: 0, works: [], date: date };
+    // Parse "Month YYYY" format
+    const parts = showDate.split(' ');
+    if (parts.length >= 2) {
+      const monthName = parts[0];
+      const monthIndex = monthNames.indexOf(monthName);
+      
+      if (monthIndex !== -1 && !isNaN(year)) {
+        const date = new Date(year, monthIndex, 1);
+        const monthKey = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+        
+        if (!monthCounts[monthKey]) {
+          monthCounts[monthKey] = { count: 0, works: [], date: date };
+        }
+        monthCounts[monthKey].count++;
+        monthCounts[monthKey].works.push(artwork.title);
+        
+        if (!minDate || date < minDate) minDate = date;
+        if (!maxDate || date > maxDate) maxDate = date;
+      }
     }
-    monthCounts[monthKey].count++;
-    monthCounts[monthKey].works.push(artwork.title);
-    
-    if (!minDate || date < minDate) minDate = date;
-    if (!maxDate || date > maxDate) maxDate = date;
   });
   
   if (!minDate || !maxDate) {
-    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">No date data available</p>';
+    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">Could not parse dates</p>';
+    console.error('Failed to parse dates from artworks');
     return;
   }
+  
+  console.log(`Date range: ${minDate.toLocaleDateString()} to ${maxDate.toLocaleDateString()}`);
+  console.log(`Months with activity: ${Object.keys(monthCounts).length}`);
   
   // Generate all months in range
   const months = [];
@@ -60,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function() {
     current.setMonth(current.getMonth() + 1);
   }
   
-  // Find max count for scaling
   const maxCount = Math.max(...months.map(m => m.count), 1);
   
   // Render activity chart
@@ -69,18 +93,21 @@ document.addEventListener('DOMContentLoaded', function() {
   months.forEach(month => {
     const cell = document.createElement('div');
     cell.className = 'activity-cell';
+    cell.title = `${month.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}: ${month.count} works`;
     
     // Scale opacity based on count
-    const opacity = month.count > 0 ? 0.3 + (month.count / maxCount) * 0.7 : 0.1;
-    cell.style.backgroundColor = month.count > 0 ? `rgba(51, 102, 204, ${opacity})` : '#f0f0f0';
+    const opacity = month.count > 0 ? 0.3 + (month.count / maxCount) * 0.7 : 0;
+    const color = month.count > 0 ? `rgba(51, 102, 204, ${opacity})` : 'rgba(0, 0, 0, 0.05)';
+    cell.style.backgroundColor = color;
     
-    // Tooltip on hover
+    // Tooltip
     cell.addEventListener('mouseenter', (e) => {
+      if (!tooltip) return;
       const monthName = month.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
       tooltip.innerHTML = `
         <strong>${monthName}</strong><br>
-        ${month.count} work${month.count !== 1 ? 's' : ''}<br>
-        ${month.works.length > 0 ? '<small>' + month.works.slice(0, 3).join(', ') + (month.works.length > 3 ? '...' : '') + '</small>' : ''}
+        ${month.count} work${month.count !== 1 ? 's' : ''}
+        ${month.works.length > 0 ? '<br><small>' + month.works.slice(0, 3).join(', ') + (month.works.length > 3 ? '...' : '') + '</small>' : ''}
       `;
       tooltip.style.display = 'block';
       
@@ -90,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     cell.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
+      if (tooltip) tooltip.style.display = 'none';
     });
     
     activityContainer.appendChild(cell);
@@ -98,23 +125,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Update stats
   updateStats(artworks, monthCounts);
+  
+  console.log('Activity chart rendered successfully');
 });
-
-function parseDateWithYear(dateStr, yearStr) {
-  if (!dateStr || !yearStr) return null;
-  
-  const formats = [
-    { regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, parse: (m) => new Date(m[3], m[1] - 1, m[2]) },
-    { regex: /^(\d{1,2})\/(\d{1,2})$/, parse: (m) => new Date(yearStr, m[1] - 1, 1) },
-  ];
-  
-  for (const fmt of formats) {
-    const match = dateStr.match(fmt.regex);
-    if (match) return fmt.parse(match);
-  }
-  
-  return null;
-}
 
 function updateStats(artworks, monthCounts) {
   // Total works
@@ -141,7 +154,7 @@ function updateStats(artworks, monthCounts) {
   const currentYearCount = document.getElementById('current-year-count');
   if (currentYearCount) {
     const currentYear = new Date().getFullYear();
-    const thisYearWorks = artworks.filter(a => a.year == currentYear).length;
+    const thisYearWorks = artworks.filter(a => parseInt(a.year) === currentYear).length;
     currentYearCount.textContent = thisYearWorks;
   }
 }

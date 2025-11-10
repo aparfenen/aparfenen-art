@@ -194,7 +194,7 @@ h3.section-title {
 }
 
 
-/* Lightbox with metadata - redesigned for elegance */
+/* ===== LIGHTBOX ===== */
 .lightbox {
   position: fixed;
   top: 0; 
@@ -226,6 +226,7 @@ h3.section-title {
   gap: 0;
   max-width: 90vw;
   max-height: 90vh;
+  position: relative;
 }
 
 .lightbox img {
@@ -238,6 +239,7 @@ h3.section-title {
   margin-bottom: 0;
 }
 
+/* Lightbox info box */
 .lightbox-info {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(10px);
@@ -279,10 +281,10 @@ h3.section-title {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* ===== LIGHTBOX NAVIGATION ARROWS ===== */
+/* ===== LIGHTBOX NAVIGATION ARROWS - ПО КРАЯМ изображения ===== */
 .lightbox-nav {
   position: absolute;
-  top: 50%;
+  top: 35%;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.9);
   border: none;
@@ -311,12 +313,13 @@ h3.section-title {
   transform: translateY(-50%) scale(1.1);
 }
 
+/* Стрелки располагаются по краям от изображения, не на нём */
 .lightbox-nav.prev {
-  left: 20px;
+  left: -70px;
 }
 
 .lightbox-nav.next {
-  right: 20px;
+  right: -70px;
 }
 
 /* Counter */
@@ -338,27 +341,6 @@ h3.section-title {
 
 .lightbox.active .lightbox-counter {
   opacity: 1;
-}
-
-@media (max-width: 768px) {
-  .lightbox-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-  }
-  
-  .lightbox-nav.prev {
-    left: 10px;
-  }
-  
-  .lightbox-nav.next {
-    right: 10px;
-  }
-  
-  .lightbox-counter {
-    font-size: 0.85em;
-    padding: 6px 12px;
-  }
 }
 
 /* ===== SHARE BUTTONS IN LIGHTBOX ===== */
@@ -401,6 +383,17 @@ h3.section-title {
 }
 
 /* Mobile optimization for lightbox */
+@media (max-width: 1200px) {
+  /* На экранах поменьше стрелки возвращаются на картинку */
+  .lightbox-nav.prev {
+    left: 20px;
+  }
+  
+  .lightbox-nav.next {
+    right: 20px;
+  }
+}
+
 @media (max-width: 768px) {
   .lightbox-content {
     gap: 10px;
@@ -438,30 +431,75 @@ h3.section-title {
     padding: 6px 12px;
     font-size: 12px;
   }
+  
+  .lightbox-nav {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+  
+  .lightbox-nav.prev {
+    left: 10px;
+  }
+  
+  .lightbox-nav.next {
+    right: 10px;
+  }
+  
+  .lightbox-counter {
+    font-size: 0.85em;
+    padding: 6px 12px;
+  }
 }
 
 
-/* ===== BACK TO TOP BUTTON ===== */
-.back-to-top {
+/* ===== SCROLL NAVIGATION BUTTONS ===== */
+.scroll-down {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  top: 80px;
+  right: 80px;
+  width: 48px;
+  height: 48px;
   background: rgba(51, 102, 204, 0.9);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
   font-size: 24px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 40;
+  transition: all 0.2s ease;
+  opacity: 1;
+}
+
+.scroll-down:hover {
+  background: rgba(51, 102, 204, 1);
+  transform: translateY(2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.scroll-down.hidden {
   opacity: 0;
   pointer-events: none;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 100;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 80px;
+  right: 80px;
+  width: 48px;
+  height: 48px;
+  background: rgba(51, 102, 204, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 40;
+  transition: all 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .back-to-top.visible {
@@ -471,41 +509,26 @@ h3.section-title {
 
 .back-to-top:hover {
   background: rgba(51, 102, 204, 1);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
 
-/* ===== SCROLL DOWN BUTTON ===== */
-.scroll-down {
-  position: fixed;
-  bottom: 90px;
-  right: 30px;
-  background: rgba(51, 102, 204, 0.9);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 24px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 100;
-}
-
-.scroll-down.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.scroll-down:hover {
-  background: rgba(51, 102, 204, 1);
-  transform: translateY(3px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+@media (max-width: 768px) {
+  .scroll-down,
+  .back-to-top {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    right: 20px;
+  }
+  
+  .scroll-down {
+    top: 20px;
+  }
+  
+  .back-to-top {
+    bottom: 20px;
+  }
 }
 
 /* ===== CURRENT CATEGORY INDICATOR ===== */
@@ -533,22 +556,6 @@ h3.section-title {
 }
 
 @media (max-width: 768px) {
-  .back-to-top {
-    bottom: 20px;
-    right: 20px;
-    width: 45px;
-    height: 45px;
-    font-size: 20px;
-  }
-  
-  .scroll-down {
-    bottom: 75px;
-    right: 20px;
-    width: 45px;
-    height: 45px;
-    font-size: 20px;
-  }
-  
   .category-indicator {
     top: 60px;
     font-size: 0.85em;
@@ -740,17 +747,25 @@ nav.main-nav .sub-menu a {
   font-size: 0.85em;
 }
 
+#activity-chart {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 20px 0;
+}
+
 .activity-cell {
-  aspect-ratio: 1;
-  border-radius: 3px;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
   cursor: pointer;
   transition: all 0.15s ease;
   border: 1px solid rgba(0,0,0,0.05);
 }
 
 .activity-cell:hover {
-  transform: scale(1.2);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transform: scale(1.4);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   z-index: 10;
 }
 
@@ -782,6 +797,7 @@ nav.main-nav .sub-menu a {
   z-index: 1000;
   display: none;
   max-width: 250px;
+  line-height: 1.5;
 }
 
 .activity-tooltip.visible {
