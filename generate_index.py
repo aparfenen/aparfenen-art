@@ -47,14 +47,15 @@ else:
     print("⚠ No 'visible' column found - showing all artworks")
 
 # 🎨🎨🎨 PARSE DATES FOR CHRONOLOGICAL SORTING 🎨🎨🎨
-def parse_date(date_str):
+def parse_date(row):
     """Parse various date formats and return a sortable datetime object."""
-    if pd.isna(date_str) or not date_str:
+    date_str = str(row.get('date_created', '')).strip()
+    year_str = str(row.get('year', '')).strip()
+    
+    if not date_str:
         return datetime(1900, 1, 1)
     
-    date_str = str(date_str).strip()
-    
-    # Try different formats
+    # Try full date formats first
     formats = [
         '%m/%d/%Y',  # 07/28/2025
         '%m/%d/%y',  # 7/28/25
@@ -62,21 +63,17 @@ def parse_date(date_str):
     
     for fmt in formats:
         try:
-            parsed = datetime.strptime(date_str, fmt)
-            return parsed
+            return datetime.strptime(date_str, fmt)
         except:
             continue
     
-    # Try M/YY format (like 7/21 or 8/24)
-    if '/' in date_str:
+    # For M/YY format (like 7/21 or 8/24), use the year column
+    if '/' in date_str and year_str:
         parts = date_str.split('/')
         if len(parts) == 2:
             try:
                 month = int(parts[0])
-                year = int(parts[1])
-                # If year is 2 digits, interpret as century
-                if year < 100:
-                    year = 2000 + year
+                year = int(year_str)
                 return datetime(year, month, 1)
             except:
                 pass
@@ -84,7 +81,7 @@ def parse_date(date_str):
     # If all parsing fails, return minimum date
     return datetime(1900, 1, 1)
 
-df['parsed_date'] = df['date_created'].apply(parse_date)
+df['parsed_date'] = df.apply(parse_date, axis=1)
 df = df.sort_values('parsed_date', ascending=False)  # Most recent first
 
 print(f"✓ Sorted {len(df)} artworks chronologically")

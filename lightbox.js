@@ -195,18 +195,7 @@ function copyLink() {
 }
 
 
-// ===== BACK TO TOP BUTTON =====
-const backToTopBtn = document.createElement('button');
-backToTopBtn.className = 'back-to-top';
-backToTopBtn.innerHTML = '↑';
-backToTopBtn.setAttribute('aria-label', 'Back to top');
-document.body.appendChild(backToTopBtn);
-
-backToTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// ===== SCROLL DOWN BUTTON =====
+// ===== SCROLL DOWN BUTTON (TOP - fixed position) =====
 const scrollDownBtn = document.createElement('button');
 scrollDownBtn.className = 'scroll-down';
 scrollDownBtn.innerHTML = '↓';
@@ -215,6 +204,17 @@ document.body.appendChild(scrollDownBtn);
 
 scrollDownBtn.addEventListener('click', () => {
   window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
+});
+
+// ===== BACK TO TOP BUTTON (BOTTOM - fixed position) =====
+const backToTopBtn = document.createElement('button');
+backToTopBtn.className = 'back-to-top';
+backToTopBtn.innerHTML = '↑';
+backToTopBtn.setAttribute('aria-label', 'Back to top');
+document.body.appendChild(backToTopBtn);
+
+backToTopBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 // Show/hide navigation buttons on scroll
