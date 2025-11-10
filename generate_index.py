@@ -58,19 +58,28 @@ def parse_date(date_str):
     formats = [
         '%m/%d/%Y',  # 07/28/2025
         '%m/%d/%y',  # 7/28/25
-        '%m/%d',     # 7/21
-        '%m/%y',     # 8/25
     ]
     
     for fmt in formats:
         try:
             parsed = datetime.strptime(date_str, fmt)
-            # If year is missing, assume 2020s
-            if parsed.year < 1950:
-                parsed = parsed.replace(year=2020 + (parsed.year % 100))
             return parsed
         except:
             continue
+    
+    # Try M/YY format (like 7/21 or 8/24)
+    if '/' in date_str:
+        parts = date_str.split('/')
+        if len(parts) == 2:
+            try:
+                month = int(parts[0])
+                year = int(parts[1])
+                # If year is 2 digits, interpret as century
+                if year < 100:
+                    year = 2000 + year
+                return datetime(year, month, 1)
+            except:
+                pass
     
     # If all parsing fails, return minimum date
     return datetime(1900, 1, 1)
