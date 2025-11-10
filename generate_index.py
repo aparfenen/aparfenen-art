@@ -45,16 +45,53 @@ if 'visible' in df.columns:
 else:
     print("⚠ No 'visible' column found - showing all artworks")
 
-# 􁾤􁾤􁾤 COLLECT UNIQUE FILTER VALUES 􁾤􁾤􁾤
-unique_subjects = sorted(df['subject'].unique()) if 'subject' in df.columns else []
-unique_moods = sorted(df['mood'].unique()) if 'mood' in df.columns else []
-unique_themes = sorted(df['themes'].unique()) if 'themes' in df.columns else []
-unique_years = sorted(df['year'].unique(), reverse=True) if 'year' in df.columns else []
+# 􁾤􁾤􁾤 COLLECT UNIQUE FILTER VALUES IN SPECIFIC ORDER 􁾤􁾤􁾤
+# Define order of categories
+SUBJECT_ORDER = [
+    'Abstract & Structures',
+    'Science & Discoveries',
+    'Human Figures',
+    'Animalia Forms',
+    'Surreal Scenes',
+    'Landscapes & Nature',
+    'Objects & Artifacts',
+    'Architecture & Space',
+    'Sketches & Studies',
+    'Digital Experiments'
+]
 
-# Remove empty strings
-unique_subjects = [s for s in unique_subjects if s]
-unique_moods = [m for m in unique_moods if m]
-unique_themes = [t for t in unique_themes if t]
+MOOD_ORDER = [
+    'Calm & Contemplative',
+    'Tender & Intimate',
+    'Melancholic',
+    'Disquiet & Tension',
+    'Detached & Clinical',
+    'Liminal & Dreamlike',
+    'Intense & Ecstatic',
+    'Feral & Primal',
+    'Fear & Indifference'
+]
+
+THEMES_ORDER = [
+    'Identity & Self',
+    'Transformation & Evolution',
+    'Memory & Time',
+    'Control & Entropy',
+    'Perception & Noise',
+    'Alienation & Belonging',
+    'Survival & Collapse',
+    'Death & Renewal'
+]
+
+# Get unique values that exist in data, in the defined order
+unique_subjects_in_data = set(df['subject'].unique()) if 'subject' in df.columns else set()
+unique_moods_in_data = set(df['mood'].unique()) if 'mood' in df.columns else set()
+unique_themes_in_data = set(df['themes'].unique()) if 'themes' in df.columns else set()
+
+unique_subjects = [s for s in SUBJECT_ORDER if s in unique_subjects_in_data and s]
+unique_moods = [m for m in MOOD_ORDER if m in unique_moods_in_data and m]
+unique_themes = [t for t in THEMES_ORDER if t in unique_themes_in_data and t]
+unique_years = sorted(df['year'].unique(), reverse=True) if 'year' in df.columns else []
 unique_years = [y for y in unique_years if y]
 
 print(f"\n✔ Found filter values:")
