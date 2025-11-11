@@ -1,4 +1,4 @@
-// ===== ACTIVITY VISUALIZATION =====
+// ===== ACTIVITY GRAPH VISUALIZATION =====
 
 document.addEventListener('DOMContentLoaded', function() {
   const activityContainer = document.getElementById('activity-chart');
@@ -89,16 +89,24 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Render activity chart
   activityContainer.innerHTML = '';
-  
   months.forEach(month => {
-    const cell = document.createElement('div');
-    cell.className = 'activity-cell';
-    cell.title = `${month.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}: ${month.count} works`;
-    
-    // Scale opacity based on count
-    const opacity = month.count > 0 ? 0.3 + (month.count / maxCount) * 0.7 : 0;
-    const color = month.count > 0 ? `rgba(51, 102, 204, ${opacity})` : 'rgba(0, 0, 0, 0.05)';
-    cell.style.backgroundColor = color;
+  const cell = document.createElement('div');
+  cell.className = 'activity-cell';
+  cell.title = `${month.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}: ${month.count} works`;
+  
+  // Assign grayscale level classes based on count
+  if (month.count === 0) {
+    cell.classList.add('empty');
+  } else {
+    const ratio = month.count / maxCount;
+    let level;
+    if (ratio <= 0.2) level = 1;
+    else if (ratio <= 0.4) level = 2;
+    else if (ratio <= 0.6) level = 3;
+    else if (ratio <= 0.8) level = 4;
+    else level = 5;
+    cell.classList.add(`level-${level}`);
+  }
     
     // Tooltip
     cell.addEventListener('mouseenter', (e) => {
