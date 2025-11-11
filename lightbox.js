@@ -365,3 +365,4 @@ if (document.readyState === 'loading') {
 } else {
   lazyLoadImages();
 }
+
