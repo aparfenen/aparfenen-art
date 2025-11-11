@@ -160,6 +160,10 @@ h3.section-title {
   max-width: 1000px;
   margin: 0 auto;
 }
+.art-block {
+  width: 100%;
+  height: 100%;
+}
 
 /* Theme sections (for thematic view) */
 .theme-section {
@@ -191,6 +195,11 @@ h3.section-title {
 .gallery img:hover {
   transform: scale(1.015);
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+/* Fix art-block wrapper */
+.art-block {
+  display: contents;
 }
 
 
