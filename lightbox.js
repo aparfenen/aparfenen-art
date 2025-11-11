@@ -359,9 +359,9 @@ const lazyLoadImages = () => {
   });
 };
 
-// // Initialize lazy loading when DOM is ready
-// if (document.readyState === 'loading') {
-//   document.addEventListener('DOMContentLoaded', lazyLoadImages);
-// } else {
-//   lazyLoadImages();
-// }
+// Initialize lazy loading when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', lazyLoadImages);
+} else {
+  lazyLoadImages();
+}
