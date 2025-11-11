@@ -322,18 +322,18 @@ h3.section-title {
   right: -70px;
 }
 
-/* Counter - now positioned relative to lightbox-content */
+/* Counter */
 .lightbox-counter {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 6px 12px;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px 16px;
   border-radius: 20px;
-  font-size: 0.85em;
+  font-size: 0.9em;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   z-index: 1001;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -661,11 +661,11 @@ nav.main-nav .sub-menu {
   left: 0;
   background-color: #ffffff;
   border: 1px solid rgba(0,0,0,0.05);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 4px;
   padding: 8px 0;
   z-index: 99;
-  min-width: 240px;
+  min-width: 220px;
 }
 nav.main-nav li:hover > .sub-menu {
   display: block;
@@ -675,21 +675,9 @@ nav.main-nav .sub-menu li {
 }
 nav.main-nav .sub-menu a {
   display: block;
-  padding: 10px 18px;
+  padding: 8px 16px;
   color: #222;
   white-space: nowrap;
-  font-size: 0.95em;
-  transition: background-color 0.2s ease;
-}
-nav.main-nav .sub-menu a:hover {
-  background-color: rgba(51, 102, 204, 0.08);
-  color: #3366cc;
-}
-.dropdown-divider {
-  height: 1px;
-  background-color: rgba(0, 0, 0, 0.1);
-  margin: 8px 12px;
-  list-style: none;
 }
 
 

@@ -284,28 +284,3 @@ document.addEventListener('DOMContentLoaded', () => {
   filterToggle.onclick = toggleFilterSidebar;
   document.body.appendChild(filterToggle);
 });
-
-// ===== GLOBAL VIEW SWITCHING FUNCTIONS =====
-function switchToChronological() {
-  if (galleryFilter) {
-    const chronoBtn = document.getElementById('chronological-view-btn');
-    if (chronoBtn) chronoBtn.click();
-  }
-  // Scroll to gallery
-  const gallery = document.getElementById('gallery');
-  if (gallery) {
-    setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 100);
-  }
-}
-
-function switchToThematic() {
-  if (galleryFilter) {
-    const thematicBtn = document.getElementById('thematic-view-btn');
-    if (thematicBtn) thematicBtn.click();
-  }
-  // Scroll to gallery
-  const gallery = document.getElementById('gallery');
-  if (gallery) {
-    setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 100);
-  }
-}
