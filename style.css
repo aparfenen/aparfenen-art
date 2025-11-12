@@ -159,6 +159,7 @@ h3.section-title {
   padding: 24px;
   max-width: 1000px;
   margin: 0 auto;
+  align-items: start;
 }
 .art-block {
   width: 100%;
@@ -200,8 +201,9 @@ h3.section-title {
 
 /* Fix art-block wrapper */
 .art-block {
-  display: contents;
-  min-height: 340px; /* Добавьте эту строку */
+  display: block;  /* old: display: contents; */
+  width: 100%;
+  position: relative;
 }
 
 

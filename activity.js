@@ -1,4 +1,4 @@
-// ===== ACTIVITY GRAPH VISUALIZATION =====
+// ===== ACTIVITY GRAPH VISUALIZATION WITH CORRECT CHRONOLOGICAL ORDER =====
 
 document.addEventListener('DOMContentLoaded', function() {
   const activityContainer = document.getElementById('activity-chart');
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log(`Date range: ${minDate.toLocaleDateString()} to ${maxDate.toLocaleDateString()}`);
   console.log(`Months with activity: ${Object.keys(monthCounts).length}`);
   
-  // Generate all months in range
+  // Generate all months in range IN CHRONOLOGICAL ORDER (oldest to newest)
   const months = [];
   const current = new Date(minDate);
   current.setDate(1);
@@ -87,26 +87,26 @@ document.addEventListener('DOMContentLoaded', function() {
   
   const maxCount = Math.max(...months.map(m => m.count), 1);
   
-  // Render activity chart
+  // Render activity chart IN CHRONOLOGICAL ORDER
   activityContainer.innerHTML = '';
   months.forEach(month => {
-  const cell = document.createElement('div');
-  cell.className = 'activity-cell';
-  cell.title = `${month.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}: ${month.count} works`;
-  
-  // Assign grayscale level classes based on count
-  if (month.count === 0) {
-    cell.classList.add('empty');
-  } else {
-    const ratio = month.count / maxCount;
-    let level;
-    if (ratio <= 0.2) level = 1;
-    else if (ratio <= 0.4) level = 2;
-    else if (ratio <= 0.6) level = 3;
-    else if (ratio <= 0.8) level = 4;
-    else level = 5;
-    cell.classList.add(`level-${level}`);
-  }
+    const cell = document.createElement('div');
+    cell.className = 'activity-cell';
+    cell.title = `${month.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}: ${month.count} works`;
+    
+    // Assign grayscale level classes based on count
+    if (month.count === 0) {
+      cell.classList.add('empty');
+    } else {
+      const ratio = month.count / maxCount;
+      let level;
+      if (ratio <= 0.2) level = 1;
+      else if (ratio <= 0.4) level = 2;
+      else if (ratio <= 0.6) level = 3;
+      else if (ratio <= 0.8) level = 4;
+      else level = 5;
+      cell.classList.add(`level-${level}`);
+    }
     
     // Tooltip
     cell.addEventListener('mouseenter', (e) => {
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update stats
   updateStats(artworks, monthCounts);
   
-  console.log('Activity chart rendered successfully');
+  console.log('Activity chart rendered successfully in chronological order');
 });
 
 function updateStats(artworks, monthCounts) {

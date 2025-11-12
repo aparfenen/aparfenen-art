@@ -1,4 +1,4 @@
-// ===== MULTI-DIMENSIONAL FILTER SYSTEM =====
+// ===== MULTI-DIMENSIONAL FILTER SYSTEM WITH SEARCH =====
 
 class GalleryFilter {
   constructor() {
@@ -7,8 +7,11 @@ class GalleryFilter {
       subject: [],
       mood: [],
       themes: [],
-      year: []
+      year: [],
+      medium: [],
+      tags: []
     };
+    this.searchQuery = '';
     this.currentView = 'chronological'; // 'chronological' or 'thematic'
     
     this.init();
@@ -24,10 +27,17 @@ class GalleryFilter {
           subject: img.dataset.subject || '',
           mood: img.dataset.mood || '',
           themes: img.dataset.themes || '',
-          year: img.dataset.year || ''
+          year: img.dataset.year || '',
+          medium: img.dataset.medium || '',
+          tags: img.dataset.tags || '',
+          title: img.dataset.title || '',
+          description: img.dataset.description || ''
         });
       }
     });
+    
+    // Setup search input
+    this.setupSearch();
     
     // Setup filter checkboxes
     this.setupCheckboxes();
@@ -44,6 +54,17 @@ class GalleryFilter {
     this.setupViewSwitcher();
     
     console.log(`✓ Gallery Filter initialized with ${this.allArtworks.length} artworks`);
+  }
+  
+  setupSearch() {
+    const searchInput = document.getElementById('filter-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this.searchQuery = e.target.value.toLowerCase().trim();
+        this.applyFilters();
+        this.updateCounter();
+      });
+    }
   }
   
   setupViewSwitcher() {
@@ -95,7 +116,11 @@ class GalleryFilter {
             subject: img.dataset.subject || '',
             mood: img.dataset.mood || '',
             themes: img.dataset.themes || '',
-            year: img.dataset.year || ''
+            year: img.dataset.year || '',
+            medium: img.dataset.medium || '',
+            tags: img.dataset.tags || '',
+            title: img.dataset.title || '',
+            description: img.dataset.description || ''
           });
         }
       });
@@ -103,7 +128,7 @@ class GalleryFilter {
   }
   
   setupCheckboxes() {
-    const filterGroups = ['subject', 'mood', 'themes', 'year'];
+    const filterGroups = ['subject', 'mood', 'themes', 'year', 'medium', 'tags'];
     
     filterGroups.forEach(group => {
       const checkboxes = document.querySelectorAll(`input[data-filter-group="${group}"]`);
@@ -144,7 +169,7 @@ class GalleryFilter {
     let visibleCount = 0;
     
     this.allArtworks.forEach(artwork => {
-      const shouldShow = this.matchesAllFilters(artwork);
+      const shouldShow = this.matchesAllFilters(artwork) && this.matchesSearch(artwork);
       
       if (shouldShow) {
         artwork.element.style.display = '';
@@ -169,7 +194,25 @@ class GalleryFilter {
       this.updateThemeSectionsVisibility();
     }
     
+    // Show/hide no results message
+    this.updateNoResultsMessage(visibleCount);
+    
     return visibleCount;
+  }
+  
+  matchesSearch(artwork) {
+    if (!this.searchQuery) return true;
+    
+    const searchableText = [
+      artwork.title,
+      artwork.description,
+      artwork.subject,
+      artwork.mood,
+      artwork.themes,
+      artwork.tags
+    ].join(' ').toLowerCase();
+    
+    return searchableText.includes(this.searchQuery);
   }
   
   matchesAllFilters(artwork) {
@@ -192,6 +235,11 @@ class GalleryFilter {
       
       // Check if artwork matches ANY of the selected values in this group
       const matches = values.some(filterValue => {
+        // For tags, check if any tag matches
+        if (group === 'tags') {
+          const artworkTags = artworkValue.split(',').map(t => t.trim());
+          return artworkTags.includes(filterValue);
+        }
         return artworkValue === filterValue;
       });
       
@@ -211,6 +259,30 @@ class GalleryFilter {
     const counterElement = document.getElementById('artwork-counter');
     if (counterElement) {
       counterElement.textContent = `${visibleCount} work${visibleCount !== 1 ? 's' : ''}`;
+    }
+  }
+  
+  updateNoResultsMessage(visibleCount) {
+    const activeGallery = this.currentView === 'chronological' 
+      ? document.getElementById('chronological-gallery')
+      : document.getElementById('thematic-gallery');
+    
+    if (!activeGallery) return;
+    
+    let noResultsDiv = activeGallery.querySelector('.no-results');
+    
+    if (visibleCount === 0) {
+      if (!noResultsDiv) {
+        noResultsDiv = document.createElement('div');
+        noResultsDiv.className = 'no-results';
+        noResultsDiv.innerHTML = `
+          <div class="no-results-icon">🔍</div>
+          <p>No artworks found matching your filters or search</p>
+        `;
+        activeGallery.insertBefore(noResultsDiv, activeGallery.firstChild);
+      }
+    } else if (noResultsDiv) {
+      noResultsDiv.remove();
     }
   }
   
@@ -234,6 +306,13 @@ class GalleryFilter {
   }
   
   clearAllFilters() {
+    // Clear search
+    const searchInput = document.getElementById('filter-search');
+    if (searchInput) {
+      searchInput.value = '';
+      this.searchQuery = '';
+    }
+    
     // Uncheck all checkboxes
     document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
       checkbox.checked = false;
@@ -244,7 +323,9 @@ class GalleryFilter {
       subject: [],
       mood: [],
       themes: [],
-      year: []
+      year: [],
+      medium: [],
+      tags: []
     };
     
     // Show all artworks
@@ -258,6 +339,9 @@ class GalleryFilter {
       if (values.length > 0) {
         summary.push(`${group}: ${values.join(', ')}`);
       }
+    }
+    if (this.searchQuery) {
+      summary.push(`search: "${this.searchQuery}"`);
     }
     return summary.length > 0 ? summary.join(' | ') : 'No filters active';
   }
@@ -276,6 +360,11 @@ function toggleFilterSidebar() {
   sidebar.classList.toggle('mobile-open');
 }
 
+function closeFilterSidebar() {
+  const sidebar = document.querySelector('.filter-sidebar');
+  sidebar.classList.remove('mobile-open');
+}
+
 // Add filter toggle button for mobile
 document.addEventListener('DOMContentLoaded', () => {
   const filterToggle = document.createElement('button');
@@ -283,6 +372,31 @@ document.addEventListener('DOMContentLoaded', () => {
   filterToggle.innerHTML = '🔍 Filters';
   filterToggle.onclick = toggleFilterSidebar;
   document.body.appendChild(filterToggle);
+  
+  // Close sidebar when clicking outside on mobile
+  document.addEventListener('click', (e) => {
+    const sidebar = document.querySelector('.filter-sidebar');
+    const filterToggle = document.querySelector('.filter-toggle-btn');
+    
+    if (window.innerWidth <= 1024 && 
+        sidebar.classList.contains('mobile-open') &&
+        !sidebar.contains(e.target) && 
+        e.target !== filterToggle) {
+      closeFilterSidebar();
+    }
+  });
+  
+  // Close sidebar when filter is applied on mobile
+  if (window.innerWidth <= 1024) {
+    document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        // Small delay to see the change before closing
+        setTimeout(() => {
+          closeFilterSidebar();
+        }, 300);
+      });
+    });
+  }
 });
 
 // ===== GLOBAL VIEW SWITCHING FUNCTIONS =====
