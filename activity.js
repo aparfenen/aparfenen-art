@@ -1,4 +1,4 @@
-// ===== ACTIVITY GRAPH VISUALIZATION WITH CORRECT CHRONOLOGICAL ORDER =====
+// ===== ACTIVITY GRAPH VISUALIZATION WITH ROBUST DATE PARSING =====
 
 document.addEventListener('DOMContentLoaded', function() {
   const activityContainer = document.getElementById('activity-chart');
@@ -17,12 +17,12 @@ document.addEventListener('DOMContentLoaded', function() {
       title: img.dataset.title || 'Untitled',
       year: img.dataset.year || ''
     };
-  }).filter(a => a.showDate && a.year);
+  }).filter(a => a.showDate); // Only filter by showDate existence
   
-  console.log(`Found ${artworks.length} artworks with dates`);
+  console.log(`Found ${artworks.length} artworks with show_date`);
   
   if (artworks.length === 0) {
-    activityContainer.innerHTML = '&lt;p style="text-align: center; color: #999;"&gt;No date data available&lt;/p&gt;';
+    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">No date data available</p>';
     return;
   }
   
@@ -30,23 +30,31 @@ document.addEventListener('DOMContentLoaded', function() {
   const monthCounts = {};
   let minDate = null;
   let maxDate = null;
+  let parsedCount = 0;
+  let failedCount = 0;
   
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
                       'July', 'August', 'September', 'October', 'November', 'December'];
   
   artworks.forEach(artwork => {
     const showDate = artwork.showDate.trim(); // "March 2025"
-    const year = parseInt(artwork.year);
     
     // Parse "Month YYYY" format  
     const parts = showDate.split(' ');
     if (parts.length >= 2) {
       const monthName = parts[0];
+      const yearFromShowDate = parseInt(parts[1]); // Extract year from show_date
       const monthIndex = monthNames.indexOf(monthName);
       
-      if (monthIndex !== -1 && !isNaN(year)) {
-        const date = new Date(year, monthIndex, 1);
-        const monthKey = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
+      // Use year from show_date if available, fallback to dataset.year
+      let finalYear = yearFromShowDate;
+      if (isNaN(finalYear) && artwork.year) {
+        finalYear = parseInt(artwork.year);
+      }
+      
+      if (monthIndex !== -1 && !isNaN(finalYear) && finalYear > 1900 && finalYear < 2100) {
+        const date = new Date(finalYear, monthIndex, 1);
+        const monthKey = `${finalYear}-${String(monthIndex + 1).padStart(2, '0')}`;
         
         if (!monthCounts[monthKey]) {
           monthCounts[monthKey] = { count: 0, works: [], date: date };  
@@ -54,19 +62,27 @@ document.addEventListener('DOMContentLoaded', function() {
         monthCounts[monthKey].count++;
         monthCounts[monthKey].works.push(artwork.title);
         
-        if (!minDate || date &lt; minDate) minDate = date;
-        if (!maxDate || date &gt; maxDate) maxDate = date;
+        if (!minDate || date < minDate) minDate = date;
+        if (!maxDate || date > maxDate) maxDate = date;
+        parsedCount++;
+      } else {
+        console.warn(`Could not parse date for "${artwork.title}": showDate="${showDate}", year="${artwork.year}"`);
+        failedCount++;
       }
+    } else {
+      console.warn(`Invalid show_date format for "${artwork.title}": "${showDate}"`);
+      failedCount++;
     }
   });
   
   if (!minDate || !maxDate) {
-    activityContainer.innerHTML = '&lt;p style="text-align: center; color: #999;"&gt;Could not parse dates&lt;/p&gt;';
-    console.error('Failed to parse dates from artworks');
+    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">Could not parse dates</p>';
+    console.error(`Failed to parse dates from artworks. Parsed: ${parsedCount}, Failed: ${failedCount}`);
     return;
   }
   
   console.log(`Date range: ${minDate.toLocaleDateString()} to ${maxDate.toLocaleDateString()}`);
+  console.log(`Successfully parsed: ${parsedCount} artworks, Failed: ${failedCount}`);
   console.log(`Months with activity: ${Object.keys(monthCounts).length}`);
   
   // Generate all months in range IN CHRONOLOGICAL ORDER (oldest to newest)
@@ -74,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const current = new Date(minDate);
   current.setDate(1);
   
-  while (current &lt;= maxDate) {
+  while (current <= maxDate) {
     const monthKey = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
     months.push({
       key: monthKey,
@@ -100,10 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       const ratio = month.count / maxCount;
       let level;
-      if (ratio &lt;= 0.2) level = 1;
-      else if (ratio &lt;= 0.4) level = 2;
-      else if (ratio &lt;= 0.6) level = 3; 
-      else if (ratio &lt;= 0.8) level = 4;
+      if (ratio <= 0.2) level = 1;
+      else if (ratio <= 0.4) level = 2;
+      else if (ratio <= 0.6) level = 3; 
+      else if (ratio <= 0.8) level = 4;
       else level = 5;
       cell.classList.add(`level-${level}`);
     }
@@ -113,9 +129,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!tooltip) return;
       const monthName = month.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
       tooltip.innerHTML = `
-        &lt;strong&gt;${monthName}&lt;/strong&gt;&lt;br&gt;
+        <strong>${monthName}</strong><br>
         ${month.count} work${month.count !== 1 ? 's' : ''}
-        ${month.works.length &gt; 0 ? '&lt;br&gt;&lt;small&gt;' + month.works.slice(0, 3).join(', ') + (month.works.length &gt; 3 ? '...' : '') + '&lt;/small&gt;' : ''}
+        ${month.works.length > 0 ? '<br><small>' + month.works.slice(0, 3).join(', ') + (month.works.length > 3 ? '...' : '') + '</small>' : ''}
       `;
       tooltip.style.display = 'block';
       
@@ -134,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Update stats
   updateStats(artworks, monthCounts);
   
-  console.log('Activity chart rendered successfully in chronological order');
+  console.log('✓ Activity chart rendered successfully in chronological order');
 });
 
 function updateStats(artworks, monthCounts) {
@@ -144,9 +160,9 @@ function updateStats(artworks, monthCounts) {
   
   // Most productive month
   const mostProductive = document.getElementById('most-productive-month');
-  if (mostProductive && Object.keys(monthCounts).length &gt; 0) {
+  if (mostProductive && Object.keys(monthCounts).length > 0) {
     const maxMonth = Object.entries(monthCounts).reduce((max, [key, val]) => 
-      val.count &gt; max.count ? { key, count: val.count } : max, 
+      val.count > max.count ? { key, count: val.count } : max, 
       { key: '', count: 0 }
     );
     
@@ -162,7 +178,15 @@ function updateStats(artworks, monthCounts) {
   const currentYearCount = document.getElementById('current-year-count');
   if (currentYearCount) {
     const currentYear = new Date().getFullYear();
-    const thisYearWorks = artworks.filter(a => parseInt(a.year) === currentYear).length;
+    const thisYearWorks = artworks.filter(a => {
+      // Parse year from show_date
+      const parts = a.showDate.split(' ');
+      if (parts.length >= 2) {
+        const year = parseInt(parts[1]);
+        return year === currentYear;
+      }
+      return false;
+    }).length;
     currentYearCount.textContent = thisYearWorks;
   }
 }

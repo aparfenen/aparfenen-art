@@ -70,7 +70,32 @@ df['filename'] = df['filename'].str.strip()
 
 print(f"✓ Loaded {len(df)} artworks from CSV\n")
 
-# ===== STEP 2: Auto-fill missing dates from filenames =====
+# ===== STEP 2: Auto-fill year from show_date if missing =====
+auto_filled_years = 0
+for idx, row in df.iterrows():
+    year_val = row.get('year')
+    show_date = str(row.get('show_date', '')).strip()
+    
+    # If year is missing but show_date exists
+    if (pd.isna(year_val) or str(year_val).strip() == '') and show_date:
+        # Extract year from show_date (format: "Month YYYY")
+        parts = show_date.split()
+        if len(parts) >= 2:
+            try:
+                year = int(parts[1])
+                if 1900 < year < 2100:  # Validate year range
+                    df.at[idx, 'year'] = year
+                    auto_filled_years += 1
+                    print(f"  Auto-filled year for {row['title']}: {year} (from show_date)")
+            except ValueError:
+                pass
+
+if auto_filled_years > 0:
+    print(f"\n✓ Auto-filled {auto_filled_years} missing years from show_date")
+    df.to_csv(CSV_PATH, index=False)
+    print(f"✓ Updated {CSV_PATH} with auto-filled years\n")
+
+# ===== STEP 3: Auto-fill missing dates from filenames =====
 auto_filled_dates = 0
 for idx, row in df.iterrows():
     filename = row['filename']
