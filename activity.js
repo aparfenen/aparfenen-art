@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Collect artworks with dates
   const artworks = Array.from(document.querySelectorAll('.gallery img')).map(img => {
     return {
-      dateCreated: img.dataset.dateCreated || '',
+      dateCreated: img.dataset.dateCreated || '',  
       showDate: img.dataset.date || '', // This is show_date from CSV
       title: img.dataset.title || 'Untitled',
       year: img.dataset.year || ''
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log(`Found ${artworks.length} artworks with dates`);
   
   if (artworks.length === 0) {
-    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">No date data available</p>';
+    activityContainer.innerHTML = '&lt;p style="text-align: center; color: #999;"&gt;No date data available&lt;/p&gt;';
     return;
   }
   
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const showDate = artwork.showDate.trim(); // "March 2025"
     const year = parseInt(artwork.year);
     
-    // Parse "Month YYYY" format
+    // Parse "Month YYYY" format  
     const parts = showDate.split(' ');
     if (parts.length >= 2) {
       const monthName = parts[0];
@@ -49,19 +49,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const monthKey = `${year}-${String(monthIndex + 1).padStart(2, '0')}`;
         
         if (!monthCounts[monthKey]) {
-          monthCounts[monthKey] = { count: 0, works: [], date: date };
+          monthCounts[monthKey] = { count: 0, works: [], date: date };  
         }
         monthCounts[monthKey].count++;
         monthCounts[monthKey].works.push(artwork.title);
         
-        if (!minDate || date < minDate) minDate = date;
-        if (!maxDate || date > maxDate) maxDate = date;
+        if (!minDate || date &lt; minDate) minDate = date;
+        if (!maxDate || date &gt; maxDate) maxDate = date;
       }
     }
   });
   
   if (!minDate || !maxDate) {
-    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">Could not parse dates</p>';
+    activityContainer.innerHTML = '&lt;p style="text-align: center; color: #999;"&gt;Could not parse dates&lt;/p&gt;';
     console.error('Failed to parse dates from artworks');
     return;
   }
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const current = new Date(minDate);
   current.setDate(1);
   
-  while (current <= maxDate) {
+  while (current &lt;= maxDate) {
     const monthKey = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
     months.push({
       key: monthKey,
@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
       count: monthCounts[monthKey]?.count || 0,
       works: monthCounts[monthKey]?.works || []
     });
-    current.setMonth(current.getMonth() + 1);
+    current.setMonth(current.getMonth() + 1); 
   }
   
   const maxCount = Math.max(...months.map(m => m.count), 1);
@@ -100,10 +100,10 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       const ratio = month.count / maxCount;
       let level;
-      if (ratio <= 0.2) level = 1;
-      else if (ratio <= 0.4) level = 2;
-      else if (ratio <= 0.6) level = 3;
-      else if (ratio <= 0.8) level = 4;
+      if (ratio &lt;= 0.2) level = 1;
+      else if (ratio &lt;= 0.4) level = 2;
+      else if (ratio &lt;= 0.6) level = 3; 
+      else if (ratio &lt;= 0.8) level = 4;
       else level = 5;
       cell.classList.add(`level-${level}`);
     }
@@ -113,9 +113,9 @@ document.addEventListener('DOMContentLoaded', function() {
       if (!tooltip) return;
       const monthName = month.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
       tooltip.innerHTML = `
-        <strong>${monthName}</strong><br>
+        &lt;strong&gt;${monthName}&lt;/strong&gt;&lt;br&gt;
         ${month.count} work${month.count !== 1 ? 's' : ''}
-        ${month.works.length > 0 ? '<br><small>' + month.works.slice(0, 3).join(', ') + (month.works.length > 3 ? '...' : '') + '</small>' : ''}
+        ${month.works.length &gt; 0 ? '&lt;br&gt;&lt;small&gt;' + month.works.slice(0, 3).join(', ') + (month.works.length &gt; 3 ? '...' : '') + '&lt;/small&gt;' : ''}
       `;
       tooltip.style.display = 'block';
       
@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     cell.addEventListener('mouseleave', () => {
-      if (tooltip) tooltip.style.display = 'none';
+      if (tooltip) tooltip.style.display = 'none';  
     });
     
     activityContainer.appendChild(cell);
@@ -144,9 +144,9 @@ function updateStats(artworks, monthCounts) {
   
   // Most productive month
   const mostProductive = document.getElementById('most-productive-month');
-  if (mostProductive && Object.keys(monthCounts).length > 0) {
+  if (mostProductive && Object.keys(monthCounts).length &gt; 0) {
     const maxMonth = Object.entries(monthCounts).reduce((max, [key, val]) => 
-      val.count > max.count ? { key, count: val.count } : max, 
+      val.count &gt; max.count ? { key, count: val.count } : max, 
       { key: '', count: 0 }
     );
     
