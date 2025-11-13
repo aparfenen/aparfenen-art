@@ -1,3 +1,5 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Unna&display=swap');*/
+
 /* ===== SMOOTH SCROLL ===== */
 html {
   scroll-behavior: smooth;
@@ -8,6 +10,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: #fefefe;
 }
+
 
 /* Headings */
 h1 {
@@ -35,6 +38,7 @@ h3.section-title {
   color: #444;
 }
 
+
 /* Category description */
 .category-description {
   max-width: 800px;
@@ -47,6 +51,7 @@ h3.section-title {
   padding: 0 20px;
 }
 
+
 /* Artist statement */
 .statement {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -55,45 +60,48 @@ h3.section-title {
   font-size: 1.15em;
   line-height: 1.7;
   color: #222;
+
   max-width: 1000px;
   margin: 20px auto;
   padding: 10px;
   box-sizing: border-box;
+
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: #f9f9f9;
 }
 
-/* COMMISSIONS */
+
+ /*COMMISSIONS*/
 .commissions {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   font-style: normal;
   font-size: 1.15em;
   line-height: 1.7;
   color: #222;
+
   max-width: 1000px;
   margin: 20px auto;
   padding: 10px;
   box-sizing: border-box;
+
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   background-color: #f9f9f9;
 }
-
 .commissions a {
   color: #3366cc;
   text-decoration: none;
 }
-
 .commissions a:hover {
   text-decoration: underline;
 }
-
 .commissions p {
   margin: 8px 0;
 }
 
-/* Gallery intro */
+
+/* Image grid */
 .gallery-intro {
   max-width: 1000px;
   margin: 10px auto 10px auto;
@@ -144,59 +152,18 @@ h3.section-title {
   display: block;
 }
 
-/* ===== FIXED: GALLERY GRID ===== */
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
   padding: 24px;
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  align-items: start; /* IMPORTANT: prevents stretching */
+  align-items: start;
 }
-
-/* FIXED: Art block wrapper */
 .art-block {
-  display: block;
   width: 100%;
-  position: relative;
-  /* NO height constraint here */
-}
-
-/* ===== FIXED: IMAGES WITH ASPECT RATIO ===== */
-.gallery img {
-  width: 100%;
-  height: auto; /* FIXED: was 340px fixed height */
-  aspect-ratio: 3/4; /* FIXED: maintain consistent ratio */
-  object-fit: cover;
-  border-radius: 12px;
-  cursor: zoom-in;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.4s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  background: #f0f0f0; /* Placeholder color while loading */
-  display: block; /* Remove inline spacing */
-}
-
-/* Lazy loading states - FIXED */
-.gallery img.lazy-loading {
-  opacity: 0.3;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.gallery img.lazy-loaded {
-  opacity: 1;
-}
-
-.gallery img:hover {
-  transform: scale(1.015);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  height: 100%;
 }
 
 /* Theme sections (for thematic view) */
@@ -204,7 +171,43 @@ h3.section-title {
   margin-bottom: 60px;
 }
 
-/* ===== LIGHTBOX - MINIMAL CHANGES ===== */
+.gallery img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: zoom-in;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.4s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  background: #f0f0f0;
+  min-height: 340px; /* Добавьте эту строку */
+}
+
+/* Lazy loading states */
+.gallery img.lazy-loading {
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.gallery img.lazy-loaded {
+  opacity: 1;
+  filter: blur(0);
+}
+
+.gallery img:hover {
+  transform: scale(1.015);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+}
+
+/* Fix art-block wrapper */
+.art-block {
+  display: block;  /* old: display: contents; */
+  width: 100%;
+  position: relative;
+}
+
+
+/* ===== LIGHTBOX ===== */
 .lightbox {
   position: fixed;
   top: 0; 
@@ -291,7 +294,7 @@ h3.section-title {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* ===== LIGHTBOX NAVIGATION ARROWS ===== */
+/* ===== LIGHTBOX NAVIGATION ARROWS - ПО КРАЯМ изображения ===== */
 .lightbox-nav {
   position: absolute;
   top: 35%;
@@ -323,6 +326,7 @@ h3.section-title {
   transform: translateY(-50%) scale(1.1);
 }
 
+/* Стрелки располагаются по краям от изображения, не на нём */
 .lightbox-nav.prev {
   left: -70px;
 }
@@ -331,6 +335,7 @@ h3.section-title {
   right: -70px;
 }
 
+/* Counter - now positioned relative to lightbox-content */
 .lightbox-counter {
   position: absolute;
   bottom: 20px;
@@ -390,19 +395,19 @@ h3.section-title {
   color: #28a745;
 }
 
-/* ===== RESPONSIVE - LIGHTBOX ===== */
+/* Mobile optimization for lightbox */
 @media (max-width: 1200px) {
-  .lightbox-nav.prev { left: 20px; }
-  .lightbox-nav.next { right: 20px; }
+  /* На экранах поменьше стрелки возвращаются на картинку */
+  .lightbox-nav.prev {
+    left: 20px;
+  }
+  
+  .lightbox-nav.next {
+    right: 20px;
+  }
 }
 
 @media (max-width: 768px) {
-  .gallery {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 12px;
-    padding: 16px;
-  }
-  
   .lightbox-content {
     gap: 10px;
   }
@@ -459,6 +464,7 @@ h3.section-title {
     padding: 6px 12px;
   }
 }
+
 
 /* ===== SCROLL NAVIGATION BUTTONS ===== */
 .scroll-down {
@@ -575,6 +581,7 @@ h3.section-title {
   }
 }
 
+
 /* FOOTER */
 .footer-separator {
   margin: 60px auto 30px auto;
@@ -583,7 +590,6 @@ h3.section-title {
   max-width: 1000px;
   width: 100%;
 }
-
 footer.contact-info {
   max-width: 1000px;
   margin: 60px auto;
@@ -591,7 +597,6 @@ footer.contact-info {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.1em;
 }
-
 footer.contact-info h2 {
   font-size: 1.5em;
   margin-bottom: 20px;
@@ -599,7 +604,7 @@ footer.contact-info h2 {
   font-weight: 600;
 }
 
-/* CONTACT INFO */
+ /*CONTACT INFO*/
 .contact-row {
   display: flex;
   flex-wrap: wrap;
@@ -608,7 +613,6 @@ footer.contact-info h2 {
   align-items: center;
   padding: 10px 0;
 }
-
 .contact-row a {
   display: flex;
   align-items: center;
@@ -618,17 +622,16 @@ footer.contact-info h2 {
   font-weight: 500;
   transition: color 0.2s ease;
 }
-
 .contact-row a:hover {
   color: #3366cc;
 }
-
 .contact-row img {
   width: 20px;
   height: 20px;
 }
 
-/* NAVIGATION BAR */
+
+/*  NAVIGATION BAR */
 nav.main-nav {
   background-color: #fff;
   border-bottom: 1px solid rgba(0,0,0,0.1);
@@ -638,7 +641,6 @@ nav.main-nav {
   top: 0;
   z-index: 10;
 }
-
 nav.main-nav ul {
   list-style: none;
   margin: 0;
@@ -649,11 +651,9 @@ nav.main-nav ul {
   align-items: center;
   flex-wrap: wrap;
 }
-
 nav.main-nav li {
   position: relative;
 }
-
 nav.main-nav a {
   text-decoration: none;
   color: #333;
@@ -662,12 +662,11 @@ nav.main-nav a {
   font-size: 1.05em;
   transition: color 0.2s ease;
 }
-
 nav.main-nav a:hover {
   color: #3366cc;
 }
 
-/* Dropdown submenu */
+/* Dropdown submenu - FIXED WIDTH */
 nav.main-nav .sub-menu {
   display: none;
   position: absolute;
@@ -681,15 +680,12 @@ nav.main-nav .sub-menu {
   z-index: 99;
   min-width: 240px;
 }
-
 nav.main-nav li:hover > .sub-menu {
   display: block;
 }
-
 nav.main-nav .sub-menu li {
   width: 100%;
 }
-
 nav.main-nav .sub-menu a {
   display: block;
   padding: 10px 18px;
@@ -698,18 +694,17 @@ nav.main-nav .sub-menu a {
   font-size: 0.95em;
   transition: background-color 0.2s ease;
 }
-
 nav.main-nav .sub-menu a:hover {
   background-color: rgba(51, 102, 204, 0.08);
   color: #3366cc;
 }
-
 .dropdown-divider {
   height: 1px;
   background-color: rgba(0, 0, 0, 0.1);
   margin: 8px 12px;
   list-style: none;
 }
+
 
 /* ===== ACTIVITY GRAPH ===== */
 .activity-container {

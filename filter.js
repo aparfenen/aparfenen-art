@@ -1,18 +1,16 @@
-// ===== MULTI-DIMENSIONAL FILTER SYSTEM WITH SEARCH =====
+// ===== MULTI-DIMENSIONAL FILTER SYSTEM WITH SEARCH - FIXED =====
 
 class GalleryFilter {
   constructor() {
     this.allArtworks = [];
     this.activeFilters = {
-      subject: [],
-      mood: [],
-      themes: [],
+      category: [],  // FIXED: changed from subject/mood/themes to category
       year: [],
       medium: [],
       tags: []
     };
     this.searchQuery = '';
-    this.currentView = 'chronological'; // 'chronological' or 'thematic'
+    this.currentView = 'chronological';
     
     this.init();
   }
@@ -24,9 +22,7 @@ class GalleryFilter {
       if (img) {
         this.allArtworks.push({
           element: block,
-          subject: img.dataset.subject || '',
-          mood: img.dataset.mood || '',
-          themes: img.dataset.themes || '',
+          category: img.dataset.category || '',  // FIXED
           year: img.dataset.year || '',
           medium: img.dataset.medium || '',
           tags: img.dataset.tags || '',
@@ -36,21 +32,14 @@ class GalleryFilter {
       }
     });
     
-    // Setup search input
     this.setupSearch();
-    
-    // Setup filter checkboxes
     this.setupCheckboxes();
     
-    // Setup clear button
     document.getElementById('clear-filters').addEventListener('click', () => {
       this.clearAllFilters();
     });
     
-    // Setup collapse/expand for filter sections
     this.setupCollapsibleSections();
-    
-    // Setup view switcher buttons
     this.setupViewSwitcher();
     
     console.log(`✓ Gallery Filter initialized with ${this.allArtworks.length} artworks`);
@@ -82,7 +71,6 @@ class GalleryFilter {
       chronoGallery.classList.add('active');
       thematicGallery.classList.remove('active');
       
-      // Re-collect artworks from current view
       this.collectArtworks();
       this.applyFilters();
     });
@@ -94,14 +82,12 @@ class GalleryFilter {
       thematicGallery.classList.add('active');
       chronoGallery.classList.remove('active');
       
-      // Re-collect artworks from current view
       this.collectArtworks();
       this.applyFilters();
     });
   }
   
   collectArtworks() {
-    // Re-collect artworks from the currently active gallery
     this.allArtworks = [];
     const activeGallery = this.currentView === 'chronological' 
       ? document.getElementById('chronological-gallery')
@@ -113,9 +99,7 @@ class GalleryFilter {
         if (img) {
           this.allArtworks.push({
             element: block,
-            subject: img.dataset.subject || '',
-            mood: img.dataset.mood || '',
-            themes: img.dataset.themes || '',
+            category: img.dataset.category || '',
             year: img.dataset.year || '',
             medium: img.dataset.medium || '',
             tags: img.dataset.tags || '',
@@ -128,7 +112,7 @@ class GalleryFilter {
   }
   
   setupCheckboxes() {
-    const filterGroups = ['subject', 'mood', 'themes', 'year', 'medium', 'tags'];
+    const filterGroups = ['category', 'year', 'medium', 'tags'];  // FIXED
     
     filterGroups.forEach(group => {
       const checkboxes = document.querySelectorAll(`input[data-filter-group="${group}"]`);
@@ -163,7 +147,6 @@ class GalleryFilter {
   }
   
   applyFilters() {
-    // Re-collect artworks in case view changed
     this.collectArtworks();
     
     let visibleCount = 0;
@@ -194,7 +177,6 @@ class GalleryFilter {
       this.updateThemeSectionsVisibility();
     }
     
-    // Show/hide no results message
     this.updateNoResultsMessage(visibleCount);
     
     return visibleCount;
@@ -206,9 +188,7 @@ class GalleryFilter {
     const searchableText = [
       artwork.title,
       artwork.description,
-      artwork.subject,
-      artwork.mood,
-      artwork.themes,
+      artwork.category,
       artwork.tags
     ].join(' ').toLowerCase();
     
@@ -216,7 +196,6 @@ class GalleryFilter {
   }
   
   matchesAllFilters(artwork) {
-    // If no filters are active, show everything
     const hasActiveFilters = Object.values(this.activeFilters).some(arr => arr.length > 0);
     if (!hasActiveFilters) {
       return true;
@@ -224,18 +203,16 @@ class GalleryFilter {
     
     // Check each filter group (OR within group, AND between groups)
     for (const [group, values] of Object.entries(this.activeFilters)) {
-      if (values.length === 0) continue; // Skip if no filters in this group
+      if (values.length === 0) continue;
       
       const artworkValue = artwork[group];
       
-      // If artwork has no value for this filter group, hide it
       if (!artworkValue) {
         return false;
       }
       
       // Check if artwork matches ANY of the selected values in this group
       const matches = values.some(filterValue => {
-        // For tags, check if any tag matches
         if (group === 'tags') {
           const artworkTags = artworkValue.split(',').map(t => t.trim());
           return artworkTags.includes(filterValue);
@@ -244,7 +221,7 @@ class GalleryFilter {
       });
       
       if (!matches) {
-        return false; // Must match in ALL active filter groups
+        return false;
       }
     }
     
@@ -287,7 +264,6 @@ class GalleryFilter {
   }
   
   updateThemeSectionsVisibility() {
-    // In thematic view, hide theme sections with no visible works
     const thematicGallery = document.getElementById('thematic-gallery');
     if (!thematicGallery) return;
     
@@ -296,7 +272,6 @@ class GalleryFilter {
       const visibleWorks = Array.from(gallery.querySelectorAll('.art-block'))
         .filter(block => block.style.display !== 'none');
       
-      // Hide entire theme section if no visible works
       if (visibleWorks.length === 0) {
         section.style.display = 'none';
       } else {
@@ -306,29 +281,23 @@ class GalleryFilter {
   }
   
   clearAllFilters() {
-    // Clear search
     const searchInput = document.getElementById('filter-search');
     if (searchInput) {
       searchInput.value = '';
       this.searchQuery = '';
     }
     
-    // Uncheck all checkboxes
     document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
       checkbox.checked = false;
     });
     
-    // Clear active filters
     this.activeFilters = {
-      subject: [],
-      mood: [],
-      themes: [],
+      category: [],
       year: [],
       medium: [],
       tags: []
     };
     
-    // Show all artworks
     this.applyFilters();
     this.updateCounter();
   }
@@ -352,7 +321,6 @@ let galleryFilter;
 document.addEventListener('DOMContentLoaded', () => {
   galleryFilter = new GalleryFilter();
 });
-
 
 // ===== FILTER SIDEBAR TOGGLE FOR MOBILE =====
 function toggleFilterSidebar() {
@@ -390,7 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.innerWidth <= 1024) {
     document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
       checkbox.addEventListener('change', () => {
-        // Small delay to see the change before closing
         setTimeout(() => {
           closeFilterSidebar();
         }, 300);
@@ -405,7 +372,6 @@ function switchToChronological() {
     const chronoBtn = document.getElementById('chronological-view-btn');
     if (chronoBtn) chronoBtn.click();
   }
-  // Scroll to gallery
   const gallery = document.getElementById('gallery');
   if (gallery) {
     setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 100);
@@ -417,7 +383,6 @@ function switchToThematic() {
     const thematicBtn = document.getElementById('thematic-view-btn');
     if (thematicBtn) thematicBtn.click();
   }
-  // Scroll to gallery
   const gallery = document.getElementById('gallery');
   if (gallery) {
     setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 100);
