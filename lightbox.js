@@ -1,4 +1,6 @@
 // ===== LIGHTBOX WITH METADATA AND SHARE BUTTONS =====
+// ИСПРАВЛЕНО: Улучшена навигация, счетчик и обработка изображений
+
 const lightbox = document.getElementById("lightbox");
 const lightboxContent = lightbox.querySelector(".lightbox-content");
 const lightboxImg = lightbox.querySelector("img");
@@ -13,44 +15,71 @@ let currentImageId = "";
 let allGalleryImages = [];
 let currentImageIndex = -1;
 
-// Get all gallery images on load (ONLY from active gallery to avoid duplicates)
-document.addEventListener("DOMContentLoaded", () => {
-  updateGalleryImagesArray();
-});
-
-// Helper function to update gallery images array based on active view
+// ИСПРАВЛЕНИЕ: Улучшенная функция обновления массива изображений
 function updateGalleryImagesArray() {
+  // Определяем активную галерею
   const activeGallery = document.querySelector('.gallery-container.active .gallery');
+  
   if (activeGallery) {
+    // ИСПРАВЛЕНИЕ: Фильтруем только видимые изображения (не скрытые фильтрами)
     allGalleryImages = Array.from(activeGallery.querySelectorAll('img'))
       .filter(img => {
         const artBlock = img.closest('.art-block');
-        return artBlock && artBlock.style.display !== 'none';
+        // Проверяем что блок существует и не скрыт
+        return artBlock && 
+               artBlock.style.display !== 'none' && 
+               getComputedStyle(artBlock).display !== 'none';
       });
+    console.log(`[Lightbox] Updated gallery images: ${allGalleryImages.length} visible images in active gallery`);
   } else {
-    // Fallback to chronological gallery if no active class found
-    const chronoGallery = document.querySelector('#chronological-gallery .gallery');
-    allGalleryImages = Array.from((chronoGallery || document.querySelector('.gallery')).querySelectorAll('img'))
-      .filter(img => {
-        const artBlock = img.closest('.art-block');
-        return artBlock && artBlock.style.display !== 'none';
-      });
+    // Fallback: используем хронологическую галерею если нет активной
+    const chronoGallery = document.querySelector('#chronological-gallery .gallery') || 
+                          document.querySelector('.gallery');
+    
+    if (chronoGallery) {
+      allGalleryImages = Array.from(chronoGallery.querySelectorAll('img'))
+        .filter(img => {
+          const artBlock = img.closest('.art-block');
+          return artBlock && 
+                 artBlock.style.display !== 'none' &&
+                 getComputedStyle(artBlock).display !== 'none';
+        });
+      console.log(`[Lightbox] Updated gallery images (fallback): ${allGalleryImages.length} visible images`);
+    } else {
+      console.error('[Lightbox] No gallery found!');
+      allGalleryImages = [];
+    }
   }
-  console.log(`Lightbox: ${allGalleryImages.length} visible images in active gallery`);
+  
+  return allGalleryImages.length;
 }
 
-// Function to open lightbox for a specific image
+// Инициализация при загрузке DOM
+document.addEventListener("DOMContentLoaded", () => {
+  const imageCount = updateGalleryImagesArray();
+  console.log(`[Lightbox] Initialized with ${imageCount} images`);
+});
+
+// ИСПРАВЛЕНИЕ: Улучшенная функция открытия lightbox
 function openLightbox(img) {
-  // Find index of current image
-  currentImageIndex = allGalleryImages.indexOf(img);
-  // Find index of current image
+  // Обновляем массив изображений перед открытием (на случай если фильтры изменились)
+  updateGalleryImagesArray();
+  
+  // Находим индекс текущего изображения
   currentImageIndex = allGalleryImages.indexOf(img);
   
-  // Set image
+  if (currentImageIndex === -1) {
+    console.error('[Lightbox] Image not found in gallery array!');
+    // Пытаемся обновить массив и найти снова
+    updateGalleryImagesArray();
+    currentImageIndex = allGalleryImages.indexOf(img);
+  }
+  
+  // Устанавливаем изображение
   lightboxImg.src = img.src;
   currentImageSrc = img.src;
   
-  // Set metadata from data attributes
+  // Устанавливаем метаданные из data-атрибутов
   const title = img.dataset.title || "Untitled";
   currentImageTitle = title;
   currentImageId = img.dataset.id || "";
@@ -59,7 +88,7 @@ function openLightbox(img) {
   lightboxDate.textContent = img.dataset.date || "";
   lightboxDescription.textContent = img.dataset.description || "";
   
-  // Build metadata string (dimensions and medium)
+  // Строим строку метаданных (размеры и материал)
   const dimensions = img.dataset.dimensions || "";
   const medium = img.dataset.medium || "";
   
@@ -72,7 +101,7 @@ function openLightbox(img) {
     metadataText = medium;
   }
   
-  // Show or hide metadata section
+  // Показываем или скрываем секцию метаданных
   if (metadataText) {
     lightboxMetadata.textContent = metadataText;
     lightboxMetadata.style.display = "block";
@@ -80,93 +109,130 @@ function openLightbox(img) {
     lightboxMetadata.style.display = "none";
   }
   
-  // Update URL hash without scrolling
+  // ИСПРАВЛЕНИЕ: Обновляем URL hash без прокрутки
   if (currentImageId) {
     history.replaceState(null, null, `#${currentImageId}`);
   }
   
-  // Update counter
+  // Обновляем счетчик
   updateCounter();
   
-  // Show lightbox
+  // Показываем lightbox с анимацией
   lightbox.classList.add("active");
+  
+  console.log(`[Lightbox] Opened image ${currentImageIndex + 1}/${allGalleryImages.length}: "${title}"`);
 }
 
-// Function to navigate to next/previous image
+// ИСПРАВЛЕНИЕ: Улучшенная навигация с проверками
 function navigateImage(direction) {
-  if (allGalleryImages.length === 0) return;
+  if (allGalleryImages.length === 0) {
+    console.warn('[Lightbox] No images available for navigation');
+    return;
+  }
   
-  // Calculate new index with wrapping
+  // Вычисляем новый индекс с циклическим переходом
   if (direction === 'next') {
     currentImageIndex = (currentImageIndex + 1) % allGalleryImages.length;
   } else if (direction === 'prev') {
     currentImageIndex = (currentImageIndex - 1 + allGalleryImages.length) % allGalleryImages.length;
   }
   
-  // Open lightbox with new image
+  // Проверяем что новый индекс валиден
+  if (currentImageIndex < 0 || currentImageIndex >= allGalleryImages.length) {
+    console.error(`[Lightbox] Invalid image index: ${currentImageIndex}`);
+    currentImageIndex = Math.max(0, Math.min(currentImageIndex, allGalleryImages.length - 1));
+  }
+  
+  // Открываем lightbox с новым изображением
   const newImg = allGalleryImages[currentImageIndex];
-  openLightbox(newImg);
-}
-
-// Update counter display
-function updateCounter() {
-  const counter = document.querySelector('.lightbox-counter');
-  if (counter && allGalleryImages.length > 0) {
-    counter.textContent = `${currentImageIndex + 1} / ${allGalleryImages.length}`;
+  if (newImg) {
+    openLightbox(newImg);
+  } else {
+    console.error(`[Lightbox] Image not found at index ${currentImageIndex}`);
   }
 }
 
-// Add click listener to all gallery images
+// ИСПРАВЛЕНИЕ: Более информативный счетчик
+function updateCounter() {
+  const counter = document.querySelector('.lightbox-counter');
+  if (counter) {
+    if (allGalleryImages.length > 0) {
+      const current = currentImageIndex + 1;
+      const total = allGalleryImages.length;
+      counter.textContent = `${current} / ${total}`;
+      console.log(`[Lightbox] Counter updated: ${current}/${total}`);
+    } else {
+      counter.textContent = '0 / 0';
+      console.warn('[Lightbox] No images in gallery');
+    }
+  }
+}
+
+// Добавляем обработчики кликов на все изображения в галерее
 document.querySelectorAll(".gallery img").forEach(img => {
   img.addEventListener("click", () => {
     openLightbox(img);
   });
 });
 
-// Close lightbox on click (but not on image or info box)
+// Закрытие lightbox при клике вне изображения
 lightbox.addEventListener("click", (e) => {
   if (e.target === lightbox) {
     closeLightbox();
   }
 });
 
-// Close lightbox function
+// Функция закрытия lightbox
 function closeLightbox() {
   lightbox.classList.remove("active");
-  // Remove hash from URL when closing
+  // Удаляем hash из URL при закрытии
   history.replaceState(null, null, window.location.pathname);
+  console.log('[Lightbox] Closed');
 }
 
-// Also close on ESC key
+// ИСПРАВЛЕНИЕ: Улучшенная обработка клавиатуры
 document.addEventListener("keydown", (e) => {
   if (lightbox.classList.contains("active")) {
-    if (e.key === "Escape") {
-      closeLightbox();
-    } else if (e.key === "ArrowRight") {
-      navigateImage('next');
-    } else if (e.key === "ArrowLeft") {
-      navigateImage('prev');
+    switch(e.key) {
+      case "Escape":
+        closeLightbox();
+        break;
+      case "ArrowRight":
+        e.preventDefault(); // Предотвращаем прокрутку страницы
+        navigateImage('next');
+        break;
+      case "ArrowLeft":
+        e.preventDefault();
+        navigateImage('prev');
+        break;
     }
   }
 });
 
-// Check if URL has hash on page load and open corresponding lightbox
+// ИСПРАВЛЕНИЕ: Проверка hash при загрузке страницы
 window.addEventListener("DOMContentLoaded", () => {
-  // Initialize gallery images array using our helper function
-  updateGalleryImagesArray();
+  // Инициализируем массив изображений
+  const imageCount = updateGalleryImagesArray();
+  console.log(`[Lightbox] Page loaded with ${imageCount} images`);
   
-  const hash = window.location.hash.substring(1); // Remove #
+  // Проверяем есть ли hash в URL
+  const hash = window.location.hash.substring(1); // Убираем #
   if (hash) {
-    // Find the artwork with this ID
+    console.log(`[Lightbox] Found hash in URL: ${hash}`);
+    // Находим artwork с этим ID
     const artBlock = document.getElementById(hash);
     if (artBlock) {
       const img = artBlock.querySelector("img");
       if (img) {
-        // Small delay to ensure page is fully loaded
+        // Небольшая задержка чтобы страница полностью загрузилась
         setTimeout(() => {
           openLightbox(img);
         }, 300);
+      } else {
+        console.warn(`[Lightbox] No image found in artblock ${hash}`);
       }
+    } else {
+      console.warn(`[Lightbox] Artblock not found: ${hash}`);
     }
   }
 });
@@ -238,21 +304,21 @@ backToTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Show/hide navigation buttons on scroll
+// Показ/скрытие кнопок навигации при прокрутке
 let lastScrollTop = 0;
 window.addEventListener('scroll', () => {
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
   const scrollHeight = document.documentElement.scrollHeight;
   const clientHeight = document.documentElement.clientHeight;
   
-  // Back to top button - show when scrolled down
+  // Кнопка "Вверх" - показываем когда прокрутили вниз
   if (scrollTop > 300) {
     backToTopBtn.classList.add('visible');
   } else {
     backToTopBtn.classList.remove('visible');
   }
   
-  // Scroll down button - hide when near bottom
+  // Кнопка "Вниз" - скрываем когда близко к низу
   if (scrollTop + clientHeight >= scrollHeight - 200) {
     scrollDownBtn.classList.add('hidden');
   } else {
@@ -268,10 +334,10 @@ const categoryIndicator = document.createElement('div');
 categoryIndicator.className = 'category-indicator';
 document.body.appendChild(categoryIndicator);
 
-// Get all section titles
+// Получаем все заголовки секций
 const sections = document.querySelectorAll('h3.section-title');
 
-// Update category indicator on scroll
+// Обновление индикатора категории при прокрутке
 function updateCategoryIndicator() {
   const scrollPosition = window.pageYOffset + 150;
   
@@ -279,7 +345,7 @@ function updateCategoryIndicator() {
   
   sections.forEach(section => {
     const sectionTop = section.offsetTop;
-    const sectionBottom = sectionTop + section.offsetHeight + 400; // Include some gallery height
+    const sectionBottom = sectionTop + section.offsetHeight + 400; // Включаем часть галереи
     
     if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
       currentSection = section.textContent;
@@ -295,7 +361,7 @@ function updateCategoryIndicator() {
 }
 
 window.addEventListener('scroll', updateCategoryIndicator);
-updateCategoryIndicator(); // Initial check
+updateCategoryIndicator(); // Начальная проверка
 
 
 // ===== TOUCH/SWIPE SUPPORT FOR MOBILE =====
@@ -305,18 +371,18 @@ let touchStartY = 0;
 let touchEndY = 0;
 
 const handleSwipeGesture = () => {
-  const swipeThreshold = 50; // Minimum distance for swipe
+  const swipeThreshold = 50; // Минимальное расстояние для свайпа
   const swipeDistanceX = touchEndX - touchStartX;
   const swipeDistanceY = touchEndY - touchStartY;
   
-  // Check if horizontal swipe is dominant
+  // Проверяем что горизонтальный свайп доминирует
   if (Math.abs(swipeDistanceX) > Math.abs(swipeDistanceY)) {
     if (Math.abs(swipeDistanceX) > swipeThreshold) {
       if (swipeDistanceX > 0) {
-        // Swipe right - previous image
+        // Свайп вправо - предыдущее изображение
         navigateImage('prev');
       } else {
-        // Swipe left - next image
+        // Свайп влево - следующее изображение
         navigateImage('next');
       }
     }
@@ -342,48 +408,45 @@ const lazyLoadImages = () => {
       if (entry.isIntersecting) {
         const img = entry.target;
         
-        // Set loading class
+        // Устанавливаем класс загрузки
         img.classList.add('lazy-loading');
         
-        // Create a new image to preload
+        // Создаем новое изображение для предзагрузки
         const tempImg = new Image();
         tempImg.onload = () => {
-          // Once loaded, update src and add loaded class
+          // После загрузки обновляем src и добавляем класс
           img.src = tempImg.src;
           img.classList.remove('lazy-loading');
           img.classList.add('lazy-loaded');
         };
         
-        // Start loading the actual image
+        // Начинаем загрузку реального изображения
         tempImg.src = img.dataset.src || img.src;
         
-        // Stop observing this image
+        // Прекращаем наблюдение за этим изображением
         observer.unobserve(img);
       }
     });
   }, {
     root: null,
-    rootMargin: '50px', // Start loading 50px before entering viewport
+    rootMargin: '50px', // Начинаем загрузку за 50px до входа в viewport
     threshold: 0.01
   });
   
-  // Observe all gallery images
+  // Наблюдаем за всеми изображениями в галерее
   document.querySelectorAll('.gallery img').forEach(img => {
-    // Store original src in data attribute if not already there
+    // Сохраняем оригинальный src в data-атрибуте если еще не сохранен
     if (!img.dataset.src) {
       img.dataset.src = img.src;
-      // Set a tiny placeholder or keep the src for now
-      // img.src can stay as is for initial load, or use data-src approach
     }
     img.classList.add('lazy-loading');
     imageObserver.observe(img);
   });
 };
 
-// Initialize lazy loading when DOM is ready
+// Инициализация lazy loading при готовности DOM
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', lazyLoadImages);
 } else {
   lazyLoadImages();
 }
-

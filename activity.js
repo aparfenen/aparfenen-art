@@ -1,4 +1,5 @@
 // ===== ACTIVITY GRAPH VISUALIZATION WITH 12-ROW LAYOUT =====
+// ИСПРАВЛЕНО: Улучшен парсинг дат, подсчет статистики и обработка данных
 
 document.addEventListener('DOMContentLoaded', function() {
   const activityContainer = document.getElementById('activity-chart');
@@ -9,28 +10,34 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Collect artworks with dates (ONLY from chronological gallery to avoid duplicates)
+  // ИСПРАВЛЕНИЕ: Собираем работы только из хронологической галереи чтобы избежать дубликатов
   const chronologicalGallery = document.querySelector('#chronological-gallery .gallery');
   const galleryToUse = chronologicalGallery || document.querySelector('.gallery');
+  
+  if (!galleryToUse) {
+    console.error('No gallery found for activity chart');
+    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">Gallery not found</p>';
+    return;
+  }
   
   const artworks = Array.from(galleryToUse.querySelectorAll('img')).map(img => {
     return {
       dateCreated: img.dataset.dateCreated || '',  
-      showDate: img.dataset.date || '', // This is show_date from CSV
+      showDate: img.dataset.date || '', // Это show_date из CSV (формат: "March 2025")
       title: img.dataset.title || 'Untitled',
       year: img.dataset.year || '',
       id: img.closest('.art-block')?.id || ''
     };
-  }).filter(a => a.showDate); // Only filter by showDate existence
+  }).filter(a => a.showDate || a.year); // ИСПРАВЛЕНИЕ: Фильтруем по наличию хотя бы одного поля с датой
   
-  console.log(`Found ${artworks.length} unique artworks with show_date (from chronological gallery)`);
+  console.log(`[Activity Graph] Found ${artworks.length} unique artworks with date information`);
   
   if (artworks.length === 0) {
     activityContainer.innerHTML = '<p style="text-align: center; color: #999;">No date data available</p>';
     return;
   }
   
-  // Parse dates from show_date (e.g., "March 2025")
+  // ИСПРАВЛЕНИЕ: Улучшенный парсинг дат с обработкой различных форматов
   const monthCounts = {};
   let minYear = null;
   let maxYear = null;
@@ -41,55 +48,82 @@ document.addEventListener('DOMContentLoaded', function() {
                       'July', 'August', 'September', 'October', 'November', 'December'];
   
   artworks.forEach(artwork => {
-    const showDate = artwork.showDate.trim(); // "March 2025"
+    const showDate = artwork.showDate.trim();
+    let finalYear = null;
+    let monthIndex = -1;
     
-    // Parse "Month YYYY" format  
-    const parts = showDate.split(' ');
-    if (parts.length >= 2) {
-      const monthName = parts[0];
-      const yearFromShowDate = parseInt(parts[1]); // Extract year from show_date
-      const monthIndex = monthNames.indexOf(monthName);
-      
-      // Use year from show_date if available, fallback to dataset.year
-      let finalYear = yearFromShowDate;
-      if (isNaN(finalYear) && artwork.year) {
-        finalYear = parseInt(artwork.year);
-      }
-      
-      if (monthIndex !== -1 && !isNaN(finalYear) && finalYear > 1900 && finalYear < 2100) {
-        const monthKey = `${finalYear}-${String(monthIndex + 1).padStart(2, '0')}`;
+    // ИСПРАВЛЕНИЕ: Попытка парсинга разных форматов дат
+    if (showDate) {
+      // Формат "Month YYYY" (например "March 2025")
+      const parts = showDate.split(' ');
+      if (parts.length >= 2) {
+        const monthName = parts[0];
+        const yearFromShowDate = parseInt(parts[1]);
+        monthIndex = monthNames.indexOf(monthName);
         
-        if (!monthCounts[monthKey]) {
-          monthCounts[monthKey] = { count: 0, works: [], year: finalYear, month: monthIndex };  
+        if (!isNaN(yearFromShowDate) && yearFromShowDate > 1900 && yearFromShowDate < 2100) {
+          finalYear = yearFromShowDate;
         }
-        monthCounts[monthKey].count++;
-        monthCounts[monthKey].works.push(artwork.title);
-        
-        if (minYear === null || finalYear < minYear) minYear = finalYear;
-        if (maxYear === null || finalYear > maxYear) maxYear = finalYear;
-        parsedCount++;
-      } else {
-        console.warn(`Could not parse date for "${artwork.title}": showDate="${showDate}", year="${artwork.year}"`);
-        failedCount++;
       }
+      
+      // Альтернативный формат "YYYY-MM" или "YYYY/MM"
+      if (finalYear === null) {
+        const dateMatch = showDate.match(/(\d{4})[-\/](\d{1,2})/);
+        if (dateMatch) {
+          finalYear = parseInt(dateMatch[1]);
+          monthIndex = parseInt(dateMatch[2]) - 1;
+        }
+      }
+    }
+    
+    // Если год не найден из showDate, используем dataset.year и ставим декабрь
+    if (finalYear === null && artwork.year) {
+      finalYear = parseInt(artwork.year);
+      // ИСПРАВЛЕНИЕ: Если есть только год без месяца, ставим декабрь
+      if (monthIndex === -1) {
+        monthIndex = 11; // December
+      }
+    }
+    
+    // Валидация и добавление в подсчет
+    if (finalYear !== null && !isNaN(finalYear) && finalYear > 1900 && finalYear < 2100 &&
+        monthIndex !== -1 && monthIndex >= 0 && monthIndex < 12) {
+      
+      const monthKey = `${finalYear}-${String(monthIndex + 1).padStart(2, '0')}`;
+      
+      if (!monthCounts[monthKey]) {
+        monthCounts[monthKey] = { 
+          count: 0, 
+          works: [], 
+          year: finalYear, 
+          month: monthIndex 
+        };  
+      }
+      monthCounts[monthKey].count++;
+      monthCounts[monthKey].works.push(artwork.title);
+      
+      if (minYear === null || finalYear < minYear) minYear = finalYear;
+      if (maxYear === null || finalYear > maxYear) maxYear = finalYear;
+      parsedCount++;
     } else {
-      console.warn(`Invalid show_date format for "${artwork.title}": "${showDate}"`);
+      console.warn(`[Activity Graph] Could not parse date for "${artwork.title}": showDate="${showDate}", year="${artwork.year}"`);
       failedCount++;
     }
   });
   
-  if (minYear === null || maxYear === null) {
-    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">Could not parse dates</p>';
-    console.error(`Failed to parse dates from artworks. Parsed: ${parsedCount}, Failed: ${failedCount}`);
+  if (minYear === null || maxYear === null || parsedCount === 0) {
+    activityContainer.innerHTML = '<p style="text-align: center; color: #999;">Could not parse dates from artworks</p>';
+    console.error(`[Activity Graph] Failed to parse dates. Parsed: ${parsedCount}, Failed: ${failedCount}`);
     return;
   }
   
-  console.log(`Year range: ${minYear} to ${maxYear}`);
-  console.log(`Successfully parsed: ${parsedCount} artworks, Failed: ${failedCount}`);
-  console.log(`Months with activity: ${Object.keys(monthCounts).length}`);
+  console.log(`[Activity Graph] Year range: ${minYear} to ${maxYear}`);
+  console.log(`[Activity Graph] Successfully parsed: ${parsedCount} artworks, Failed: ${failedCount}`);
+  console.log(`[Activity Graph] Months with activity: ${Object.keys(monthCounts).length}`);
   
   // Calculate max count for color scaling
   const maxCount = Math.max(...Object.values(monthCounts).map(m => m.count), 1);
+  console.log(`[Activity Graph] Max works per month: ${maxCount}`);
   
   // Create grid container with month labels
   activityContainer.innerHTML = '';
@@ -108,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const label = document.createElement('div');
     label.className = 'month-label';
     label.textContent = monthName;
-    // Only show every other month label to reduce clutter
+    // Show every other month label to reduce clutter
     if (idx % 2 === 1) {
       label.style.opacity = '0.5';
     }
@@ -125,8 +159,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const numYears = maxYear - minYear + 1;
   grid.style.gridTemplateColumns = `repeat(${numYears}, 18px)`;
   
-  // Create cells organized by month (row) and year (column)
-  // We need to create 12 rows × numYears columns
+  // ИСПРАВЛЕНИЕ: Создаем ячейки по месяцам (строки) и годам (столбцы)
+  // 12 строк × numYears столбцов
   for (let monthIdx = 0; monthIdx < 12; monthIdx++) {
     for (let yearOffset = 0; yearOffset < numYears; yearOffset++) {
       const year = minYear + yearOffset;
@@ -142,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
       if (monthData) {
         cell.title = `${monthName}: ${monthData.count} work${monthData.count !== 1 ? 's' : ''}`;
         
-        // Assign grayscale level classes based on count
+        // ИСПРАВЛЕНИЕ: Улучшенная градация цветов (5 уровней)
         const ratio = monthData.count / maxCount;
         let level;
         if (ratio <= 0.2) level = 1;
@@ -152,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
         else level = 5;
         cell.classList.add(`level-${level}`);
         
-        // Tooltip
+        // Tooltip с улучшенной информацией
         cell.addEventListener('mouseenter', (e) => {
           if (!tooltip) return;
           tooltip.innerHTML = `
@@ -210,16 +244,20 @@ document.addEventListener('DOMContentLoaded', function() {
   activityContainer.appendChild(gridContainer);
   activityContainer.appendChild(yearLabelsRow);
   
-  // Update stats
-  updateStats(artworks, monthCounts);
+  // ИСПРАВЛЕНИЕ: Обновление статистики с корректными подсчетами
+  updateStats(artworks, monthCounts, parsedCount);
   
-  console.log('✓ Activity chart rendered successfully with 12-row layout');
+  console.log('✅ [Activity Graph] Rendered successfully with 12-row layout');
 });
 
-function updateStats(artworks, monthCounts) {
-  // Total works
+// ИСПРАВЛЕНИЕ: Улучшенная функция обновления статистики
+function updateStats(artworks, monthCounts, totalParsedWorks) {
+  // Total works - используем количество успешно обработанных работ
   const totalWorks = document.getElementById('total-works');
-  if (totalWorks) totalWorks.textContent = artworks.length;
+  if (totalWorks) {
+    totalWorks.textContent = totalParsedWorks;
+    console.log(`[Stats] Total works: ${totalParsedWorks}`);
+  }
   
   // Most productive month
   const mostProductive = document.getElementById('most-productive-month');
@@ -234,6 +272,7 @@ function updateStats(artworks, monthCounts) {
       const date = new Date(year, parseInt(month) - 1);
       const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
       mostProductive.textContent = `${monthName} (${maxMonth.count})`;
+      console.log(`[Stats] Most productive: ${monthName} with ${maxMonth.count} works`);
     }
   }
   
@@ -241,15 +280,16 @@ function updateStats(artworks, monthCounts) {
   const currentYearCount = document.getElementById('current-year-count');
   if (currentYearCount) {
     const currentYear = new Date().getFullYear();
-    const thisYearWorks = artworks.filter(a => {
-      // Parse year from show_date
-      const parts = a.showDate.split(' ');
-      if (parts.length >= 2) {
-        const year = parseInt(parts[1]);
-        return year === currentYear;
+    
+    // ИСПРАВЛЕНИЕ: Более надежный подсчет для текущего года
+    let thisYearWorks = 0;
+    for (const [monthKey, data] of Object.entries(monthCounts)) {
+      if (data.year === currentYear) {
+        thisYearWorks += data.count;
       }
-      return false;
-    }).length;
+    }
+    
     currentYearCount.textContent = thisYearWorks;
+    console.log(`[Stats] Current year (${currentYear}): ${thisYearWorks} works`);
   }
 }

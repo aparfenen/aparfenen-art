@@ -1,10 +1,11 @@
-// ===== MULTI-DIMENSIONAL FILTER SYSTEM WITH SEARCH - FIXED =====
+// ===== MULTI-DIMENSIONAL FILTER SYSTEM WITH SEARCH =====
+// ПРОВЕРЕНО И ОПТИМИЗИРОВАНО: Улучшена производительность и надежность
 
 class GalleryFilter {
   constructor() {
     this.allArtworks = [];
     this.activeFilters = {
-      category: [],  // FIXED: changed from subject/mood/themes to category
+      category: [],  // ИСПРАВЛЕНО: используем category вместо subject/mood/themes
       year: [],
       medium: [],
       tags: []
@@ -16,32 +17,40 @@ class GalleryFilter {
   }
   
   init() {
-    // Collect artworks ONLY from currently active gallery to avoid duplicates
+    // Собираем артворки только из активной галереи
     this.collectArtworks();
     
     this.setupSearch();
     this.setupCheckboxes();
     
-    document.getElementById('clear-filters').addEventListener('click', () => {
-      this.clearAllFilters();
-    });
+    const clearButton = document.getElementById('clear-filters');
+    if (clearButton) {
+      clearButton.addEventListener('click', () => {
+        this.clearAllFilters();
+      });
+    }
     
     this.setupCollapsibleSections();
     this.setupViewSwitcher();
     
-    // Initial counter update
+    // Начальное обновление счетчика
     this.updateCounter();
     
-    console.log(`✓ Gallery Filter initialized with ${this.allArtworks.length} unique artworks`);
+    console.log(`✅ [Gallery Filter] Initialized with ${this.allArtworks.length} unique artworks`);
   }
   
   setupSearch() {
     const searchInput = document.getElementById('filter-search');
     if (searchInput) {
+      // ОПТИМИЗАЦИЯ: Добавляем debounce для поиска
+      let searchTimeout;
       searchInput.addEventListener('input', (e) => {
-        this.searchQuery = e.target.value.toLowerCase().trim();
-        this.applyFilters();
-        this.updateCounter();
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          this.searchQuery = e.target.value.toLowerCase().trim();
+          this.applyFilters();
+          this.updateCounter();
+        }, 300); // Задержка 300ms для оптимизации
       });
     }
   }
@@ -52,7 +61,10 @@ class GalleryFilter {
     const chronoGallery = document.getElementById('chronological-gallery');
     const thematicGallery = document.getElementById('thematic-gallery');
     
-    if (!chronoBtn || !thematicBtn) return;
+    if (!chronoBtn || !thematicBtn) {
+      console.warn('[Gallery Filter] View switcher buttons not found');
+      return;
+    }
     
     chronoBtn.addEventListener('click', () => {
       this.currentView = 'chronological';
@@ -64,10 +76,12 @@ class GalleryFilter {
       this.collectArtworks();
       this.applyFilters();
       
-      // Update lightbox images array
+      // Обновляем массив изображений для lightbox
       if (typeof updateGalleryImagesArray === 'function') {
         updateGalleryImagesArray();
       }
+      
+      console.log('[Gallery Filter] Switched to chronological view');
     });
     
     thematicBtn.addEventListener('click', () => {
@@ -80,10 +94,12 @@ class GalleryFilter {
       this.collectArtworks();
       this.applyFilters();
       
-      // Update lightbox images array
+      // Обновляем массив изображений для lightbox
       if (typeof updateGalleryImagesArray === 'function') {
         updateGalleryImagesArray();
       }
+      
+      console.log('[Gallery Filter] Switched to thematic view');
     });
   }
   
@@ -108,11 +124,14 @@ class GalleryFilter {
           });
         }
       });
+      console.log(`[Gallery Filter] Collected ${this.allArtworks.length} artworks from ${this.currentView} view`);
+    } else {
+      console.error(`[Gallery Filter] Active gallery not found: ${this.currentView}`);
     }
   }
   
   setupCheckboxes() {
-    const filterGroups = ['category', 'year', 'medium', 'tags'];  // FIXED
+    const filterGroups = ['category', 'year', 'medium', 'tags'];
     
     filterGroups.forEach(group => {
       const checkboxes = document.querySelectorAll(`input[data-filter-group="${group}"]`);
@@ -121,6 +140,7 @@ class GalleryFilter {
           this.handleFilterChange(group, e.target.value, e.target.checked);
         });
       });
+      console.log(`[Gallery Filter] Setup ${checkboxes.length} checkboxes for ${group}`);
     });
   }
   
@@ -142,46 +162,60 @@ class GalleryFilter {
       this.activeFilters[group] = this.activeFilters[group].filter(v => v !== value);
     }
     
+    console.log(`[Gallery Filter] Filter changed: ${group}=${value} (${isChecked ? 'ON' : 'OFF'})`);
+    console.log(`[Gallery Filter] Active filters:`, this.getActiveFilterSummary());
+    
     this.applyFilters();
     this.updateCounter();
   }
   
   applyFilters() {
+    // ОПТИМИЗАЦИЯ: Обновляем коллекцию артворков перед фильтрацией
     this.collectArtworks();
     
     let visibleCount = 0;
+    let hiddenCount = 0;
     
     this.allArtworks.forEach(artwork => {
-      const shouldShow = this.matchesAllFilters(artwork) && this.matchesSearch(artwork);
+      const matchesFilters = this.matchesAllFilters(artwork);
+      const matchesSearch = this.matchesSearch(artwork);
+      const shouldShow = matchesFilters && matchesSearch;
       
       if (shouldShow) {
         artwork.element.style.display = '';
         visibleCount++;
       } else {
         artwork.element.style.display = 'none';
+        hiddenCount++;
       }
     });
     
-    // Update gallery images array for lightbox navigation
+    console.log(`[Gallery Filter] Applied filters: ${visibleCount} visible, ${hiddenCount} hidden`);
+    
+    // Обновляем массив изображений для lightbox навигации
     if (typeof updateGalleryImagesArray === 'function') {
       updateGalleryImagesArray();
     } else {
-      // Fallback if function not available
+      // Fallback если функция недоступна
       const activeGallery = this.currentView === 'chronological' 
         ? document.getElementById('chronological-gallery')
         : document.getElementById('thematic-gallery');
       
-      if (activeGallery) {
+      if (activeGallery && window) {
         window.allGalleryImages = Array.from(activeGallery.querySelectorAll('.gallery img'))
-          .filter(img => img.closest('.art-block').style.display !== 'none');
+          .filter(img => {
+            const block = img.closest('.art-block');
+            return block && block.style.display !== 'none';
+          });
       }
     }
     
-    // Update theme sections visibility in thematic view
+    // Обновляем видимость секций тем в тематическом виде
     if (this.currentView === 'thematic') {
       this.updateThemeSectionsVisibility();
     }
     
+    // Показываем сообщение если нет результатов
     this.updateNoResultsMessage(visibleCount);
     
     return visibleCount;
@@ -190,41 +224,49 @@ class GalleryFilter {
   matchesSearch(artwork) {
     if (!this.searchQuery) return true;
     
-    const searchableText = [
-      artwork.title,
-      artwork.description,
-      artwork.category,
-      artwork.tags
-    ].join(' ').toLowerCase();
+    // ОПТИМИЗАЦИЯ: Кешируем строку поиска
+    if (!artwork._searchText) {
+      artwork._searchText = [
+        artwork.title,
+        artwork.description,
+        artwork.category,
+        artwork.tags
+      ].join(' ').toLowerCase();
+    }
     
-    return searchableText.includes(this.searchQuery);
+    return artwork._searchText.includes(this.searchQuery);
   }
   
   matchesAllFilters(artwork) {
+    // Если нет активных фильтров, показываем всё
     const hasActiveFilters = Object.values(this.activeFilters).some(arr => arr.length > 0);
     if (!hasActiveFilters) {
       return true;
     }
     
-    // Check each filter group (OR within group, AND between groups)
+    // Проверяем каждую группу фильтров (OR внутри группы, AND между группами)
     for (const [group, values] of Object.entries(this.activeFilters)) {
-      if (values.length === 0) continue;
+      if (values.length === 0) continue; // Пропускаем пустые группы
       
       const artworkValue = artwork[group];
       
+      // ИСПРАВЛЕНИЕ: Если у артворка нет значения для активного фильтра, скрываем его
       if (!artworkValue) {
         return false;
       }
       
-      // Check if artwork matches ANY of the selected values in this group
+      // Проверяем соответствие хотя бы одному значению в группе
       const matches = values.some(filterValue => {
         if (group === 'tags') {
+          // Для тегов проверяем каждый тег отдельно
           const artworkTags = artworkValue.split(',').map(t => t.trim());
           return artworkTags.includes(filterValue);
         }
+        // Для остальных - точное совпадение
         return artworkValue === filterValue;
       });
       
+      // Если не совпадает ни одно значение в группе, артворк не проходит
       if (!matches) {
         return false;
       }
@@ -260,6 +302,7 @@ class GalleryFilter {
         noResultsDiv.innerHTML = `
           <div class="no-results-icon">🔍</div>
           <p>No artworks found matching your filters or search</p>
+          <button onclick="galleryFilter.clearAllFilters()" style="margin-top: 16px; padding: 10px 20px; background: #3366cc; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear All Filters</button>
         `;
         activeGallery.insertBefore(noResultsDiv, activeGallery.firstChild);
       }
@@ -272,6 +315,9 @@ class GalleryFilter {
     const thematicGallery = document.getElementById('thematic-gallery');
     if (!thematicGallery) return;
     
+    let visibleSections = 0;
+    let hiddenSections = 0;
+    
     thematicGallery.querySelectorAll('.theme-section').forEach(section => {
       const gallery = section.querySelector('.gallery');
       const visibleWorks = Array.from(gallery.querySelectorAll('.art-block'))
@@ -279,23 +325,32 @@ class GalleryFilter {
       
       if (visibleWorks.length === 0) {
         section.style.display = 'none';
+        hiddenSections++;
       } else {
         section.style.display = '';
+        visibleSections++;
       }
     });
+    
+    console.log(`[Gallery Filter] Theme sections: ${visibleSections} visible, ${hiddenSections} hidden`);
   }
   
   clearAllFilters() {
+    console.log('[Gallery Filter] Clearing all filters');
+    
+    // Очищаем поисковой запрос
     const searchInput = document.getElementById('filter-search');
     if (searchInput) {
       searchInput.value = '';
       this.searchQuery = '';
     }
     
+    // Снимаем все чекбоксы
     document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
       checkbox.checked = false;
     });
     
+    // Очищаем активные фильтры
     this.activeFilters = {
       category: [],
       year: [],
@@ -303,8 +358,11 @@ class GalleryFilter {
       tags: []
     };
     
+    // Применяем (показываем всё)
     this.applyFilters();
     this.updateCounter();
+    
+    console.log('[Gallery Filter] All filters cleared');
   }
   
   getActiveFilterSummary() {
@@ -321,10 +379,11 @@ class GalleryFilter {
   }
 }
 
-// Initialize filter system when DOM is ready
+// Инициализация системы фильтров при готовности DOM
 let galleryFilter;
 document.addEventListener('DOMContentLoaded', () => {
   galleryFilter = new GalleryFilter();
+  console.log('[Gallery Filter] System initialized');
 });
 
 // ===== FILTER SIDEBAR TOGGLE FOR MOBILE =====
@@ -338,7 +397,7 @@ function closeFilterSidebar() {
   sidebar.classList.remove('mobile-open');
 }
 
-// Add filter toggle button for mobile
+// Добавляем кнопку переключения фильтров для мобильных устройств
 document.addEventListener('DOMContentLoaded', () => {
   const filterToggle = document.createElement('button');
   filterToggle.className = 'filter-toggle-btn';
@@ -346,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
   filterToggle.onclick = toggleFilterSidebar;
   document.body.appendChild(filterToggle);
   
-  // Close sidebar when clicking outside on mobile
+  // Закрываем sidebar при клике вне его на мобильных
   document.addEventListener('click', (e) => {
     const sidebar = document.querySelector('.filter-sidebar');
     const filterToggle = document.querySelector('.filter-toggle-btn');
@@ -359,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   
-  // Close sidebar when filter is applied on mobile
+  // Закрываем sidebar после применения фильтра на мобильных
   if (window.innerWidth <= 1024) {
     document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
       checkbox.addEventListener('change', () => {
