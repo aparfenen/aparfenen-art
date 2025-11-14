@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Calculate number of columns needed (one per year)
   const numYears = maxYear - minYear + 1;
-  grid.style.gridTemplateColumns = `repeat(${numYears}, 14px)`;
+  grid.style.gridTemplateColumns = `repeat(${numYears}, 18px)`;
   
   // Create cells organized by month (row) and year (column)
   // We need to create 12 rows × numYears columns
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Year labels grid
   const yearLabelsGrid = document.createElement('div');
   yearLabelsGrid.className = 'year-labels-grid';
-  yearLabelsGrid.style.gridTemplateColumns = `repeat(${numYears}, 14px)`;
+  yearLabelsGrid.style.gridTemplateColumns = `repeat(${numYears}, 18px)`;
   
   for (let yearOffset = 0; yearOffset < numYears; yearOffset++) {
     const year = minYear + yearOffset;

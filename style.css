@@ -722,8 +722,8 @@ nav.main-nav .sub-menu a {
 }
 
 .legend-box {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 2px;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
@@ -775,27 +775,27 @@ nav.main-nav .sub-menu a {
 
 .activity-grid-container {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: flex-start;
   margin-bottom: 8px;
-  justify-content: center;  ← ДОБАВЛЕНО ДЛЯ ЦЕНТРИРОВАНИЯ!
+  justify-content: center;
 }
 
 .month-labels-column {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   padding-top: 0;
-  min-width: 35px;
+  min-width: 40px;
 }
 
 .month-label {
-  height: 14px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding-right: 8px;
-  font-size: 0.7em;
+  font-size: 0.85em;
   color: #666;
   font-weight: 500;
   line-height: 1;
@@ -803,14 +803,14 @@ nav.main-nav .sub-menu a {
 
 .activity-grid {
   display: grid;
-  grid-template-rows: repeat(12, 14px);
-  gap: 3px;
+  grid-template-rows: repeat(12, 18px);
+  gap: 4px;
   grid-auto-flow: column;
 }
 
 .activity-cell {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -843,7 +843,7 @@ nav.main-nav .sub-menu a {
 
 .year-labels-row {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: flex-start;
   margin-top: 8px;
   padding-left: 0;
@@ -852,19 +852,19 @@ nav.main-nav .sub-menu a {
 .year-labels-grid {
   display: grid;
   grid-auto-flow: column;
-  gap: 3px;
+  gap: 4px;
 }
 
 .year-label-item {
-  width: 14px;
+  width: 18px;
   text-align: center;
-  font-size: 0.7em;
+  font-size: 0.8em;
   color: #666;
   font-weight: 500;
   transform: rotate(-45deg);
   transform-origin: center;
   white-space: nowrap;
-  padding-top: 10px;
+  padding-top: 12px;
 }
 
 #activity-tooltip {
