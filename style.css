@@ -824,7 +824,6 @@ nav.main-nav .sub-menu a:hover {
 }
 
 /* ===== TOOLTIP UPDATE ===== */
-/* INSTRUCTIONS: Find .activity-tooltip (around line 888) and UPDATE it to add these two lines at the end */
 
 .activity-tooltip {
   position: fixed;
@@ -843,7 +842,6 @@ nav.main-nav .sub-menu a:hover {
 }
 
 /* ===== RESPONSIVE STYLES UPDATE ===== */
-/* INSTRUCTIONS: Find your @media (max-width: 768px) section and ADD this content inside it */
 
 @media (max-width: 768px) {
   /* ... your existing mobile styles ... */
@@ -883,7 +881,6 @@ nav.main-nav .sub-menu a:hover {
 }
 
 /* ===== ADD NEW MOBILE MEDIA QUERY ===== */
-/* INSTRUCTIONS: Add this new media query after your 768px one */
 
 @media (max-width: 480px) {
   .activity-cell {
