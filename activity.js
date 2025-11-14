@@ -9,17 +9,21 @@ document.addEventListener('DOMContentLoaded', function() {
     return;
   }
   
-  // Collect artworks with dates
-  const artworks = Array.from(document.querySelectorAll('.gallery img')).map(img => {
+  // Collect artworks with dates (ONLY from chronological gallery to avoid duplicates)
+  const chronologicalGallery = document.querySelector('#chronological-gallery .gallery');
+  const galleryToUse = chronologicalGallery || document.querySelector('.gallery');
+  
+  const artworks = Array.from(galleryToUse.querySelectorAll('img')).map(img => {
     return {
       dateCreated: img.dataset.dateCreated || '',  
       showDate: img.dataset.date || '', // This is show_date from CSV
       title: img.dataset.title || 'Untitled',
-      year: img.dataset.year || ''
+      year: img.dataset.year || '',
+      id: img.closest('.art-block')?.id || ''
     };
   }).filter(a => a.showDate); // Only filter by showDate existence
   
-  console.log(`Found ${artworks.length} artworks with show_date`);
+  console.log(`Found ${artworks.length} unique artworks with show_date (from chronological gallery)`);
   
   if (artworks.length === 0) {
     activityContainer.innerHTML = '<p style="text-align: center; color: #999;">No date data available</p>';

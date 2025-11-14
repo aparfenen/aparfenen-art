@@ -13,10 +13,31 @@ let currentImageId = "";
 let allGalleryImages = [];
 let currentImageIndex = -1;
 
-// Get all gallery images on load
+// Get all gallery images on load (ONLY from active gallery to avoid duplicates)
 document.addEventListener("DOMContentLoaded", () => {
-  allGalleryImages = Array.from(document.querySelectorAll(".gallery img"));
+  updateGalleryImagesArray();
 });
+
+// Helper function to update gallery images array based on active view
+function updateGalleryImagesArray() {
+  const activeGallery = document.querySelector('.gallery-container.active .gallery');
+  if (activeGallery) {
+    allGalleryImages = Array.from(activeGallery.querySelectorAll('img'))
+      .filter(img => {
+        const artBlock = img.closest('.art-block');
+        return artBlock && artBlock.style.display !== 'none';
+      });
+  } else {
+    // Fallback to chronological gallery if no active class found
+    const chronoGallery = document.querySelector('#chronological-gallery .gallery');
+    allGalleryImages = Array.from((chronoGallery || document.querySelector('.gallery')).querySelectorAll('img'))
+      .filter(img => {
+        const artBlock = img.closest('.art-block');
+        return artBlock && artBlock.style.display !== 'none';
+      });
+  }
+  console.log(`Lightbox: ${allGalleryImages.length} visible images in active gallery`);
+}
 
 // Function to open lightbox for a specific image
 function openLightbox(img) {
@@ -131,8 +152,8 @@ document.addEventListener("keydown", (e) => {
 
 // Check if URL has hash on page load and open corresponding lightbox
 window.addEventListener("DOMContentLoaded", () => {
-  // Initialize gallery images array
-  allGalleryImages = Array.from(document.querySelectorAll(".gallery img"));
+  // Initialize gallery images array using our helper function
+  updateGalleryImagesArray();
   
   const hash = window.location.hash.substring(1); // Remove #
   if (hash) {

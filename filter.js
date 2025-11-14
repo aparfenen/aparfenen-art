@@ -16,21 +16,8 @@ class GalleryFilter {
   }
   
   init() {
-    // Collect all artworks with their metadata
-    document.querySelectorAll('.art-block').forEach(block => {
-      const img = block.querySelector('img');
-      if (img) {
-        this.allArtworks.push({
-          element: block,
-          category: img.dataset.category || '',  // FIXED
-          year: img.dataset.year || '',
-          medium: img.dataset.medium || '',
-          tags: img.dataset.tags || '',
-          title: img.dataset.title || '',
-          description: img.dataset.description || ''
-        });
-      }
-    });
+    // Collect artworks ONLY from currently active gallery to avoid duplicates
+    this.collectArtworks();
     
     this.setupSearch();
     this.setupCheckboxes();
@@ -42,7 +29,10 @@ class GalleryFilter {
     this.setupCollapsibleSections();
     this.setupViewSwitcher();
     
-    console.log(`✓ Gallery Filter initialized with ${this.allArtworks.length} artworks`);
+    // Initial counter update
+    this.updateCounter();
+    
+    console.log(`✓ Gallery Filter initialized with ${this.allArtworks.length} unique artworks`);
   }
   
   setupSearch() {
@@ -73,6 +63,11 @@ class GalleryFilter {
       
       this.collectArtworks();
       this.applyFilters();
+      
+      // Update lightbox images array
+      if (typeof updateGalleryImagesArray === 'function') {
+        updateGalleryImagesArray();
+      }
     });
     
     thematicBtn.addEventListener('click', () => {
@@ -84,6 +79,11 @@ class GalleryFilter {
       
       this.collectArtworks();
       this.applyFilters();
+      
+      // Update lightbox images array
+      if (typeof updateGalleryImagesArray === 'function') {
+        updateGalleryImagesArray();
+      }
     });
   }
   
@@ -163,13 +163,18 @@ class GalleryFilter {
     });
     
     // Update gallery images array for lightbox navigation
-    const activeGallery = this.currentView === 'chronological' 
-      ? document.getElementById('chronological-gallery')
-      : document.getElementById('thematic-gallery');
-    
-    if (activeGallery) {
-      window.allGalleryImages = Array.from(activeGallery.querySelectorAll('.gallery img'))
-        .filter(img => img.closest('.art-block').style.display !== 'none');
+    if (typeof updateGalleryImagesArray === 'function') {
+      updateGalleryImagesArray();
+    } else {
+      // Fallback if function not available
+      const activeGallery = this.currentView === 'chronological' 
+        ? document.getElementById('chronological-gallery')
+        : document.getElementById('thematic-gallery');
+      
+      if (activeGallery) {
+        window.allGalleryImages = Array.from(activeGallery.querySelectorAll('.gallery img'))
+          .filter(img => img.closest('.art-block').style.display !== 'none');
+      }
     }
     
     // Update theme sections visibility in thematic view
