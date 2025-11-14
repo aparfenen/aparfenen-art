@@ -1,4 +1,4 @@
-// ===== ACTIVITY GRAPH VISUALIZATION WITH ROBUST DATE PARSING =====
+// ===== ACTIVITY GRAPH VISUALIZATION WITH 12-ROW LAYOUT =====
 
 document.addEventListener('DOMContentLoaded', function() {
   const activityContainer = document.getElementById('activity-chart');
@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Parse dates from show_date (e.g., "March 2025")
   const monthCounts = {};
-  let minDate = null;
-  let maxDate = null;
+  let minYear = null;
+  let maxYear = null;
   let parsedCount = 0;
   let failedCount = 0;
   
@@ -53,17 +53,16 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       if (monthIndex !== -1 && !isNaN(finalYear) && finalYear > 1900 && finalYear < 2100) {
-        const date = new Date(finalYear, monthIndex, 1);
         const monthKey = `${finalYear}-${String(monthIndex + 1).padStart(2, '0')}`;
         
         if (!monthCounts[monthKey]) {
-          monthCounts[monthKey] = { count: 0, works: [], date: date };  
+          monthCounts[monthKey] = { count: 0, works: [], year: finalYear, month: monthIndex };  
         }
         monthCounts[monthKey].count++;
         monthCounts[monthKey].works.push(artwork.title);
         
-        if (!minDate || date < minDate) minDate = date;
-        if (!maxDate || date > maxDate) maxDate = date;
+        if (minYear === null || finalYear < minYear) minYear = finalYear;
+        if (maxYear === null || finalYear > maxYear) maxYear = finalYear;
         parsedCount++;
       } else {
         console.warn(`Could not parse date for "${artwork.title}": showDate="${showDate}", year="${artwork.year}"`);
@@ -75,82 +74,142 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  if (!minDate || !maxDate) {
+  if (minYear === null || maxYear === null) {
     activityContainer.innerHTML = '<p style="text-align: center; color: #999;">Could not parse dates</p>';
     console.error(`Failed to parse dates from artworks. Parsed: ${parsedCount}, Failed: ${failedCount}`);
     return;
   }
   
-  console.log(`Date range: ${minDate.toLocaleDateString()} to ${maxDate.toLocaleDateString()}`);
+  console.log(`Year range: ${minYear} to ${maxYear}`);
   console.log(`Successfully parsed: ${parsedCount} artworks, Failed: ${failedCount}`);
   console.log(`Months with activity: ${Object.keys(monthCounts).length}`);
   
-  // Generate all months in range IN CHRONOLOGICAL ORDER (oldest to newest)
-  const months = [];
-  const current = new Date(minDate);
-  current.setDate(1);
+  // Calculate max count for color scaling
+  const maxCount = Math.max(...Object.values(monthCounts).map(m => m.count), 1);
   
-  while (current <= maxDate) {
-    const monthKey = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, '0')}`;
-    months.push({
-      key: monthKey,
-      date: new Date(current),
-      count: monthCounts[monthKey]?.count || 0,
-      works: monthCounts[monthKey]?.works || []
-    });
-    current.setMonth(current.getMonth() + 1); 
+  // Create grid container with month labels
+  activityContainer.innerHTML = '';
+  const gridContainer = document.createElement('div');
+  gridContainer.className = 'activity-grid-container';
+  
+  // Add month labels column
+  const monthLabelsCol = document.createElement('div');
+  monthLabelsCol.className = 'month-labels-column';
+  
+  // Short month names for labels
+  const shortMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  shortMonths.forEach((monthName, idx) => {
+    const label = document.createElement('div');
+    label.className = 'month-label';
+    label.textContent = monthName;
+    // Only show every other month label to reduce clutter
+    if (idx % 2 === 1) {
+      label.style.opacity = '0.5';
+    }
+    monthLabelsCol.appendChild(label);
+  });
+  
+  gridContainer.appendChild(monthLabelsCol);
+  
+  // Create the main grid for cells
+  const grid = document.createElement('div');
+  grid.className = 'activity-grid';
+  
+  // Calculate number of columns needed (one per year)
+  const numYears = maxYear - minYear + 1;
+  grid.style.gridTemplateColumns = `repeat(${numYears}, 14px)`;
+  
+  // Create cells organized by month (row) and year (column)
+  // We need to create 12 rows × numYears columns
+  for (let monthIdx = 0; monthIdx < 12; monthIdx++) {
+    for (let yearOffset = 0; yearOffset < numYears; yearOffset++) {
+      const year = minYear + yearOffset;
+      const monthKey = `${year}-${String(monthIdx + 1).padStart(2, '0')}`;
+      const monthData = monthCounts[monthKey];
+      
+      const cell = document.createElement('div');
+      cell.className = 'activity-cell';
+      
+      const date = new Date(year, monthIdx, 1);
+      const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+      
+      if (monthData) {
+        cell.title = `${monthName}: ${monthData.count} work${monthData.count !== 1 ? 's' : ''}`;
+        
+        // Assign grayscale level classes based on count
+        const ratio = monthData.count / maxCount;
+        let level;
+        if (ratio <= 0.2) level = 1;
+        else if (ratio <= 0.4) level = 2;
+        else if (ratio <= 0.6) level = 3; 
+        else if (ratio <= 0.8) level = 4;
+        else level = 5;
+        cell.classList.add(`level-${level}`);
+        
+        // Tooltip
+        cell.addEventListener('mouseenter', (e) => {
+          if (!tooltip) return;
+          tooltip.innerHTML = `
+            <strong>${monthName}</strong><br>
+            ${monthData.count} work${monthData.count !== 1 ? 's' : ''}
+            ${monthData.works.length > 0 ? '<br><small>' + monthData.works.slice(0, 3).join(', ') + (monthData.works.length > 3 ? '...' : '') + '</small>' : ''}
+          `;
+          tooltip.style.display = 'block';
+          
+          const rect = cell.getBoundingClientRect();
+          tooltip.style.left = rect.left + rect.width / 2 + 'px';
+          tooltip.style.top = rect.top - 10 + 'px';
+        });
+        
+        cell.addEventListener('mouseleave', () => {
+          if (tooltip) tooltip.style.display = 'none';  
+        });
+      } else {
+        // Empty cell
+        cell.classList.add('empty');
+        cell.title = `${monthName}: 0 works`;
+      }
+      
+      grid.appendChild(cell);
+    }
   }
   
-  const maxCount = Math.max(...months.map(m => m.count), 1);
+  gridContainer.appendChild(grid);
   
-  // Render activity chart IN CHRONOLOGICAL ORDER
-  activityContainer.innerHTML = '';
-  months.forEach(month => {
-    const cell = document.createElement('div');
-    cell.className = 'activity-cell';
-    cell.title = `${month.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}: ${month.count} works`;
-    
-    // Assign grayscale level classes based on count
-    if (month.count === 0) {
-      cell.classList.add('empty');
-    } else {
-      const ratio = month.count / maxCount;
-      let level;
-      if (ratio <= 0.2) level = 1;
-      else if (ratio <= 0.4) level = 2;
-      else if (ratio <= 0.6) level = 3; 
-      else if (ratio <= 0.8) level = 4;
-      else level = 5;
-      cell.classList.add(`level-${level}`);
-    }
-    
-    // Tooltip
-    cell.addEventListener('mouseenter', (e) => {
-      if (!tooltip) return;
-      const monthName = month.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
-      tooltip.innerHTML = `
-        <strong>${monthName}</strong><br>
-        ${month.count} work${month.count !== 1 ? 's' : ''}
-        ${month.works.length > 0 ? '<br><small>' + month.works.slice(0, 3).join(', ') + (month.works.length > 3 ? '...' : '') + '</small>' : ''}
-      `;
-      tooltip.style.display = 'block';
-      
-      const rect = cell.getBoundingClientRect();
-      tooltip.style.left = rect.left + rect.width / 2 + 'px';
-      tooltip.style.top = rect.top - 10 + 'px';
-    });
-    
-    cell.addEventListener('mouseleave', () => {
-      if (tooltip) tooltip.style.display = 'none';  
-    });
-    
-    activityContainer.appendChild(cell);
-  });
+  // Add year labels at the bottom
+  const yearLabelsRow = document.createElement('div');
+  yearLabelsRow.className = 'year-labels-row';
+  
+  // Empty space for month label column alignment
+  const emptySpace = document.createElement('div');
+  emptySpace.className = 'month-labels-column';
+  emptySpace.style.visibility = 'hidden';
+  yearLabelsRow.appendChild(emptySpace);
+  
+  // Year labels grid
+  const yearLabelsGrid = document.createElement('div');
+  yearLabelsGrid.className = 'year-labels-grid';
+  yearLabelsGrid.style.gridTemplateColumns = `repeat(${numYears}, 14px)`;
+  
+  for (let yearOffset = 0; yearOffset < numYears; yearOffset++) {
+    const year = minYear + yearOffset;
+    const yearLabel = document.createElement('div');
+    yearLabel.className = 'year-label-item';
+    yearLabel.textContent = year;
+    yearLabelsGrid.appendChild(yearLabel);
+  }
+  
+  yearLabelsRow.appendChild(yearLabelsGrid);
+  
+  activityContainer.appendChild(gridContainer);
+  activityContainer.appendChild(yearLabelsRow);
   
   // Update stats
   updateStats(artworks, monthCounts);
   
-  console.log('✓ Activity chart rendered successfully in chronological order');
+  console.log('✓ Activity chart rendered successfully with 12-row layout');
 });
 
 function updateStats(artworks, monthCounts) {
