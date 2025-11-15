@@ -188,7 +188,7 @@ print(f"✓ Sorted {len(df)} artworks chronologically (newest first)\n")
 unique_categories = sorted(df['category'].unique())
 unique_categories = [c for c in unique_categories if c]
 
-unique_years = sorted(df['year'].unique(), reverse=True)
+unique_years = sorted([str(int(float(y))) if pd.notna(y) and y != '' else y for y in df['year'].unique()], reverse=True)
 unique_years = [y for y in unique_years if y]
 
 # Collect unique mediums and tags

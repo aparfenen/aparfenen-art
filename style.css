@@ -55,7 +55,7 @@ h3.section-title {
   font-size: 1.15em;
   line-height: 1.7;
   color: #222;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 20px auto;
   padding: 10px;
   box-sizing: border-box;
@@ -71,7 +71,7 @@ h3.section-title {
   font-size: 1.15em;
   line-height: 1.7;
   color: #222;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 20px auto;
   padding: 10px;
   box-sizing: border-box;
@@ -95,7 +95,7 @@ h3.section-title {
 
 /* Gallery intro */
 .gallery-intro {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 10px auto 10px auto;
   text-align: center;
   font-size: 1.15em;
@@ -108,7 +108,7 @@ h3.section-title {
   justify-content: center;
   gap: 12px;
   margin: 20px auto 30px auto;
-  max-width: 1000px;
+  max-width: 1200px;
 }
 
 .view-btn {
@@ -151,6 +151,7 @@ h3.section-title {
   gap: 16px;
   padding: 24px;
   max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
   align-items: start; /* IMPORTANT: prevents stretching */
 }
@@ -294,7 +295,7 @@ h3.section-title {
 /* ===== LIGHTBOX NAVIGATION ARROWS ===== */
 .lightbox-nav {
   position: absolute;
-  top: 35%;
+  top: 50%;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.9);
   border: none;
@@ -333,8 +334,8 @@ h3.section-title {
 
 .lightbox-counter {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  top: 20px;
+  left: 20px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 6px 12px;
@@ -580,12 +581,12 @@ h3.section-title {
   margin: 60px auto 30px auto;
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  max-width: 1000px;
+  max-width: 1200px;
   width: 100%;
 }
 
 footer.contact-info {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 60px auto;
   text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -607,6 +608,9 @@ footer.contact-info h2 {
   gap: 32px;
   align-items: center;
   padding: 10px 0;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .contact-row a {
@@ -703,6 +707,7 @@ nav.main-nav .sub-menu a {
 
 .activity-container {
   max-width: 1200px;
+  width: 100%;
   margin: 40px auto;
   padding: 30px;
   background: #fff;
@@ -971,7 +976,7 @@ nav.main-nav .sub-menu a {
 /* ===== LIGHTBOX NAVIGATION ARROWS ===== */
 .lightbox-nav {
   position: absolute;
-  top: 35%;
+  top: 50%;
   transform: translateY(-50%);
   background: rgba(255, 255, 255, 0.9);
   border: none;
@@ -1010,8 +1015,8 @@ nav.main-nav .sub-menu a {
 
 .lightbox-counter {
   position: absolute;
-  bottom: 20px;
-  right: 20px;
+  top: 20px;
+  left: 20px;
   background: rgba(0, 0, 0, 0.7);
   color: white;
   padding: 6px 12px;
@@ -1257,12 +1262,12 @@ nav.main-nav .sub-menu a {
   margin: 60px auto 30px auto;
   border: none;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  max-width: 1000px;
+  max-width: 1200px;
   width: 100%;
 }
 
 footer.contact-info {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 60px auto;
   text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
@@ -1284,6 +1289,9 @@ footer.contact-info h2 {
   gap: 32px;
   align-items: center;
   padding: 10px 0;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .contact-row a {
