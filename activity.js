@@ -137,10 +137,8 @@ function generateTimeline() {
       months: []
     };
     
-    const monthStart = (year === startYear) ? startMonth : 0;
-    const monthEnd = (year === endYear) ? endMonth : 11;
-    
-    for (let month = monthStart; month <= monthEnd; month++) {
+    // ИСПРАВЛЕНО: Всегда показываем ВСЕ 12 месяцев для каждого года
+    for (let month = 0; month <= 11; month++) {
       const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
       yearData.months.push({
         month: month,
@@ -149,9 +147,7 @@ function generateTimeline() {
       });
     }
     
-    if (yearData.months.length > 0) {
-      timeline.push(yearData);
-    }
+    timeline.push(yearData);
   }
   
   return timeline;
