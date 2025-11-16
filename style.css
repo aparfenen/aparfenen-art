@@ -1208,17 +1208,16 @@ footer.contact-info h2 {
 }
 
 
-/* ===== ACTIVITY VISUALIZATION - ПРАВИЛЬНОЕ ВЫРАВНИВАНИЕ ===== */
+/* ===== ACTIVITY VISUALIZATION - GRAY THEME ===== */
 
-/* Основной контейнер - выровнен по ширине галереи */
+/* Main container aligned with gallery width */
 .activity-container {
-  max-width: 1200px; /* ← Та же ширина что у .gallery */
+  max-width: 1200px;
   margin: 40px auto;
-  padding: 0 20px;
+  padding: 32px;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  padding: 32px;
 }
 
 /* Activity heading */
@@ -1249,27 +1248,31 @@ footer.contact-info h2 {
 }
 
 .legend-box.empty {
-  background: #f0f0f0;
+  background: #f8f8f8;
 }
 
 .legend-box.level-1 {
-  background: #c6e2ff;
+  background: #e0e0e0;
 }
 
 .legend-box.level-2 {
-  background: #7cb9ff;
+  background: #b8b8b8;
 }
 
 .legend-box.level-3 {
-  background: #3d8fff;
+  background: #909090;
 }
 
 .legend-box.level-4 {
-  background: #1a6cd7;
+  background: #686868;
 }
 
 .legend-box.level-5 {
-  background: #0047b3;
+  background: #404040;
+}
+
+.legend-box.level-6 {
+  background: #1a1a1a;
 }
 
 /* Statistics - 3 cards in a row */
@@ -1285,20 +1288,20 @@ footer.contact-info h2 {
 .stat-item {
   text-align: center;
   padding: 16px;
-  background: rgba(51, 102, 204, 0.03);
+  background: rgba(0, 0, 0, 0.02);
   border-radius: 8px;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .stat-item:hover {
   transform: translateY(-2px);
-  background: rgba(51, 102, 204, 0.06);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .stat-number {
   font-size: 2em;
   font-weight: 700;
-  color: #3366cc;
+  color: #333;
   margin-bottom: 8px;
   line-height: 1;
 }
@@ -1309,76 +1312,130 @@ footer.contact-info h2 {
   font-weight: 500;
 }
 
-/* Activity chart - 2 columns for compactness */
-.activity-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px 32px;
+/* Activity timeline - compact year-based visualization */
+.activity-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   margin: 0 auto;
   max-width: 100%;
 }
 
-.activity-month-cell {
+.activity-year {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
+  gap: 16px;
+  padding: 12px;
   background: rgba(0, 0, 0, 0.01);
-  border-radius: 6px;
+  border-radius: 8px;
   transition: background 0.2s ease;
 }
 
-.activity-month-cell:hover {
-  background: rgba(0, 0, 0, 0.03);
+.activity-year:hover {
+  background: rgba(0, 0, 0, 0.02);
 }
 
-.activity-month-label {
-  font-size: 0.85em;
+.year-label {
   font-weight: 600;
-  color: #555;
-  min-width: 75px;
+  font-size: 0.95em;
+  color: #444;
+  min-width: 50px;
   text-align: right;
 }
 
-.activity-cell {
+.year-months {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
   flex: 1;
-  height: 28px;
+}
+
+.month-box {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid rgba(0, 0, 0, 0.08);
   position: relative;
+  font-size: 0.75em;
 }
 
-.activity-cell:hover {
-  transform: scale(1.03);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+.month-box:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   z-index: 10;
 }
 
-/* Activity levels - from light to dark */
-.activity-cell.empty {
-  background: #f0f0f0;
+.month-abbr {
+  font-weight: 600;
+  color: #666;
+  line-height: 1;
 }
 
-.activity-cell.level-1 {
-  background: #c6e2ff;
+.month-count {
+  font-weight: 700;
+  color: #333;
+  font-size: 0.9em;
+  line-height: 1;
+  margin-top: 2px;
 }
 
-.activity-cell.level-2 {
-  background: #7cb9ff;
+/* Activity levels - gray scale */
+.month-box.empty {
+  background: #f8f8f8;
 }
 
-.activity-cell.level-3 {
-  background: #3d8fff;
+.month-box.empty .month-abbr {
+  color: #bbb;
 }
 
-.activity-cell.level-4 {
-  background: #1a6cd7;
+.month-box.level-1 {
+  background: #e0e0e0;
 }
 
-.activity-cell.level-5 {
-  background: #0047b3;
+.month-box.level-2 {
+  background: #b8b8b8;
+}
+
+.month-box.level-3 {
+  background: #909090;
+}
+
+.month-box.level-3 .month-abbr,
+.month-box.level-3 .month-count {
+  color: #fff;
+}
+
+.month-box.level-4 {
+  background: #686868;
+}
+
+.month-box.level-4 .month-abbr,
+.month-box.level-4 .month-count {
+  color: #fff;
+}
+
+.month-box.level-5 {
+  background: #404040;
+}
+
+.month-box.level-5 .month-abbr,
+.month-box.level-5 .month-count {
+  color: #fff;
+}
+
+.month-box.level-6 {
+  background: #1a1a1a;
+}
+
+.month-box.level-6 .month-abbr,
+.month-box.level-6 .month-count {
+  color: #fff;
 }
 
 /* Tooltip for Activity */
@@ -1410,9 +1467,13 @@ footer.contact-info h2 {
     gap: 16px;
   }
   
-  .activity-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 14px 24px;
+  .year-months {
+    gap: 3px;
+  }
+  
+  .month-box {
+    width: 32px;
+    height: 32px;
   }
   
   .stat-number {
@@ -1441,19 +1502,25 @@ footer.contact-info h2 {
     font-size: 0.85em;
   }
   
-  /* Chart in 1 column on mobile */
-  .activity-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .activity-year {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
   }
   
-  .activity-month-label {
-    min-width: 65px;
-    font-size: 0.8em;
+  .year-label {
+    text-align: left;
+    margin-bottom: 8px;
   }
   
-  .activity-cell {
-    height: 24px;
+  .year-months {
+    width: 100%;
+  }
+  
+  .month-box {
+    width: 28px;
+    height: 28px;
+    font-size: 0.7em;
   }
   
   .activity-legend {
@@ -1484,18 +1551,18 @@ footer.contact-info h2 {
     height: 12px;
   }
   
-  .activity-month-cell {
-    padding: 6px 8px;
-    gap: 8px;
+  .month-box {
+    width: 24px;
+    height: 24px;
+    font-size: 0.65em;
   }
   
-  .activity-month-label {
-    min-width: 55px;
-    font-size: 0.75em;
+  .month-count {
+    font-size: 0.8em;
   }
   
-  .activity-cell {
-    height: 22px;
+  .year-label {
+    font-size: 0.85em;
   }
   
   .stat-item {
@@ -1513,7 +1580,12 @@ footer.contact-info h2 {
     max-width: 1200px; /* Fixed width like gallery */
   }
   
-  .activity-grid {
-    gap: 18px 40px;
+  .year-months {
+    gap: 5px;
+  }
+  
+  .month-box {
+    width: 40px;
+    height: 40px;
   }
 }
