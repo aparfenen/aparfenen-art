@@ -133,8 +133,8 @@ function generateActivityChart() {
   const timeline = generateTimeline();
   let html = '<div class="activity-timeline">';
   
-  // Create year-based visualization
-  timeline.forEach(yearData => {
+  // Create year-based visualization - REVERSED ORDER (newest first)
+  timeline.reverse().forEach(yearData => {
     // Skip years with no activity at all
     const hasActivity = yearData.months.some(m => m.count > 0);
     if (!hasActivity && yearData.year < 2024) return; // Skip empty early years
