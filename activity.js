@@ -3,6 +3,48 @@
 // Activity data - будет заполнено из CSV
 let activityData = {};
 
+// Правильный парсинг CSV с учетом кавычек
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current.trim());
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current.trim());
+  return result;
+}
+
+// Парсим show_date: "August 2025" → { month: 8, year: 2025 }
+function parseShowDate(showDate) {
+  const months = {
+    'january': 1, 'february': 2, 'march': 3, 'april': 4,
+    'may': 5, 'june': 6, 'july': 7, 'august': 8,
+    'september': 9, 'october': 10, 'november': 11, 'december': 12
+  };
+  
+  const parts = showDate.toLowerCase().trim().split(/\s+/);
+  if (parts.length !== 2) return null;
+  
+  const monthName = parts[0];
+  const year = parseInt(parts[1], 10);
+  
+  const month = months[monthName];
+  if (!month || isNaN(year)) return null;
+  
+  return { month, year };
+}
+
 // 1) Загрузка данных из CSV
 async function loadActivityFromCSV() {
   try {
@@ -10,52 +52,63 @@ async function loadActivityFromCSV() {
     if (!resp.ok) throw new Error(`Failed to load CSV: ${resp.status}`);
     const text = await resp.text();
     
-    // Простой парсинг CSV без библиотек
-    const lines = text.split('\n');
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const lines = text.split('\n').filter(line => line.trim());
+    const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
     
-    const dateIndex = headers.findIndex(h => 
-      h === 'date_created' || h === 'date created'
-    );
+    const showDateIndex = headers.indexOf('show_date');
+    const visibleIndex = headers.indexOf('visible');
     
-    if (dateIndex === -1) {
-      console.warn('[Activity] date_created column not found');
+    if (showDateIndex === -1) {
+      console.error('[Activity] show_date column not found. Headers:', headers);
       return;
     }
     
+    console.log(`[Activity] Found show_date at index ${showDateIndex}`);
+    
     const data = {};
+    let parsed = 0;
+    let skipped = 0;
     
     for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
+      const cols = parseCSVLine(lines[i]);
       
-      const cols = line.split(',');
-      const dateStr = cols[dateIndex]?.trim();
-      if (!dateStr) continue;
-      
-      // Парсим дату MM/DD/YYYY или MM/YYYY или MM/YY
-      const parts = dateStr.split('/').map(p => p.trim());
-      if (parts.length < 2) continue;
-      
-      let month = parseInt(parts[0]);
-      let year;
-      
-      if (parts.length === 3) {
-        year = parseInt(parts[2]);
-      } else if (parts.length === 2) {
-        const y = parseInt(parts[1]);
-        year = parts[1].length <= 2 ? 2000 + y : y;
+      // Проверяем visible = yes
+      const visible = cols[visibleIndex]?.toLowerCase().trim();
+      if (visible !== 'yes') {
+        skipped++;
+        continue;
       }
       
-      if (isNaN(month) || isNaN(year)) continue;
-      if (month < 1 || month > 12 || year < 1900 || year > 2100) continue;
+      const showDate = cols[showDateIndex]?.trim();
       
+      if (!showDate) {
+        skipped++;
+        continue;
+      }
+      
+      const parsed_date = parseShowDate(showDate);
+      
+      if (!parsed_date) {
+        console.warn(`[Activity] Could not parse show_date: "${showDate}"`);
+        skipped++;
+        continue;
+      }
+      
+      const { month, year } = parsed_date;
       const key = `${year}-${String(month).padStart(2, '0')}`;
       data[key] = (data[key] || 0) + 1;
+      parsed++;
     }
     
     activityData = data;
-    console.log(`[Activity] Loaded ${Object.keys(data).length} months from CSV`);
+    console.log(`[Activity] Successfully parsed ${parsed} dates, skipped ${skipped}`);
+    console.log('[Activity] Months:', Object.keys(data).sort());
+    console.log('[Activity] Top months:', 
+      Object.entries(data)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([k, v]) => `${k}: ${v}`)
+    );
     
   } catch (error) {
     console.error('[Activity] Error loading CSV:', error);
@@ -112,7 +165,7 @@ function getActivityLevel(count) {
   if (count <= 7) return 'level-3';
   if (count <= 12) return 'level-4';
   if (count <= 18) return 'level-5';
-  return 'level-6'; // For exceptional months
+  return 'level-6';
 }
 
 // Get month name abbreviation
@@ -131,13 +184,19 @@ function generateActivityChart() {
   }
   
   const timeline = generateTimeline();
+  
+  if (timeline.length === 0) {
+    chartContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">No activity data available</div>';
+    return;
+  }
+  
   let html = '<div class="activity-timeline">';
   
   // Create year-based visualization - REVERSED ORDER (newest first)
   timeline.reverse().forEach(yearData => {
     // Skip years with no activity at all
     const hasActivity = yearData.months.some(m => m.count > 0);
-    if (!hasActivity && yearData.year < 2024) return; // Skip empty early years
+    if (!hasActivity && yearData.year < 2024) return;
     
     html += `
       <div class="activity-year">
@@ -170,13 +229,16 @@ function generateActivityChart() {
   html += '</div>';
   chartContainer.innerHTML = html;
   
-  console.log(`[Activity] Timeline visualization generated`);
+  console.log(`[Activity] Timeline visualization generated with ${timeline.length} years`);
 }
 
 // Update statistics
 function updateStats() {
   const counts = Object.values(activityData);
-  if (counts.length === 0) return;
+  if (counts.length === 0) {
+    console.warn('[Activity] No data for stats');
+    return;
+  }
   
   // Count total works
   const totalWorks = counts.reduce((sum, count) => sum + count, 0);
@@ -209,16 +271,22 @@ function updateStats() {
   if (productiveElement) productiveElement.textContent = `${monthName} ${year} (${maxCount})`;
   if (yearElement) yearElement.textContent = currentYearCount;
   
-  console.log(`[Activity] Stats: ${totalWorks} total, peak ${monthName} ${year}`);
+  console.log(`[Activity] Stats updated: ${totalWorks} total, peak ${monthName} ${year} (${maxCount}), this year ${currentYearCount}`);
 }
 
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('[Activity] Initializing...');
   await loadActivityFromCSV();
+  
+  if (Object.keys(activityData).length === 0) {
+    console.error('[Activity] No data loaded!');
+    return;
+  }
+  
   generateActivityChart();
   updateStats();
-  console.log('[Activity] Visualization initialized');
+  console.log('[Activity] Visualization initialized successfully');
 });
 
 // Enhanced tooltip interaction
