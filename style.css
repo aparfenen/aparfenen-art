@@ -292,167 +292,34 @@ h3.section-title {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-/* ===== LIGHTBOX NAVIGATION ARROWS ===== */
-.lightbox-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 24px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
-  z-index: 1001;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.lightbox.active .lightbox-nav {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.lightbox-nav:hover {
-  background: rgba(255, 255, 255, 1);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.lightbox-nav.prev {
-  left: -70px;
-}
-
-.lightbox-nav.next {
-  right: -70px;
-}
-
-/* .lightbox-counter {
-  position: static;
-  
-  
-  background: transparent;
-  color: rgba(255, 255, 255, 0.9);
-  padding: 0;
-  
-  font-size: 0.85em;
-  font-weight: 400;
-  
-  
-  opacity: 1;
-  
-}
-
-.lightbox.active .lightbox-counter {
-  opacity: 1;
-} */
-/* ===== LIGHTBOX - ИСПРАВЛЕННАЯ ВЕРСИЯ ===== */
-.lightbox {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  z-index: 1000;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.lightbox.active {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 1;
-}
-
-.lightbox-content {
-  position: relative;
-  max-width: 90vw;
-  max-height: 90vh;
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.lightbox img {
-  max-width: 70vw;
-  max-height: 85vh;
-  object-fit: contain;
-  border-radius: 4px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-}
-
-/* Navigation arrows */
-.lightbox-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.lightbox-nav:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.lightbox-nav.prev {
-  left: 20px;
-}
-
-.lightbox-nav.next {
-  right: 20px;
-}
-
-.lightbox-nav svg {
-  width: 24px;
-  height: 24px;
-}
-
 /* Counter - ИСПРАВЛЕНО: теперь в левом верхнем углу над изображением */
 .lightbox-counter {
-  position: absolute;
+  position: center;
   top: 20px;
   left: 20px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(89, 88, 88, 0.159);
   color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.9em;
-  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-size: 0.8em;
+  font-weight: 100;
   z-index: 15;
   backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(155, 154, 154, 0.174);
+  margin-bottom: 2%;
 }
 
 /* Close button - ИСПРАВЛЕНО: остается в правом верхнем углу */
 .lightbox-close {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: -20px;
+  right: -20px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
   color: white;
-  font-size: 36px;
-  width: 50px;
-  height: 50px;
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -516,34 +383,6 @@ h3.section-title {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.share-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: none;
-  color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.share-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-}
-
-.share-button.copied {
-  background: rgba(76, 175, 80, 0.8);
-}
-
-.share-button svg {
-  width: 20px;
-  height: 20px;
-}
-
 /* Mobile responsive */
 @media (max-width: 1024px) {
   .lightbox-content {
@@ -560,10 +399,6 @@ h3.section-title {
     max-width: 90vw;
     max-height: 30vh;
     margin-top: 16px;
-  }
-  
-  .lightbox-nav {
-    top: 40%;
   }
   
   /* Уменьшаем размер счетчика и кнопки закрытия на мобильных */
@@ -584,18 +419,6 @@ h3.section-title {
 }
 
 @media (max-width: 768px) {
-  .lightbox-nav {
-    width: 40px;
-    height: 40px;
-  }
-  
-  .lightbox-nav.prev {
-    left: 10px;
-  }
-  
-  .lightbox-nav.next {
-    right: 10px;
-  }
   
   .lightbox-counter {
     top: 10px;
@@ -635,39 +458,7 @@ h3.section-title {
   flex-wrap: wrap;
 }
 
-.share-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  font-size: 14px;
-  color: #333;
-  white-space: nowrap;
-}
-
-.share-button:hover {
-  background: rgba(0, 0, 0, 0.1);
-  transform: translateY(-1px);
-  border-color: rgba(0, 0, 0, 0.2);
-}
-
-.share-button.copy.copied {
-  background: rgba(40, 167, 69, 0.1);
-  border-color: rgba(40, 167, 69, 0.3);
-  color: #28a745;
-}
-
 /* ===== RESPONSIVE - LIGHTBOX ===== */
-@media (max-width: 1200px) {
-  .lightbox-nav.prev { left: 20px; }
-  .lightbox-nav.next { right: 20px; }
-}
 
 @media (max-width: 768px) {
   .gallery {
@@ -711,20 +502,6 @@ h3.section-title {
   .share-button {
     padding: 6px 12px;
     font-size: 12px;
-  }
-  
-  .lightbox-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-  }
-  
-  .lightbox-nav.prev {
-    left: 10px;
-  }
-  
-  .lightbox-nav.next {
-    right: 10px;
   }
   
   .lightbox-counter {
@@ -1251,18 +1028,18 @@ nav.main-nav .sub-menu a {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(157, 157, 157, 0.528);
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   font-size: 24px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 12px rgba(184, 182, 182, 0.087);
   z-index: 1001;
   opacity: 0;
   pointer-events: none;
@@ -1274,7 +1051,7 @@ nav.main-nav .sub-menu a {
 }
 
 .lightbox-nav:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(173, 173, 173, 0.325);
   transform: translateY(-50%) scale(1.1);
 }
 
@@ -1284,22 +1061,6 @@ nav.main-nav .sub-menu a {
 
 .lightbox-nav.next {
   right: -70px;
-}
-
-.lightbox-counter {
-  position: static;
-  
-  
-  background: transparent;
-  color: rgba(255, 255, 255, 0.9);
-  padding: 0;
-  
-  font-size: 0.85em;
-  font-weight: 400;
-  
-  
-  opacity: 1;
-  
 }
 
 .lightbox.active .lightbox-counter {
@@ -1347,8 +1108,8 @@ nav.main-nav .sub-menu a {
 
 /* ===== RESPONSIVE - LIGHTBOX ===== */
 @media (max-width: 1200px) {
-  .lightbox-nav.prev { left: 20px; }
-  .lightbox-nav.next { right: 20px; }
+  .lightbox-nav.prev { left: -70px; }
+  .lightbox-nav.next { right: -70px; }
 }
 
 @media (max-width: 768px) {
