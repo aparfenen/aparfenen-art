@@ -217,7 +217,7 @@ h3.section-title {
   left: 0;
   width: 100vw; 
   height: 100vh;
-  background: rgba(0, 0, 0, 0.92);
+  background: rgba(245, 240, 235, 0.95);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -250,6 +250,9 @@ h3.section-title {
   max-width: min(1200px, 90vw);
   max-height: 70vh;
   border-radius: 8px 8px 0 0;
+  background: rgba(245, 240, 235, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: none;
   cursor: zoom-out;
   object-fit: contain;
   display: block;
