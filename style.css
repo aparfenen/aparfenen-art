@@ -76,7 +76,7 @@ h3.section-title {
   color: #222;
   max-width: 1200px;
   margin: 20px auto;
-  padding: 10px 24px;
+  /* padding: 10px 24px; */
   box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -152,7 +152,7 @@ h3.section-title {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 16px;
-  padding: 24px;
+  /* padding: 24px; */
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
