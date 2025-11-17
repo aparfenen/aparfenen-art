@@ -1235,6 +1235,7 @@ footer.contact-info h2 {
   max-width: 1200px;
   margin: 40px auto;
   padding: 10px 24px;
+  box-sizing: border-box;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
