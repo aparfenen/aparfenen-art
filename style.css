@@ -157,6 +157,7 @@ h3.section-title {
   width: 100%;
   margin: 0 auto;
   align-items: start; /* IMPORTANT: prevents stretching */
+  box-sizing: border-box;
 }
 
 /* FIXED: Art block wrapper */
