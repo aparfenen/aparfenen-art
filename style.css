@@ -1343,6 +1343,7 @@ footer.contact-info h2 {
   color: #444;
   min-width: 50px;
   text-align: right;
+  margin-right: 16px;
 }
 
 .year-months {
