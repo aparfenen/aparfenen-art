@@ -14,8 +14,11 @@ h1 {
   text-align: center;
   font-weight: 600;
   font-size: 2.8em;
-  margin: 20px 0 20px;
+  margin: 20px auto;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  max-width: 1200px;
+  padding: 0 24px;
+  box-sizing: border-box;
 }
 
 h2.section-title {
@@ -235,15 +238,14 @@ h3.section-title {
   flex-direction: column;
   align-items: center;
   gap: 0;
-  max-width: 1200px;
-  max-width: 90vw;
+  max-width: min(1200px, 90vw);
   max-height: 90vh;
   position: relative;
+  width: 100%;
 }
 
 .lightbox img {
-  max-width: 1200px;
-  max-width: 90vw;
+  max-width: min(1200px, 90vw);
   max-height: 70vh;
   border-radius: 8px 8px 0 0;
   cursor: zoom-out;
@@ -254,7 +256,7 @@ h3.section-title {
 
 /* Counter - FIXED: now in top left corner above image */
 .lightbox-counter {
-  position: center;
+  position: fixed;
   top: 20px;
   left: 20px;
   background: rgba(89, 88, 88, 0.159);
