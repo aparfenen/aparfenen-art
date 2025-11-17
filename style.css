@@ -548,6 +548,10 @@ footer.contact-info h2 {
 
 /* NAVIGATION BAR */
 nav.main-nav {
+  margin-left: -280px;   /* Compensates for .content-with-sidebar margin */
+  margin-right: -20px;   /* Compensates for .content-with-sidebar padding */
+  padding-left: 280px;   /* Creates space for the sidebar */
+  padding-right: 20px;   /* Matches content padding */
   background-color: #fff;
   border-bottom: 1px solid rgba(0,0,0,0.1);
   box-shadow: 0 1px 6px rgba(0,0,0,0.05);
@@ -617,8 +621,8 @@ nav.main-nav .sub-menu a {
   transition: background-color 0.2s ease;
 }
 
-/* ===== ACTIVITY VISUALIZATION ===== */
 
+/* ===== ACTIVITY VISUALIZATION ===== */
 .activity-container {
   max-width: 1200px;
   width: 100%;
@@ -972,6 +976,15 @@ nav.main-nav .sub-menu a {
 }
 
 /* ===== RESPONSIVE - LIGHTBOX ===== */
+@media (max-width: 1024px) {
+  nav.main-nav {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
+
 @media (max-width: 1200px) {
   .lightbox-nav.prev { left: -70px; }
   .lightbox-nav.next { right: -70px; }
