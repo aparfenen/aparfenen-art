@@ -349,7 +349,8 @@ CATEGORY_ORDER = [
     "Underwater",
     "Fragile Systems",
     "Sketches",
-    "Boston"
+    "Boston",
+    "Postcards"
 ]
 sorted_categories = [c for c in CATEGORY_ORDER if c in grouped_by_category]
 # Add any missing categories
