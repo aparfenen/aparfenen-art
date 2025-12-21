@@ -401,52 +401,5 @@ lightboxImg.addEventListener('touchend', (e) => {
 }, { passive: true });
 
 
-// ===== LAZY LOADING WITH INTERSECTION OBSERVER =====
-const lazyLoadImages = () => {
-  const imageObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const img = entry.target;
-        
-        // Устанавливаем класс загрузки
-        img.classList.add('lazy-loading');
-        
-        // Создаем новое изображение для предзагрузки
-        const tempImg = new Image();
-        tempImg.onload = () => {
-          // После загрузки обновляем src и добавляем класс
-          img.src = tempImg.src;
-          img.classList.remove('lazy-loading');
-          img.classList.add('lazy-loaded');
-        };
-        
-        // Начинаем загрузку реального изображения
-        tempImg.src = img.dataset.src || img.src;
-        
-        // Прекращаем наблюдение за этим изображением
-        observer.unobserve(img);
-      }
-    });
-  }, {
-    root: null,
-    rootMargin: '50px', // Начинаем загрузку за 50px до входа в viewport
-    threshold: 0.01
-  });
-  
-  // Наблюдаем за всеми изображениями в галерее
-  document.querySelectorAll('.gallery img').forEach(img => {
-    // Сохраняем оригинальный src в data-атрибуте если еще не сохранен
-    if (!img.dataset.src) {
-      img.dataset.src = img.src;
-    }
-    img.classList.add('lazy-loading');
-    imageObserver.observe(img);
-  });
-};
-
-// Инициализация lazy loading при готовности DOM
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', lazyLoadImages);
-} else {
-  lazyLoadImages();
-}
+// Native lazy loading is used via loading="lazy" attribute in HTML
+// No JavaScript lazy loading needed - browser handles it natively

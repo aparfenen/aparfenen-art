@@ -303,6 +303,8 @@ def generate_artwork_block(row):
       <img src="img/{row["category"]}/{row["filename"]}"
            alt="{row["title"]}"
            title="{row["title"]} ({row["show_date"]})"
+           loading="lazy"
+           decoding="async"
            data-title="{row["title"]}"
            data-date="{row["show_date"]}"
            data-date-created="{date_created_escaped}"

@@ -183,21 +183,15 @@ h3.section-title {
   display: block; /* Remove inline spacing */
 }
 
-/* Lazy loading states - FIXED */
-.gallery img.lazy-loading {
-  opacity: 0.3;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.gallery img.lazy-loaded {
+/* Lazy loading states - simplified for native loading="lazy" */
+.gallery img {
   opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Optional: fade-in effect when image loads */
+.gallery img[loading="lazy"] {
+  background: #f0f0f0;
 }
 
 .gallery img:hover {
