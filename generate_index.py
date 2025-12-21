@@ -299,10 +299,9 @@ def generate_artwork_block(row):
     date_created = str(row.get("date_created", "")).strip() if "date_created" in row else ""
     date_created_escaped = date_created.replace('"', '&quot;')
     
-    block = f'''    <div class="art-block" id="{unique_id}">
+    block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{row["title"]} ({row["show_date"]})">
       <img src="img/{row["category"]}/{row["filename"]}"
            alt="{row["title"]}"
-           title="{row["title"]} ({row["show_date"]})"
            loading="lazy"
            decoding="async"
            data-title="{row["title"]}"
