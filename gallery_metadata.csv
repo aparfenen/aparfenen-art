@@ -1,153 +1,154 @@
-category,filename,title,show_date,date_created,description,dimensions,medium,visible,tags,year
-Nothing more than Human,queen.jpg,Queen of Angles,December 2025,12/25,She rules in straight lines because curves would break her.,11 in x 14 in (27.9 cm x 35.6 cm),Ink liners and colored pencils on Bristol paper,yes,,2025.0
-Subconscious,pink_histeria.jpg,Pink Hysteria,December 2025,12/25,"When calm snaps, it blooms.",5.8 in x 8.3 in (14.8 cm x 21 cm),Ink liners and water based markers on sketchbook paper,yes,,2025.0
-Subconscious,canuhide.jpg,Can You Hide,December 2025,12/25,"The entity dissolves into simplified inner structure — code rather than body. What remains carries only basic information: enough to exist, not enough to be understood.",9 in x 12 in (23 cm x 30.5 cm),Ink liners and colored pencils on paper,yes,,2025.0
-Echoes of Distance,augusteve.jpg,August Eve,December 2025,12/25,"The sky bleeds into the sea, and I stop counting the days.",9.4 in x 5.1 in (23.7 cm x 13 cm),Watercolor on cold press watercolor paper,yes,,2025.0
-Nothing more than Human,game.jpg,Crossing Without Arrival,December 2025,12/25,"The moment of passage is frozen, denying resolution. Transition itself becomes the final state.",9 in x 12 in (23 cm x 30.5 cm),Ink liners and colored pencils on Bristol paper,yes,,2025.0
-Subconscious,southwest_bright.jpg,Elastic Boundary,December 2025,12/25,The drawing explores the moment where containment fails but coherence remains. The form stretches past its limits without breaking its logic.,8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners on Bristol paper,yes,,2025.0
-Sketches,destiny.jpg,Quality Control for Feelings,December 2025,12/25,"Every emotion gets screened. Many fail. The heart complains, but the rigid system remains in place.",8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners and colored pencils on Bristol paper,yes,,2025.0
-Sketches,coast.jpg,The Sea Attempts Consistency,December 2025,12/25,A restless surface making yet another failed argument for stability.,8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners on Bristol paper,yes,,2025.0
-Sketches,spring_flowers.jpg,Tangled Motion,June 2025,6/25,"Two drooping flowers caught in swirling colors, showing how forms get pulled and stretched by the flow around them.",5 in x 5 in (12.7 cm x 12.7 cm),Ink liners and water based markers on sketchbook paper,yes,,2025.0
-Subconscious,lingerlook.jpg,Inner Tide,November 2025,11/25,"The eye is fixed in place while colors flow and distort around it, revealing a still point within a shifting stream.",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
-Echoes of Distance,sunset_walk.jpg,Sunset Walk,November 2025,11/25,The loneliness of shared experiences.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on cold press watercolor paper,yes,,2025.0
-Sketches,sweetheart.jpg,Neural Heart,November 2025,11/25,When your thoughts grow directly from feeling and there's no separating them anymore.,8 in x 8 in (20.3 cm x 20.3 cm),Ink liners on mixed media paper,yes,,2025.0
-Subconscious,dopamine.jpg,Dopamine,November 2025,11/25,"“Dopamine — a diamond between the eyes. Fix your inside.”
+category,date_finished,filename,title,show_date,date_created,description,dimensions,medium,visible,tags,year
+Nothing more than Human,,cruelty.jpg,Cruelty,December 2025,12/25,What hardens is not what heals.,9 in x 12 in (23 cm x 30.5 cm),Ink liners and colored pencils on Bristol paper,yes,,2025.0
+Nothing more than Human,,queen.jpg,Queen of Angles,December 2025,12/25,She rules in straight lines because curves would break her.,11 in x 14 in (27.9 cm x 35.6 cm),Ink liners and colored pencils on Bristol paper,yes,,2025.0
+Subconscious,,pink_histeria.jpg,Pink Hysteria,December 2025,12/25,"When calm snaps, it blooms.",5.8 in x 8.3 in (14.8 cm x 21 cm),Ink liners and water based markers on sketchbook paper,yes,,2025.0
+Subconscious,12/13/2025,canuhide.jpg,Can You Hide,December 2025,12/25,"The entity dissolves into simplified inner structure — code rather than body. What remains carries only basic information: enough to exist, not enough to be understood.",9 in x 12 in (23 cm x 30.5 cm),Ink liners and colored pencils on paper,yes,,2025.0
+Echoes of Distance,,augusteve.jpg,August Eve,December 2025,12/25,"The sky bleeds into the sea, and I stop counting the days.",9.4 in x 5.1 in (23.7 cm x 13 cm),Watercolor on cold press watercolor paper,yes,,2025.0
+Nothing more than Human,,game.jpg,Crossing Without Arrival,December 2025,12/25,"The moment of passage is frozen, denying resolution. Transition itself becomes the final state.",9 in x 12 in (23 cm x 30.5 cm),Ink liners and colored pencils on Bristol paper,yes,,2025.0
+Subconscious,,southwest_bright.jpg,Elastic Boundary,December 2025,12/25,The drawing explores the moment where containment fails but coherence remains. The form stretches past its limits without breaking its logic.,8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners on Bristol paper,yes,,2025.0
+Sketches,,destiny.jpg,Quality Control for Feelings,December 2025,12/25,"Every emotion gets screened. Many fail. The heart complains, but the rigid system remains in place.",8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners and colored pencils on Bristol paper,yes,,2025.0
+Sketches,,coast.jpg,The Sea Attempts Consistency,December 2025,12/25,A restless surface making yet another failed argument for stability.,8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners on Bristol paper,yes,,2025.0
+Sketches,,spring_flowers.jpg,Tangled Motion,June 2025,6/25,"Two drooping flowers caught in swirling colors, showing how forms get pulled and stretched by the flow around them.",5 in x 5 in (12.7 cm x 12.7 cm),Ink liners and water based markers on sketchbook paper,yes,,2025.0
+Subconscious,,lingerlook.jpg,Inner Tide,November 2025,11/25,"The eye is fixed in place while colors flow and distort around it, revealing a still point within a shifting stream.",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
+Echoes of Distance,,sunset_walk.jpg,Sunset Walk,November 2025,11/25,The loneliness of shared experiences.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on cold press watercolor paper,yes,,2025.0
+Sketches,,sweetheart.jpg,Neural Heart,November 2025,11/25,When your thoughts grow directly from feeling and there's no separating them anymore.,8 in x 8 in (20.3 cm x 20.3 cm),Ink liners on mixed media paper,yes,,2025.0
+Subconscious,,dopamine.jpg,Dopamine,November 2025,11/25,"“Dopamine — a diamond between the eyes. Fix your inside.”
 — IAMX",12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on Bristol paper,yes,,2025.0
-Echoes of Distance,therock.jpg,The Rock,December 2025,12/25,"The rock face doesn't explain itself, doesn't shift. It's just there, holding space.",7 in x 5 in (18 cm x 12.5 cm),Acrylic markers on canvas,yes,,2025.0
-Underwater,baltic.jpg,Fake Place,December 2025,12/25,Existing in someone else's idea of where you belong.,12 in x 9 in (30.5 cm x 23 cm),Ink liners and acrylic markers on Bristol paper,yes,,2025.0
-Subconscious,cutie.jpg,Cutie in the Moonlight,November 2025,11/25,When you're trying to be optimistic and colorful in a world that feels layered and complex.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on cold press watercolor paper,yes,,2025.0
-Postcards,stitch.jpg,Stitch in Blue,November 2025,11/25,"Sometimes you need to sit with the melancholy. Blue on blue on blue, tropical leaves that suggest paradise but the posture says otherwise. Just existing in the space between “ohana means family” and the reality that family is complicated.",3 in x 5 in ( 7.62 cm x 12.7 cm),Mixed media postcard paper,yes,,2025.0
-Boston,splitted.jpg,Split Vision,November 2025,11/25,"Standing outside looking at a house that could be home, could be memory, could be neither. The warm window beckons but you're stuck on the sidewalk, split between worlds that don't quite connect.",12 in x 9 in (30.5 cm x 23 cm),Ink liners and water based markers on Bristol paper,yes,,2025.0
-Echoes of Distance,american_values.jpg,American Abundance,November 2025,11/25,"When reality gets too loud, sometimes you just hold onto something simple - like corn.",12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
-Between Waking,mountains.jpg,Learning to Be Free,November 2025,11/25,The honest rehearsal of what it means to move through the world without restraint.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on marker paper,yes,,2025.0
-Subconscious,liquid_flower.jpg,Forgotten Edges,October 2025,10/25,Something pretending it's still a flower.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water based markers on Bristol paper,yes,,2025.0
-Fragile Systems,folios.jpg,The Day the Air Grew Opinions,October 2025,10/25,A cluster of stubborn shapes insisting on moving upward for absolutely no reason.,,,,,2025.0
-Subconscious,flowofsmth.jpg,Branches of Unnamed Pulse,September 2025,9/25,DMN is taking over.,8 in x 8 in (20.3 cm x 20.3 cm),Ink and water based markers on mixed media paper.,yes,,2025.0
-Fragile Systems,eremition.jpg,Eremition,September 2025,9/25,Flowers That Learn to Look Back,8 in x 8 in (20.3 cm x 20.3 cm),Watercolor markers on mixed media paper,yes,,2025.0
-Fragile Systems,driftform.jpg,Drift Form,August 2025,8/25,"“I pulled away to face the pain, I close my eyes and drift away, over the fear.”
+Echoes of Distance,,therock.jpg,The Rock,December 2025,12/25,"The rock face doesn't explain itself, doesn't shift. It's just there, holding space.",7 in x 5 in (18 cm x 12.5 cm),Acrylic markers on canvas,yes,,2025.0
+Underwater,,baltic.jpg,Fake Place,December 2025,12/25,Existing in someone else's idea of where you belong.,12 in x 9 in (30.5 cm x 23 cm),Ink liners and acrylic markers on Bristol paper,yes,,2025.0
+Subconscious,,cutie.jpg,Cutie in the Moonlight,November 2025,11/25,When you're trying to be optimistic and colorful in a world that feels layered and complex.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on cold press watercolor paper,yes,,2025.0
+Postcards,,stitch.jpg,Stitch in Blue,November 2025,11/25,"Sometimes you need to sit with the melancholy. Blue on blue on blue, tropical leaves that suggest paradise but the posture says otherwise. Just existing in the space between “ohana means family” and the reality that family is complicated.",3 in x 5 in ( 7.62 cm x 12.7 cm),Mixed media postcard paper,yes,,2025.0
+Boston,,splitted.jpg,Split Vision,November 2025,11/25,"Standing outside looking at a house that could be home, could be memory, could be neither. The warm window beckons but you're stuck on the sidewalk, split between worlds that don't quite connect.",12 in x 9 in (30.5 cm x 23 cm),Ink liners and water based markers on Bristol paper,yes,,2025.0
+Echoes of Distance,,american_values.jpg,American Abundance,November 2025,11/25,"When reality gets too loud, sometimes you just hold onto something simple - like corn.",12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
+Between Waking,,mountains.jpg,Learning to Be Free,November 2025,11/25,The honest rehearsal of what it means to move through the world without restraint.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on marker paper,yes,,2025.0
+Subconscious,,liquid_flower.jpg,Forgotten Edges,October 2025,10/25,Something pretending it's still a flower.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water based markers on Bristol paper,yes,,2025.0
+Fragile Systems,,folios.jpg,The Day the Air Grew Opinions,October 2025,10/25,A cluster of stubborn shapes insisting on moving upward for absolutely no reason.,,,,,2025.0
+Subconscious,,flowofsmth.jpg,Branches of Unnamed Pulse,September 2025,9/25,DMN is taking over.,8 in x 8 in (20.3 cm x 20.3 cm),Ink and water based markers on mixed media paper.,yes,,2025.0
+Fragile Systems,,eremition.jpg,Eremition,September 2025,9/25,Flowers That Learn to Look Back,8 in x 8 in (20.3 cm x 20.3 cm),Watercolor markers on mixed media paper,yes,,2025.0
+Fragile Systems,,driftform.jpg,Drift Form,August 2025,8/25,"“I pulled away to face the pain, I close my eyes and drift away, over the fear.”
 — Evanescence, “My Heart Is Broken”",8 in x 8 in (20.3 cm x 20.3 cm),Watercolor markers on mixed media paper,yes,,2025.0
-Animalia Forms,secrets.jpg,The Geometry of Attention,November 2025,11/25,"Attention becomes a bridge: a silent calibration between forms, proving that presence is not static but continually negotiated.",14 in x 11 in (35.56 cm x 27.94 cm),Ink liners on Bristol paper,yes,,2025.0
-Subconscious,surface.jpg,The Shifting Horizon,November 2025,11/25,"A horizon isn't just a place, it's a dynamic process, a reminder that our perception shifts and evolves with every thought.",12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
-Echoes of Distance,onega.jpg,The Physics of Dusk,November 2025,11/25,"I tried to show how light breaks into gradients that move like shifting thoughts, revealing the way perception rewrites itself at the edge of the day.",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
-Subconscious,shy.jpg,A Cheerful Little Spark,September 2025,9/25,"Bright, quick, and full of its own quiet charm.",8 in x 8 in (20.3 cm x 20.3 cm),Ink liners and colored pencils on mixed media paper,yes,,2025.0
-Boston,christian_science_center.jpg,Boston in a State of Suspension,September 2025,9/25,"Light, water, and a moment held still.",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
-Echoes of Distance,atlanticlove.jpg,A Quiet Place Between Waves,September 2025,9/25,The softest part of the northern atlantic coast.,8 in x 8 in (20.3 cm x 20.3 cm),Watercolor on mixed media paper,yes,,2025.0
-Animalia Forms,3horses.jpg,Equine Dreams,June 2014,6/14,Each one gallops out of a different silence.,8.3 in x 11.7 in (21 cm x 29.7 cm),Watercolor and Ink on paper,yes,,2014.0
-Animalia Forms,bird2025.jpg,The Watcher,July 2025,7/25,Knows something…,8 in x 8 in (20.3 cm x 20.3 cm),Markers on marker paper,yes,,2025.0
-Animalia Forms,crustaceans.jpeg,Crux Crustacea,August 2021,8/21,Prehistoric arms held in surrender.,5 in x 5 in (12.7 cm x 12.7 cm),Ink liners on paper,yes,,2021.0
-Animalia Forms,daydreaming.jpg,The Waiting Phase,August 2024,8/24,Some mutations are emotional.,7 in x 5 in (18 cm x 12.5 cm),Ink liners on paper,yes,,2024.0
-Animalia Forms,horse2025.jpg,Edge,March 2025,3/25,Between tension and release.,8.3 in x 11.7 in (21 cm x 29.7 cm),Graphite pencils on paper,yes,,2025.0
-Animalia Forms,horsepsy2025.jpg,Inward,July 2025,7/25,Everything moves inside.,8 in x 8 in (20.3 cm x 20.3 cm),Ink liners and markers on marker paper,yes,,2025.0
-Animalia Forms,justlooking.jpg,Focused,August 2025,8/25,You see what you fear in its frozen glee. That's the whole trick.,8.3 in x 11.7 in (21 cm x 29.7 cm),Watercolor on hot press watercolor paper,yes,,2025.0
-Animalia Forms,snail2021.jpg,Snail No. 1,July 2021,7/21,The body as architecture of refusal.,8.3 in x 11.7 in (21 cm x 29.7 cm),Ink liners on paper,yes,,2021.0
-Animalia Forms,snail2024.jpg,Snail No. 2,December 2024,12/24,Some species mastered patience long ago.,11.7 in x 8.3 in (29.7 cm x 21 cm),Ink liners on paper,yes,,2024.0
-Animalia Forms,trypanosoma2025.jpg,Trypanosoma brucei,May 2025,5/25,Form follows infection.,11.7 in x 8.3 in (29.7 cm x 21 cm),Red Ink and craft stickers on paper,yes,,2025.0
-Animalia Forms,weird_horse.jpg,The Anatomist's Horse,May 2014,5/14,Muscle remembers more than mind.,15 in x 11 in (38.1 cm x 27.94 cm),Graphite pencils and watercolor on paper,yes,,2014.0
-Animalia Forms,wildbird2025.jpg,Alone,July 2025,7/25,To be free is to be on your own,11.7 in x 8.3 in (29.7 cm x 21 cm),Graphite pencils on sketch paper,yes,,2025.0
-Between Waking,fire_and_ice.jpg,Fever Dream,October 2025,10/25,"Where heat meets depth, neither wins.",7 in x 5 in (18 cm x 12.5 cm),Watercolor on hot press watercolor paper,yes,,2025.0
-Between Waking,moonrise.jpg,Lunar Witness,October 2025,10/25,"Rocks jut from water that mirrors nothing, the moon is the only thing here that knows its own completeness.",15 in x 11 in (38.1 cm x 27.94 cm),Watercolor on on hot press watercolor paper,yes,,2025.0
-Between Waking,nighthills2025.jpg,Planet's Mood Swing,August 2025,8/25,Captured in Acrylic,7 in x 5 in (18 cm x 12.5 cm),Acrylic markers on stretched canvas,yes,,2025.0
-Between Waking,northern_lights.jpg,Aurora as Hysteria,October 2025,10/25,Northern nature malfunctions ignites in spectrum.,7 in x 5 in (18 cm x 12.5 cm),Watercolor on hot press watercolor paper,yes,,2025.0
-Boston,boston_m_2025.jpg,Stillness on the Dock,August 2025,8/25,"Waiting, like everything here, for something to begin or return.",8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
-Boston,boston_N2_2025.jpg,This is how Boston feels to me,August 2025,8/25,A city awake in stillness. A city becoming itself.,11.7 in x 8.3 in (29.7 cm x 21 cm),Alcohol markers on mixed media paper,yes,,2025.0
-Boston,boston2025.jpg,Citgo Sign,June 2025,6/25,It watches over Kenmore like a lighthouse with no sea.,5.8 in x 8.3 in (14.8 cm x 21 cm),Red colored pencil on sketch paper,yes,,2025.0
-Boston,downtown_boston.jpg,Lanterns of Downtown,August 2025,9/25,"History climbs upward in glass, downward in light.",8 in x 8 in (20.3 cm x 20.3 cm),Watercolor on mixed media paper,yes,,2025.0
-Boston,MIT.jpg,MIT at Dusk,August 2025,8/25,Fairytale in RGB,11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on stretched canvas,yes,,2025.0
-Boston,sunrise2025.jpeg,Sunrise of Empathy,August 2025,8/25,"Long Wharf, Boston MA",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
-Boston,washington_street_brighton.jpg,"Washington Street, Brighton MA",September 2025,9/25,A little too late.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
-Boston,watercolorboston.jpg,River of Memory,September 2025,9/24,The water holds the city's reflection tighter than its shape.,12 in x 9 in (30.5 cm x 23 cm),Watercolor on watercolor paper,yes,,2025.0
-Echoes of Distance,andoma.jpg,Andoma,September 2025,9/25,A tributary of Lake Onega (Vytegorsky District of Vologda Oblast in Russia).,7 in x 5 in (18 cm x 12.5 cm),Watercolor on hot press watercolor paper,yes,,2025.0
-Echoes of Distance,blackseabatumi2022.jpg,"Black Sea, Batumi",September 2022,9/22,"Soft sea, hard world, no touch.",11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic paint on stretched canvas,yes,,2022.0
-Echoes of Distance,canada.jpg,Mirror of an Unlived Life,October 2025,10/25,Every reflection is what could've been if I'd stayed.,,,yes,,2025.0
-Echoes of Distance,dryearth.jpg,Molten Dusk,September 2025,9/25,The mountains melt into rivers of fire and silence.,,,yes,,2025.0
-Echoes of Distance,frozen_light.jpg,When Radiance Breaches Flesh,October 2025,10/25,"A cold, luminescent incursion – light entering where it shouldn't, freezing itself inside something once warm and alive.",,,yes,,2025.0
-Echoes of Distance,grandcanyon2025.jpg,Canyon Landscape,July 2025,7/25,Erosion Sonata.,8.3 in x 11.7 in (21 cm x 29.7 cm),Graphite pencils on paper,yes,,2025.0
-Echoes of Distance,hills.jpg,Topographical Regret,August 2025,8/25,Miscalculated erosion is now permanent.,,,yes,,2025.0
-Echoes of Distance,lake2024.jpg,Frozen,December 2024,12/24,"Frozen, but not cold.",,,yes,,2024.0
-Echoes of Distance,lifeordeath.jpg,Spectral Geography,October 2025,10/25,Cartography for places that only exist between blinks.,,,yes,,2025.0
-Echoes of Distance,niagara2025.jpg,Memory in Infrared,March 2025,3/25,The moment is gone.,,,yes,,2025.0
-Echoes of Distance,niagarafalls2025.jpg,The Mist,March 2025,3/25,A drift between presence and disappearance.,,,yes,,2025.0
-Echoes of Distance,seethestorm2025.jpeg,The Witness of Tempests,August 2025,8/25,It's a painting of presence. Of what stays still when everything else wants to collapse.,,,yes,,2025.0
-Echoes of Distance,ship.jpg,Into the Wave,August 2025,8/25,"The ship leans toward the crest, carried by both fear and freedom.",,,yes,,2025.0
-Echoes of Distance,shore_after_heat.jpg,The Quiet After,November 2025,11/25,Everything here has already happened.,,,yes,,2025.0
-Echoes of Distance,storm2025.jpeg,"It looks like rescue, but it's just drift",August 2025,8/25,Direction ≠ salvation.,,,yes,,2025.0
-Echoes of Distance,theriverbay.jpg,Riverbed,August 2025,8/25,"I am the mirror that blinds as the sun. I'll stay in your reflection
+Animalia Forms,,secrets.jpg,The Geometry of Attention,November 2025,11/25,"Attention becomes a bridge: a silent calibration between forms, proving that presence is not static but continually negotiated.",14 in x 11 in (35.56 cm x 27.94 cm),Ink liners on Bristol paper,yes,,2025.0
+Subconscious,,surface.jpg,The Shifting Horizon,November 2025,11/25,"A horizon isn't just a place, it's a dynamic process, a reminder that our perception shifts and evolves with every thought.",12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
+Echoes of Distance,,onega.jpg,The Physics of Dusk,November 2025,11/25,"I tried to show how light breaks into gradients that move like shifting thoughts, revealing the way perception rewrites itself at the edge of the day.",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
+Subconscious,,shy.jpg,A Cheerful Little Spark,September 2025,9/25,"Bright, quick, and full of its own quiet charm.",8 in x 8 in (20.3 cm x 20.3 cm),Ink liners and colored pencils on mixed media paper,yes,,2025.0
+Boston,,christian_science_center.jpg,Boston in a State of Suspension,September 2025,9/25,"Light, water, and a moment held still.",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
+Echoes of Distance,,atlanticlove.jpg,A Quiet Place Between Waves,September 2025,9/25,The softest part of the northern atlantic coast.,8 in x 8 in (20.3 cm x 20.3 cm),Watercolor on mixed media paper,yes,,2025.0
+Animalia Forms,,3horses.jpg,Equine Dreams,June 2014,6/14,Each one gallops out of a different silence.,8.3 in x 11.7 in (21 cm x 29.7 cm),Watercolor and Ink on paper,yes,,2014.0
+Animalia Forms,,bird2025.jpg,The Watcher,July 2025,7/25,Knows something…,8 in x 8 in (20.3 cm x 20.3 cm),Markers on marker paper,yes,,2025.0
+Animalia Forms,,crustaceans.jpeg,Crux Crustacea,August 2021,8/21,Prehistoric arms held in surrender.,5 in x 5 in (12.7 cm x 12.7 cm),Ink liners on paper,yes,,2021.0
+Animalia Forms,,daydreaming.jpg,The Waiting Phase,August 2024,8/24,Some mutations are emotional.,7 in x 5 in (18 cm x 12.5 cm),Ink liners on paper,yes,,2024.0
+Animalia Forms,,horse2025.jpg,Edge,March 2025,3/25,Between tension and release.,8.3 in x 11.7 in (21 cm x 29.7 cm),Graphite pencils on paper,yes,,2025.0
+Animalia Forms,,horsepsy2025.jpg,Inward,July 2025,7/25,Everything moves inside.,8 in x 8 in (20.3 cm x 20.3 cm),Ink liners and markers on marker paper,yes,,2025.0
+Animalia Forms,,justlooking.jpg,Focused,August 2025,8/25,You see what you fear in its frozen glee. That's the whole trick.,8.3 in x 11.7 in (21 cm x 29.7 cm),Watercolor on hot press watercolor paper,yes,,2025.0
+Animalia Forms,,snail2021.jpg,Snail No. 1,July 2021,7/21,The body as architecture of refusal.,8.3 in x 11.7 in (21 cm x 29.7 cm),Ink liners on paper,yes,,2021.0
+Animalia Forms,,snail2024.jpg,Snail No. 2,December 2024,12/24,Some species mastered patience long ago.,11.7 in x 8.3 in (29.7 cm x 21 cm),Ink liners on paper,yes,,2024.0
+Animalia Forms,,trypanosoma2025.jpg,Trypanosoma brucei,May 2025,5/25,Form follows infection.,11.7 in x 8.3 in (29.7 cm x 21 cm),Red Ink and craft stickers on paper,yes,,2025.0
+Animalia Forms,,weird_horse.jpg,The Anatomist's Horse,May 2014,5/14,Muscle remembers more than mind.,15 in x 11 in (38.1 cm x 27.94 cm),Graphite pencils and watercolor on paper,yes,,2014.0
+Animalia Forms,,wildbird2025.jpg,Alone,July 2025,7/25,To be free is to be on your own,11.7 in x 8.3 in (29.7 cm x 21 cm),Graphite pencils on sketch paper,yes,,2025.0
+Between Waking,,fire_and_ice.jpg,Fever Dream,October 2025,10/25,"Where heat meets depth, neither wins.",7 in x 5 in (18 cm x 12.5 cm),Watercolor on hot press watercolor paper,yes,,2025.0
+Between Waking,,moonrise.jpg,Lunar Witness,October 2025,10/25,"Rocks jut from water that mirrors nothing, the moon is the only thing here that knows its own completeness.",15 in x 11 in (38.1 cm x 27.94 cm),Watercolor on on hot press watercolor paper,yes,,2025.0
+Between Waking,,nighthills2025.jpg,Planet's Mood Swing,August 2025,8/25,Captured in Acrylic,7 in x 5 in (18 cm x 12.5 cm),Acrylic markers on stretched canvas,yes,,2025.0
+Between Waking,,northern_lights.jpg,Aurora as Hysteria,October 2025,10/25,Northern nature malfunctions ignites in spectrum.,7 in x 5 in (18 cm x 12.5 cm),Watercolor on hot press watercolor paper,yes,,2025.0
+Boston,,boston_m_2025.jpg,Stillness on the Dock,August 2025,8/25,"Waiting, like everything here, for something to begin or return.",8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
+Boston,,boston_N2_2025.jpg,This is how Boston feels to me,August 2025,8/25,A city awake in stillness. A city becoming itself.,11.7 in x 8.3 in (29.7 cm x 21 cm),Alcohol markers on mixed media paper,yes,,2025.0
+Boston,,boston2025.jpg,Citgo Sign,June 2025,6/25,It watches over Kenmore like a lighthouse with no sea.,5.8 in x 8.3 in (14.8 cm x 21 cm),Red colored pencil on sketch paper,yes,,2025.0
+Boston,,downtown_boston.jpg,Lanterns of Downtown,August 2025,9/25,"History climbs upward in glass, downward in light.",8 in x 8 in (20.3 cm x 20.3 cm),Watercolor on mixed media paper,yes,,2025.0
+Boston,,MIT.jpg,MIT at Dusk,August 2025,8/25,Fairytale in RGB,11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on stretched canvas,yes,,2025.0
+Boston,,sunrise2025.jpeg,Sunrise of Empathy,August 2025,8/25,"Long Wharf, Boston MA",8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on mixed media paper,yes,,2025.0
+Boston,,washington_street_brighton.jpg,"Washington Street, Brighton MA",September 2025,9/25,A little too late.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
+Boston,,watercolorboston.jpg,River of Memory,September 2025,9/24,The water holds the city's reflection tighter than its shape.,12 in x 9 in (30.5 cm x 23 cm),Watercolor on watercolor paper,yes,,2025.0
+Echoes of Distance,,andoma.jpg,Andoma,September 2025,9/25,A tributary of Lake Onega (Vytegorsky District of Vologda Oblast in Russia).,7 in x 5 in (18 cm x 12.5 cm),Watercolor on hot press watercolor paper,yes,,2025.0
+Echoes of Distance,,blackseabatumi2022.jpg,"Black Sea, Batumi",September 2022,9/22,"Soft sea, hard world, no touch.",11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic paint on stretched canvas,yes,,2022.0
+Echoes of Distance,,canada.jpg,Mirror of an Unlived Life,October 2025,10/25,Every reflection is what could've been if I'd stayed.,,,yes,,2025.0
+Echoes of Distance,,dryearth.jpg,Molten Dusk,September 2025,9/25,The mountains melt into rivers of fire and silence.,,,yes,,2025.0
+Echoes of Distance,,frozen_light.jpg,When Radiance Breaches Flesh,October 2025,10/25,"A cold, luminescent incursion – light entering where it shouldn't, freezing itself inside something once warm and alive.",,,yes,,2025.0
+Echoes of Distance,,grandcanyon2025.jpg,Canyon Landscape,July 2025,7/25,Erosion Sonata.,8.3 in x 11.7 in (21 cm x 29.7 cm),Graphite pencils on paper,yes,,2025.0
+Echoes of Distance,,hills.jpg,Topographical Regret,August 2025,8/25,Miscalculated erosion is now permanent.,,,yes,,2025.0
+Echoes of Distance,,lake2024.jpg,Frozen,December 2024,12/24,"Frozen, but not cold.",,,yes,,2024.0
+Echoes of Distance,,lifeordeath.jpg,Spectral Geography,October 2025,10/25,Cartography for places that only exist between blinks.,,,yes,,2025.0
+Echoes of Distance,,niagara2025.jpg,Memory in Infrared,March 2025,3/25,The moment is gone.,,,yes,,2025.0
+Echoes of Distance,,niagarafalls2025.jpg,The Mist,March 2025,3/25,A drift between presence and disappearance.,,,yes,,2025.0
+Echoes of Distance,,seethestorm2025.jpeg,The Witness of Tempests,August 2025,8/25,It's a painting of presence. Of what stays still when everything else wants to collapse.,,,yes,,2025.0
+Echoes of Distance,,ship.jpg,Into the Wave,August 2025,8/25,"The ship leans toward the crest, carried by both fear and freedom.",,,yes,,2025.0
+Echoes of Distance,,shore_after_heat.jpg,The Quiet After,November 2025,11/25,Everything here has already happened.,,,yes,,2025.0
+Echoes of Distance,,storm2025.jpeg,"It looks like rescue, but it's just drift",August 2025,8/25,Direction ≠ salvation.,,,yes,,2025.0
+Echoes of Distance,,theriverbay.jpg,Riverbed,August 2025,8/25,"I am the mirror that blinds as the sun. I'll stay in your reflection
 and be embraced by drugs.",,,yes,,2025.0
-Fragile Systems,deadflowers2025.jpg,Dead Flowers,July 2025,7/25,A shadow where love once grew.,5.8 in x 8.3 in (14.8 cm x 21 cm),,yes,,2025.0
-Fragile Systems,dnaflowers2025.jpg,Bloomline,June 2025,6/25,Still forming.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-based markers and gel pens on sketchbook paper,yes,,2025.0
-Fragile Systems,flowers_07-2025.jpg,A Bit Too Alive,July 2025,7/25,Flowers that don't fit in botany.,,,yes,,2025.0
-Fragile Systems,flowers2025.jpg,Inheritance,June 2025,6/25,Two heads bloom on one genetic wound.,5.8 in x 8.3 in (14.8 cm x 21 cm),Ink liners on sketchbook paper,yes,,2025.0
-Nothing more than Human,2cb.jpg,Flutter of a Sleeping Nerve,October 2025,10/25,"A stillness so complete that even living things dare to land on it, as if the nervous system finally exhaled.",12 in x 9 in (30.5 cm x 23 cm),Colored pencils and ink liners on Bristol paper,yes,,2025.0
-Nothing more than Human,angel2014.jpg,Form Before Light,November 2014,11/14,What you become right before you disappear.,8.3 in x 11.7 in (21 cm x 29.7 cm),Pencil on paper,yes,,2014.0
-Nothing more than Human,beforethestorm2025.jpeg,A memory you shouldn't trust.,August 2025,8/25,Painted in the palette of your last warning.,8.3 in x 5.8 in (21 cm x 14.8 cm),Watercolor on cold press watercolor paper,yes,,2025.0
-Nothing more than Human,body2025.jpg,Anatomy of Want,April 2025,4/25,This pose is a need & the face never mattered.,12 in x 9 in (30.5 cm x 23 cm),Graphite pencils on paper,yes,,2025.0
-Nothing more than Human,core2014.jpg,Hold Yourself,October 2014,10/25,"Not comfort, just a proof you still exist.",8.3 in x 11.7 in (21 cm x 29.7 cm),Pencil on paper,yes,,2014.0
-Nothing more than Human,cruella.jpg,Before the Implosion,October 2025,10/25,A creature trained being geometric so it doesn't leak its softness into the teeth of the world.,11.7 in x 8.3 in (29.7 cm x 21 cm),Watercolor on cold press watercolor paper,yes,,2025.0
-Nothing more than Human,cybergirl.jpg,Neural Elegance,September 2025,10/25,Beauty redesigned for the electric age.,7 in x 5 in (18 cm x 12.5 cm),Acrylic markers on hot press watercolor paper,yes,,2025.0
-Nothing more than Human,devilgirl2025.jpeg,Burnt Sugar,August 2025,9/25,Sweetness gone bitter in the sun.,8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,dima2025.jpg,The McUniverse expands,September 2025,9/25,"Eating in a Boston McDonald's, halfway between a fluorescent dream and capitalist déjà vu.",9 in x 12 in (23 cm x 30.5 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,fishing2025.jpg,Fishing for Certainty,September 2025,9/25,It's not about catching. It's about holding the thread between chaos and control without letting go.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,girl2025.jpg,Becoming,March 2025,3/25,She Emerges…,12 in x 9 in (30.5 cm x 23 cm),Red colored pencil on pink cardstock,no,,2025.0
-Nothing more than Human,girlwaiting2025.jpg,No One Waits,April 2025,4/25,But she lingers anyway.,9 in x 12 in (23 cm x 30.5 cm),Colored pencils on white cardstock,yes,,2025.0
-Nothing more than Human,gothicgirl.jpg,Velvet Poison,October 2025,10/25,Sorrow smokes into the room.,8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners on Bristol paper,yes,,2025.0
-Nothing more than Human,inside2025.jpg,Blind to Noise,September 2025,9/25,"A red band cuts the world, leaving only the pulse of color behind.",12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,insignificant.jpg,The Fall Was Internal,July 2025,7/25,"Some angels descend inward, not down.",8 in x 8 in (20.3 cm x 20.3 cm),Water-based markers on marker paper,yes,,2025.0
-Nothing more than Human,internalwar2025.jpg,Cradle of Collapse,August 2025,8/25,"Folding in, before rising again.",9 in x 12 in (23 cm x 30.5 cm),Red colored pencil on yellow cardstock,yes,,2025.0
-Nothing more than Human,learning.jpg,Last Known Backup,September 2025,9/25,Trying to remember if the world was always this loud.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on paper,yes,,2025.0
-Nothing more than Human,liberty.jpg,Mother of Exile,June 2025,6/25,Burning Quiet.,9 in x 12 in (23 cm x 30.5 cm),Charcoal and pencil on paper,yes,,2025.0
-Nothing more than Human,livinginaveil.jpg,Containment,October 2025,10/25,"She's drowning in colors like a cage: the blues – press inward, the reds – bleed outward, somewhere in between – she tries to breathe.",12 in x 9 in (30.5 cm x 23 cm),Watercolor on cold press watercolor paper,yes,,2025.0
-Nothing more than Human,mescaline.jpg,Horned Serenity,October 2025,10/25,Wears silence like an ancient crown.,8.3 in x 5.8 in (21 cm x 14.8 cm),Alcohol markers on Bristol paper,yes,,2025.0
-Nothing more than Human,moongirl2025.jpg,Orbital dysphoria,August 2025,8/25,"I am not from here, but it won't leave me.",8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,noonethere.jpg,Contact,August 2025,8/25,"It's a question hung between stars:
+Fragile Systems,,deadflowers2025.jpg,Dead Flowers,July 2025,7/25,A shadow where love once grew.,5.8 in x 8.3 in (14.8 cm x 21 cm),,yes,,2025.0
+Fragile Systems,,dnaflowers2025.jpg,Bloomline,June 2025,6/25,Still forming.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-based markers and gel pens on sketchbook paper,yes,,2025.0
+Fragile Systems,,flowers_07-2025.jpg,A Bit Too Alive,July 2025,7/25,Flowers that don't fit in botany.,,,yes,,2025.0
+Fragile Systems,,flowers2025.jpg,Inheritance,June 2025,6/25,Two heads bloom on one genetic wound.,5.8 in x 8.3 in (14.8 cm x 21 cm),Ink liners on sketchbook paper,yes,,2025.0
+Nothing more than Human,,2cb.jpg,Flutter of a Sleeping Nerve,October 2025,10/25,"A stillness so complete that even living things dare to land on it, as if the nervous system finally exhaled.",12 in x 9 in (30.5 cm x 23 cm),Colored pencils and ink liners on Bristol paper,yes,,2025.0
+Nothing more than Human,,angel2014.jpg,Form Before Light,November 2014,11/14,What you become right before you disappear.,8.3 in x 11.7 in (21 cm x 29.7 cm),Pencil on paper,yes,,2014.0
+Nothing more than Human,,beforethestorm2025.jpeg,A memory you shouldn't trust.,August 2025,8/25,Painted in the palette of your last warning.,8.3 in x 5.8 in (21 cm x 14.8 cm),Watercolor on cold press watercolor paper,yes,,2025.0
+Nothing more than Human,,body2025.jpg,Anatomy of Want,April 2025,4/25,This pose is a need & the face never mattered.,12 in x 9 in (30.5 cm x 23 cm),Graphite pencils on paper,yes,,2025.0
+Nothing more than Human,,core2014.jpg,Hold Yourself,October 2014,10/25,"Not comfort, just a proof you still exist.",8.3 in x 11.7 in (21 cm x 29.7 cm),Pencil on paper,yes,,2014.0
+Nothing more than Human,,cruella.jpg,Before the Implosion,October 2025,10/25,A creature trained being geometric so it doesn't leak its softness into the teeth of the world.,11.7 in x 8.3 in (29.7 cm x 21 cm),Watercolor on cold press watercolor paper,yes,,2025.0
+Nothing more than Human,,cybergirl.jpg,Neural Elegance,September 2025,10/25,Beauty redesigned for the electric age.,7 in x 5 in (18 cm x 12.5 cm),Acrylic markers on hot press watercolor paper,yes,,2025.0
+Nothing more than Human,,devilgirl2025.jpeg,Burnt Sugar,August 2025,9/25,Sweetness gone bitter in the sun.,8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,dima2025.jpg,The McUniverse expands,September 2025,9/25,"Eating in a Boston McDonald's, halfway between a fluorescent dream and capitalist déjà vu.",9 in x 12 in (23 cm x 30.5 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,fishing2025.jpg,Fishing for Certainty,September 2025,9/25,It's not about catching. It's about holding the thread between chaos and control without letting go.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,girl2025.jpg,Becoming,March 2025,3/25,She Emerges…,12 in x 9 in (30.5 cm x 23 cm),Red colored pencil on pink cardstock,no,,2025.0
+Nothing more than Human,,girlwaiting2025.jpg,No One Waits,April 2025,4/25,But she lingers anyway.,9 in x 12 in (23 cm x 30.5 cm),Colored pencils on white cardstock,yes,,2025.0
+Nothing more than Human,,gothicgirl.jpg,Velvet Poison,October 2025,10/25,Sorrow smokes into the room.,8.3 in x 5.8 in (21 cm x 14.8 cm),Ink liners on Bristol paper,yes,,2025.0
+Nothing more than Human,,inside2025.jpg,Blind to Noise,September 2025,9/25,"A red band cuts the world, leaving only the pulse of color behind.",12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,insignificant.jpg,The Fall Was Internal,July 2025,7/25,"Some angels descend inward, not down.",8 in x 8 in (20.3 cm x 20.3 cm),Water-based markers on marker paper,yes,,2025.0
+Nothing more than Human,,internalwar2025.jpg,Cradle of Collapse,August 2025,8/25,"Folding in, before rising again.",9 in x 12 in (23 cm x 30.5 cm),Red colored pencil on yellow cardstock,yes,,2025.0
+Nothing more than Human,,learning.jpg,Last Known Backup,September 2025,9/25,Trying to remember if the world was always this loud.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on paper,yes,,2025.0
+Nothing more than Human,,liberty.jpg,Mother of Exile,June 2025,6/25,Burning Quiet.,9 in x 12 in (23 cm x 30.5 cm),Charcoal and pencil on paper,yes,,2025.0
+Nothing more than Human,,livinginaveil.jpg,Containment,October 2025,10/25,"She's drowning in colors like a cage: the blues – press inward, the reds – bleed outward, somewhere in between – she tries to breathe.",12 in x 9 in (30.5 cm x 23 cm),Watercolor on cold press watercolor paper,yes,,2025.0
+Nothing more than Human,,mescaline.jpg,Horned Serenity,October 2025,10/25,Wears silence like an ancient crown.,8.3 in x 5.8 in (21 cm x 14.8 cm),Alcohol markers on Bristol paper,yes,,2025.0
+Nothing more than Human,,moongirl2025.jpg,Orbital dysphoria,August 2025,8/25,"I am not from here, but it won't leave me.",8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,noonethere.jpg,Contact,August 2025,8/25,"It's a question hung between stars:
 What if we almost found each other?",8.3 in x 5.8 in (21 cm x 14.8 cm),Watercolor on cold press watercolor paper,yes,,2025.0
-Nothing more than Human,nudev32025.jpg,Veil,July 2025,7/25,Living in a veil we never question.,11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on paper,yes,,2025.0
-Nothing more than Human,pathincontrol2025.jpeg,Reality Maintenance Department,August 2025,8/25,"This work explores the tension between control and surrender, and between constructed worlds and the underlying truth. Is the man walking toward freedom or deeper into the simulation?",8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,scream.jpg,Scream,September 2025,9/25,A rupture in the color of silence.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,serpent_of_memory.jpg,The Familiar Predator,October 2025,10/25,Some attachments outlive their safety but not their intimacy.,12 in x 9 in (30.5 cm x 23 cm),Watercolor and watercolor markers on cold press watercolor paper,yes,,2025.0
-Nothing more than Human,sosurreal.jpg,Fragmented Composure,November 2025,11/25,This is how you look when you try to hold yourself together and the edges don't line up.,12 in x 9 in (30.5 cm x 23 cm),Colored pencils on Bristol paper,yes,,2025.0
-Nothing more than Human,summertimesadness.jpeg,Liquid serotonin cosplay,August 2025,8/25,Seems to be pretending that everything is normal.,8.3 in x 5.8 in (21 cm x 14.8 cm),Watercolor on cold press watercolor paper,yes,,2025.0
-Nothing more than Human,supergirl.jpg,Supergirl,August 2025,8/25,A restrained portrait of control – burning quietly beneath the surface.,8 in x 11 in (20 cm x 28 cm),Acrylic markers on mixed media paper,yes,,2025.0
-Nothing more than Human,survived.jpg,The Proof,November 2025,11/25,"Body, like a diagram of damage, and evidence that survival has texture.",12 in x 9 in (30.5 cm x 23 cm),Colored pencils on paper,yes,,2025.0
-Nothing more than Human,theendofliberty.jpg,Liberty Flooded,September 2025,9/25,The goddess stands calm as the city drowns in her own reflection.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
-Nothing more than Human,time.jpg,Hour of Stillness,September 2025,9/25,Even the clock looks tired of measuring.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on paper,yes,,2025.0
-Nothing more than Human,woman2025.jpg,False Light,April 2025,4/25,"Too vivid to be true, too polished to be real.",8.3 in x 11.7 in (21 cm x 29.7 cm),Colored pencils on white cardstock,no,,2025.0
-Sketches,abstract2025.jpg,Background Noise,June 2025,6/25,Blurred before the world did.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-soluble crayons on sketchbook paper,yes,,2025.0
-Sketches,armenia2025.jpg,Soft Ashes,July 2025,7/25,What burned is quiet now.,,,yes,,2025.0
-Sketches,atwork07082025.jpg,Survival mode,July 2025,7/25,Too many pupils for one truth.,,,yes,,2025.0
-Sketches,autumn2024.jpg,Autumn Draft,November 2024,11/24,"Something angular, almost alive.",,,yes,,2024.0
-Sketches,darkcity2025.jpg,Dark City,May 2025,5/25,"Silent, waiting, watchful.",,,yes,,2025.0
-Sketches,eyes.jpg,Threefold Vision,September 2025,9/25,"Not one, but many eyes absorb the world at once.",,,yes,,2025.0
-Sketches,flowerheart2025.jpg,Rooted,July 2025,7/25,No thorns.,,,yes,,2025.0
-Sketches,hand_reflection2025.jpg,Echo Hand,August 2025,8/25,I saw you in my absence.,8 in x 8 in (20.3 cm x 20.3 cm),Water-based markers on marker paper,yes,,2025.0
-Sketches,hands2025.jpg,A new way to bleed,July 2025,7/25,"You reach, not to hold, but to be unmade.",,,yes,,2025.0
-Sketches,lastlight.jpg,Afterglow,September 2025,9/25,"The sun sinks, but its memory refuses to fade.",,,yes,,2025.0
-Sketches,postit_set1.jpg,PostIt Notes,July 2025,7/25,Just a handful of feelings painted in private and seen by you.,,,yes,,2025.0
-Sketches,sea2025.jpg,Underexposed,July 2025,7/25,"The light remained, but not on me.",,,yes,,2025.0
-Sketches,sleeping_fields.jpg,Sleeping Fields,September 2025,9/25,"Beneath the blaze, the earth curls into shadow.",,,yes,,2025.0
-Sketches,smoking2025.jpg,Smoking Kills,June 2025,6/25,And all I want is to surrender.,,,yes,,2025.0
-Sketches,sorrow2025.jpg,Three Birds,July 2025,7/25,And none of them return.,,,yes,,2025.0
-Sketches,sunset2025.jpg,Overgeneralization,June 2025,6/25,The mind forgets boundaries when it hurts.,,,yes,,2025.0
-Sketches,surrealnature.jpeg,Malfunction,August 2025,8/25,The sky is unaware if it is ending or beginning. It's stuck in expressive mode.,,,yes,,2025.0
-Sketches,velvetsky.jpg,Velvet Sky,July 2025,7/25,Evening gathers like a soft command.,,,yes,,2025.0
-Sketches,watercolor_nature.jpg,Fields of Silence,September 2025,9/25,"A collection of quiet horizons where land, sea, and sky dissolve into stillness.",,,yes,,2025.0
-Subconscious,abswaves2025.jpg,Warmth Knows the Way,July 2025,7/25,Sensations that don't need proof.,8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on marker paper,yes,,2025.0
-Subconscious,box.jpg,Inheritance Box,August 2025,8/25,Something was left for you by me.,,,yes,,2025.0
-Subconscious,brain2025.jpg,Inner Spectrum,July 2025,7/25,Nothing is black and white inside.,8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on marker paper,yes,,2025.0
-Subconscious,cute.jpg,Dream Axolotl,September 2025,9/25,"A being born from liquid light, floating without destination.",9 in x 12 in (23 cm x 30.5 cm),Alcohol markers on marker paper,yes,,2025.0
-Subconscious,faultlines2025.jpg,Faultlines,April 2025,4/25,Confused.,4 in x 4 in (10.2 cm x 10.2 cm),Ink liners on paper,yes,,2025.0
-Subconscious,helix2025.jpg,Spiraling,June 2025,6/25,Structure bends like memory.,5.8 in x 8.3 in (14.8 cm x 21 cm),Ink liners and colored pencils on sketchbook paper,yes,,2025.0
-Subconscious,invasion.jpg,Invasion,June 2025,6/25,Nervous system dreaming itself into color,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-based markers and ink liners on sketchbook paper,yes,,2025.0
-Subconscious,neverwas2025.jpg,Memory of a Place That Never Was,June 2025,6/25,Painted like a dream you half-remember.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-soluble crayons on sketchbook paper,yes,,2025.0
-Subconscious,notblind.jpg,False Window,July 2025,7/25,You saw reflection and thought it was truth.,8 in x 8 in (20.3 cm x 20.3 cm),Water-based markers on marker paper,yes,,2025.0
-Subconscious,oracle.jpg,The Observer Inside,September 2025,9/25,"An eye within an eye, endlessly watching itself.",12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on hot press watercolor paper,yes,,2025.0
-Subconscious,picasso.jpg,Cubism of Memory,October 2025,10/25,"Fragments of what I used to be, arranged to look deliberate.",11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on beige cardstock,yes,,2025.0
-Subconscious,soulmates.jpg,Entanglement,July 2025,7/25,"Nothing here is still, not even love.",7.2 in x 10.1 in (18.2 cm x 25.7 cm),Acrylic markers on stretched canvas,yes,,2025.0
-Subconscious,sunset2025.jpg,Soft Rift,July 2025,7/25,Splitting just to spill light.,11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on sketchbook paper,yes,,2025.0
-Underwater,angel2024.jpg,Heaven Is Also an Ocean,April 2025,4/25,They never needing air to pray.,,,yes,,2024.0
-Underwater,fear2025.jpeg,Tactile fear,August 2025,8/25,"It's the moment your hand realizes it's holding a life, not an object. It's not the fish that inspires fear, but the intimacy of touching something real and not knowing how it will affect you.",,,yes,,2025.0
-Underwater,fish2022.jpg,Silent Lantern,September 2022,9/22,"Glows for no one, still glows.",,,yes,,2022.0
-Underwater,fish2025.jpg,Aquarium Mind,March 2025,3/25,A swirl of thoughts in motion drifting through the subconscious like fish in glass.,,,yes,,2025.0
-Underwater,guppy2023.jpg,Nowhere Fish,July 2023,7/23,Swims through thought.,,,yes,,2023.0
-Underwater,lobster.jpeg,Lobster,March 2025,3/25,Leaving behind what once protected.,,,yes,,2025.0
-Underwater,sadfish2025.jpg,Decorative despair,August 2025,8/25,A rainbow melting under pressure.,,,yes,,2025.0
-Underwater,shrimp2021.jpg,Blue Shell Study,December 2021,12/21,A sketch made mid-escape.,5 in x 5 in (12.7 cm x 12.7 cm),,yes,,2021.0
+Nothing more than Human,,nudev32025.jpg,Veil,July 2025,7/25,Living in a veil we never question.,11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on paper,yes,,2025.0
+Nothing more than Human,,pathincontrol2025.jpeg,Reality Maintenance Department,August 2025,8/25,"This work explores the tension between control and surrender, and between constructed worlds and the underlying truth. Is the man walking toward freedom or deeper into the simulation?",8 in x 8 in (20.3 cm x 20.3 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,scream.jpg,Scream,September 2025,9/25,A rupture in the color of silence.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,serpent_of_memory.jpg,The Familiar Predator,October 2025,10/25,Some attachments outlive their safety but not their intimacy.,12 in x 9 in (30.5 cm x 23 cm),Watercolor and watercolor markers on cold press watercolor paper,yes,,2025.0
+Nothing more than Human,,sosurreal.jpg,Fragmented Composure,November 2025,11/25,This is how you look when you try to hold yourself together and the edges don't line up.,12 in x 9 in (30.5 cm x 23 cm),Colored pencils on Bristol paper,yes,,2025.0
+Nothing more than Human,,summertimesadness.jpeg,Liquid serotonin cosplay,August 2025,8/25,Seems to be pretending that everything is normal.,8.3 in x 5.8 in (21 cm x 14.8 cm),Watercolor on cold press watercolor paper,yes,,2025.0
+Nothing more than Human,,supergirl.jpg,Supergirl,August 2025,8/25,A restrained portrait of control – burning quietly beneath the surface.,8 in x 11 in (20 cm x 28 cm),Acrylic markers on mixed media paper,yes,,2025.0
+Nothing more than Human,,survived.jpg,The Proof,November 2025,11/25,"Body, like a diagram of damage, and evidence that survival has texture.",12 in x 9 in (30.5 cm x 23 cm),Colored pencils on paper,yes,,2025.0
+Nothing more than Human,,theendofliberty.jpg,Liberty Flooded,September 2025,9/25,The goddess stands calm as the city drowns in her own reflection.,12 in x 9 in (30.5 cm x 23 cm),Alcohol markers on marker paper,yes,,2025.0
+Nothing more than Human,,time.jpg,Hour of Stillness,September 2025,9/25,Even the clock looks tired of measuring.,12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on paper,yes,,2025.0
+Nothing more than Human,,woman2025.jpg,False Light,April 2025,4/25,"Too vivid to be true, too polished to be real.",8.3 in x 11.7 in (21 cm x 29.7 cm),Colored pencils on white cardstock,no,,2025.0
+Sketches,,abstract2025.jpg,Background Noise,June 2025,6/25,Blurred before the world did.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-soluble crayons on sketchbook paper,yes,,2025.0
+Sketches,,armenia2025.jpg,Soft Ashes,July 2025,7/25,What burned is quiet now.,,,yes,,2025.0
+Sketches,,atwork07082025.jpg,Survival mode,July 2025,7/25,Too many pupils for one truth.,,,yes,,2025.0
+Sketches,,autumn2024.jpg,Autumn Draft,November 2024,11/24,"Something angular, almost alive.",,,yes,,2024.0
+Sketches,,darkcity2025.jpg,Dark City,May 2025,5/25,"Silent, waiting, watchful.",,,yes,,2025.0
+Sketches,,eyes.jpg,Threefold Vision,September 2025,9/25,"Not one, but many eyes absorb the world at once.",,,yes,,2025.0
+Sketches,,flowerheart2025.jpg,Rooted,July 2025,7/25,No thorns.,,,yes,,2025.0
+Sketches,,hand_reflection2025.jpg,Echo Hand,August 2025,8/25,I saw you in my absence.,8 in x 8 in (20.3 cm x 20.3 cm),Water-based markers on marker paper,yes,,2025.0
+Sketches,,hands2025.jpg,A new way to bleed,July 2025,7/25,"You reach, not to hold, but to be unmade.",,,yes,,2025.0
+Sketches,,lastlight.jpg,Afterglow,September 2025,9/25,"The sun sinks, but its memory refuses to fade.",,,yes,,2025.0
+Sketches,,postit_set1.jpg,PostIt Notes,July 2025,7/25,Just a handful of feelings painted in private and seen by you.,,,yes,,2025.0
+Sketches,,sea2025.jpg,Underexposed,July 2025,7/25,"The light remained, but not on me.",,,yes,,2025.0
+Sketches,,sleeping_fields.jpg,Sleeping Fields,September 2025,9/25,"Beneath the blaze, the earth curls into shadow.",,,yes,,2025.0
+Sketches,,smoking2025.jpg,Smoking Kills,June 2025,6/25,And all I want is to surrender.,,,yes,,2025.0
+Sketches,,sorrow2025.jpg,Three Birds,July 2025,7/25,And none of them return.,,,yes,,2025.0
+Sketches,,sunset2025.jpg,Overgeneralization,June 2025,6/25,The mind forgets boundaries when it hurts.,,,yes,,2025.0
+Sketches,,surrealnature.jpeg,Malfunction,August 2025,8/25,The sky is unaware if it is ending or beginning. It's stuck in expressive mode.,,,yes,,2025.0
+Sketches,,velvetsky.jpg,Velvet Sky,July 2025,7/25,Evening gathers like a soft command.,,,yes,,2025.0
+Sketches,,watercolor_nature.jpg,Fields of Silence,September 2025,9/25,"A collection of quiet horizons where land, sea, and sky dissolve into stillness.",,,yes,,2025.0
+Subconscious,,abswaves2025.jpg,Warmth Knows the Way,July 2025,7/25,Sensations that don't need proof.,8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on marker paper,yes,,2025.0
+Subconscious,,box.jpg,Inheritance Box,August 2025,8/25,Something was left for you by me.,,,yes,,2025.0
+Subconscious,,brain2025.jpg,Inner Spectrum,July 2025,7/25,Nothing is black and white inside.,8 in x 8 in (20.3 cm x 20.3 cm),Acrylic markers on marker paper,yes,,2025.0
+Subconscious,,cute.jpg,Dream Axolotl,September 2025,9/25,"A being born from liquid light, floating without destination.",9 in x 12 in (23 cm x 30.5 cm),Alcohol markers on marker paper,yes,,2025.0
+Subconscious,,faultlines2025.jpg,Faultlines,April 2025,4/25,Confused.,4 in x 4 in (10.2 cm x 10.2 cm),Ink liners on paper,yes,,2025.0
+Subconscious,,helix2025.jpg,Spiraling,June 2025,6/25,Structure bends like memory.,5.8 in x 8.3 in (14.8 cm x 21 cm),Ink liners and colored pencils on sketchbook paper,yes,,2025.0
+Subconscious,,invasion.jpg,Invasion,June 2025,6/25,Nervous system dreaming itself into color,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-based markers and ink liners on sketchbook paper,yes,,2025.0
+Subconscious,,neverwas2025.jpg,Memory of a Place That Never Was,June 2025,6/25,Painted like a dream you half-remember.,5.8 in x 8.3 in (14.8 cm x 21 cm),Water-soluble crayons on sketchbook paper,yes,,2025.0
+Subconscious,,notblind.jpg,False Window,July 2025,7/25,You saw reflection and thought it was truth.,8 in x 8 in (20.3 cm x 20.3 cm),Water-based markers on marker paper,yes,,2025.0
+Subconscious,,oracle.jpg,The Observer Inside,September 2025,9/25,"An eye within an eye, endlessly watching itself.",12 in x 9 in (30.5 cm x 23 cm),Acrylic markers on hot press watercolor paper,yes,,2025.0
+Subconscious,,picasso.jpg,Cubism of Memory,October 2025,10/25,"Fragments of what I used to be, arranged to look deliberate.",11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on beige cardstock,yes,,2025.0
+Subconscious,,soulmates.jpg,Entanglement,July 2025,7/25,"Nothing here is still, not even love.",7.2 in x 10.1 in (18.2 cm x 25.7 cm),Acrylic markers on stretched canvas,yes,,2025.0
+Subconscious,,sunset2025.jpg,Soft Rift,July 2025,7/25,Splitting just to spill light.,11.7 in x 8.3 in (29.7 cm x 21 cm),Acrylic markers on sketchbook paper,yes,,2025.0
+Underwater,,angel2024.jpg,Heaven Is Also an Ocean,April 2025,4/25,They never needing air to pray.,,,yes,,2024.0
+Underwater,,fear2025.jpeg,Tactile fear,August 2025,8/25,"It's the moment your hand realizes it's holding a life, not an object. It's not the fish that inspires fear, but the intimacy of touching something real and not knowing how it will affect you.",,,yes,,2025.0
+Underwater,,fish2022.jpg,Silent Lantern,September 2022,9/22,"Glows for no one, still glows.",,,yes,,2022.0
+Underwater,,fish2025.jpg,Aquarium Mind,March 2025,3/25,A swirl of thoughts in motion drifting through the subconscious like fish in glass.,,,yes,,2025.0
+Underwater,,guppy2023.jpg,Nowhere Fish,July 2023,7/23,Swims through thought.,,,yes,,2023.0
+Underwater,,lobster.jpeg,Lobster,March 2025,3/25,Leaving behind what once protected.,,,yes,,2025.0
+Underwater,,sadfish2025.jpg,Decorative despair,August 2025,8/25,A rainbow melting under pressure.,,,yes,,2025.0
+Underwater,,shrimp2021.jpg,Blue Shell Study,December 2021,12/21,A sketch made mid-escape.,5 in x 5 in (12.7 cm x 12.7 cm),,yes,,2021.0
