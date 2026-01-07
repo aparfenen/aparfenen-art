@@ -346,6 +346,7 @@ CATEGORY_ORDER = [
     "Animalia Forms", 
     "Echoes of Distance",
     "Between Waking",
+    "Daydwellers",
     "Subconscious",
     "Underwater",
     "Fragile Systems",
