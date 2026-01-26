@@ -285,7 +285,15 @@ def generate_artwork_block(row):
     medium = str(row.get("medium", "")).strip() if "medium" in row and pd.notna(row.get("medium")) else ""
     tags = str(row.get("tags", "")).strip() if "tags" in row and pd.notna(row.get("tags")) else ""
     category = row.get("category", "").strip() if "category" in row else ""
-    year = row.get("year", "").strip() if "year" in row else ""
+    # FIXED: Convert year float (2025.0) to int string ("2025")
+    year_raw = row.get("year", "")
+    if pd.notna(year_raw) and str(year_raw).strip():
+        try:
+            year = str(int(float(year_raw)))
+        except (ValueError, TypeError):
+            year = str(year_raw).strip()
+    else:
+        year = ""
     
     dimensions_escaped = dimensions.replace('"', '&quot;')
     medium_escaped = medium.replace('"', '&quot;')
