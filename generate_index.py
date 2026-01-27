@@ -252,18 +252,19 @@ def generate_filter_sidebar():
         html += '      </div>\n'
         html += '    </div>\n\n'
     
-    if unique_mediums:
-        html += '    <div class="filter-section collapsed">\n'  # FIXED: collapsed by default
-        html += '      <div class="filter-section-header">Medium</div>\n'
-        html += '      <div class="filter-options">\n'
-        for medium in unique_mediums:
-            html += f'        <label class="filter-option">\n'
-            html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="medium" value="{medium}">\n'
-            html += f'          <span class="filter-label">{medium}</span>\n'
-            html += f'        </label>\n'
-        html += '      </div>\n'
-        html += '    </div>\n\n'
-    
+    # Medium filter removed - too large to display
+    # if unique_mediums:
+    #     html += '    <div class="filter-section collapsed">\n'
+    #     html += '      <div class="filter-section-header">Medium</div>\n'
+    #     html += '      <div class="filter-options">\n'
+    #     for medium in unique_mediums:
+    #         html += f'        <label class="filter-option">\n'
+    #         html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="medium" value="{medium}">\n'
+    #         html += f'          <span class="filter-label">{medium}</span>\n'
+    #         html += f'        </label>\n'
+    #     html += '      </div>\n'
+    #     html += '    </div>\n\n'
+
     if unique_tags:
         html += '    <div class="filter-section collapsed">\n'  # FIXED: collapsed by default
         html += '      <div class="filter-section-header">Tags</div>\n'
