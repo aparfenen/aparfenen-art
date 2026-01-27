@@ -136,46 +136,58 @@ if 'visible' in df.columns:
 
 # ===== STEP 3: Parse and sort by dates =====
 def parse_date(row):
-    """Parse date using show_date for month/year, date_created for day if available."""
-    show_date = str(row.get('show_date', '')).strip()
+    """
+    Parse date with priority:
+    1. date_finished (M/D/YYYY) - most precise
+    2. date_created (M/YY) - month/year only
+    3. show_date (Month YYYY) - text format
+    """
+    date_finished = str(row.get('date_finished', '')).strip()
     date_created = str(row.get('date_created', '')).strip()
+    show_date = str(row.get('show_date', '')).strip()
     year_str = str(row.get('year', '')).strip()
-    
-    if not show_date or not year_str:
-        return datetime(1900, 1, 1)
-    
-    # Parse month from show_date (e.g., "March 2025")
-    try:
-        parsed = datetime.strptime(show_date, '%B %Y')
-        
-        # If date_created has full date, extract day
-        if '/' in date_created:
-            parts = date_created.split('/')
-            if len(parts) == 3:  # M/D/YYYY format
-                try:
-                    day = int(parts[1])
-                    parsed = parsed.replace(day=min(day, 28))
-                except:
-                    pass
-        
-        return parsed
-    except:
-        pass
-    
-    # Fallback: use year and month from date_created
-    if '/' in date_created:
-        parts = date_created.split('/')
-        if len(parts) >= 2:
+
+    # Priority 1: date_finished (format: M/D/YYYY or MM/DD/YYYY)
+    if date_finished and '/' in date_finished:
+        parts = date_finished.split('/')
+        if len(parts) == 3:  # M/D/YYYY
             try:
                 month = int(parts[0])
-                year = int(year_str)
-                day = 1
-                if len(parts) == 3:
-                    day = int(parts[1])
+                day = int(parts[1])
+                year = int(parts[2])
                 return datetime(year, month, day)
-            except:
+            except (ValueError, IndexError):
                 pass
-    
+
+    # Priority 2: date_created (format: M/YY - month/year, e.g., "12/25" = December 2025)
+    if date_created and '/' in date_created:
+        parts = date_created.split('/')
+        if len(parts) == 2:  # M/YY format
+            try:
+                month = int(parts[0])
+                year_short = int(parts[1])
+                # Convert YY to YYYY (25 -> 2025, 26 -> 2026)
+                year = 2000 + year_short if year_short < 100 else year_short
+                return datetime(year, month, 1)
+            except (ValueError, IndexError):
+                pass
+
+    # Priority 3: show_date (format: "Month YYYY")
+    if show_date:
+        try:
+            parsed = datetime.strptime(show_date, '%B %Y')
+            return parsed
+        except ValueError:
+            pass
+
+    # Fallback: use year only
+    if year_str:
+        try:
+            year = int(float(year_str))
+            return datetime(year, 1, 1)
+        except (ValueError, TypeError):
+            pass
+
     return datetime(1900, 1, 1)
 
 df['parsed_date'] = df.apply(parse_date, axis=1)
