@@ -8,6 +8,7 @@ const lightboxTitle = lightbox.querySelector(".lightbox-title");
 const lightboxDate = lightbox.querySelector(".lightbox-date");
 const lightboxDescription = lightbox.querySelector(".lightbox-description");
 const lightboxMetadata = lightbox.querySelector(".lightbox-metadata");
+const lightboxLoader = lightbox.querySelector(".lightbox-loader");
 
 let currentImageSrc = "";
 let currentImageTitle = "";
@@ -60,39 +61,61 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log(`[Lightbox] Initialized with ${imageCount} images`);
 });
 
-// ИСПРАВЛЕНИЕ: Улучшенная функция открытия lightbox
-function openLightbox(img) {
-  // Обновляем массив изображений перед открытием (на случай если фильтры изменились)
-  updateGalleryImagesArray();
-  
-  // Находим индекс текущего изображения
-  currentImageIndex = allGalleryImages.indexOf(img);
-  
-  if (currentImageIndex === -1) {
-    console.error('[Lightbox] Image not found in gallery array!');
-    // Пытаемся обновить массив и найти снова
-    updateGalleryImagesArray();
-    currentImageIndex = allGalleryImages.indexOf(img);
-  }
-  
-  // Устанавливаем изображение (используем full-src для полного разрешения)
-  const fullImageSrc = img.dataset.fullSrc || img.src;
-  lightboxImg.src = fullImageSrc;
-  currentImageSrc = fullImageSrc;
-  
+// Функция для предзагрузки изображения с loader
+function loadImageWithLoader(imgElement, onLoadComplete) {
+  // Показываем loader
+  lightboxLoader.style.display = "block";
+  lightboxImg.style.opacity = "0.3";
+
+  // Получаем путь к полному изображению
+  const fullImageSrc = imgElement.dataset.fullSrc || imgElement.src;
+
+  // Создаем новый объект Image для предзагрузки
+  const preloadImg = new Image();
+
+  preloadImg.onload = function() {
+    // Изображение загружено - обновляем lightbox
+    lightboxImg.src = fullImageSrc;
+    currentImageSrc = fullImageSrc;
+
+    // Скрываем loader
+    lightboxLoader.style.display = "none";
+    lightboxImg.style.opacity = "1";
+
+    // Вызываем callback для обновления метаданных
+    if (onLoadComplete) {
+      onLoadComplete(imgElement);
+    }
+
+    console.log(`[Lightbox] Image loaded: ${fullImageSrc}`);
+  };
+
+  preloadImg.onerror = function() {
+    console.error(`[Lightbox] Failed to load image: ${fullImageSrc}`);
+    // Скрываем loader даже при ошибке
+    lightboxLoader.style.display = "none";
+    lightboxImg.style.opacity = "1";
+  };
+
+  // Начинаем загрузку
+  preloadImg.src = fullImageSrc;
+}
+
+// Функция для обновления метаданных
+function updateLightboxMetadata(img) {
   // Устанавливаем метаданные из data-атрибутов
   const title = img.dataset.title || "Untitled";
   currentImageTitle = title;
   currentImageId = img.dataset.id || "";
-  
+
   lightboxTitle.textContent = title;
   lightboxDate.textContent = img.dataset.date || "";
   lightboxDescription.textContent = img.dataset.description || "";
-  
+
   // Строим строку метаданных (размеры и материал)
   const dimensions = img.dataset.dimensions || "";
   const medium = img.dataset.medium || "";
-  
+
   let metadataText = "";
   if (dimensions && medium) {
     metadataText = `${dimensions} • ${medium}`;
@@ -101,7 +124,7 @@ function openLightbox(img) {
   } else if (medium) {
     metadataText = medium;
   }
-  
+
   // Показываем или скрываем секцию метаданных
   if (metadataText) {
     lightboxMetadata.textContent = metadataText;
@@ -109,19 +132,39 @@ function openLightbox(img) {
   } else {
     lightboxMetadata.style.display = "none";
   }
-  
+
   // ИСПРАВЛЕНИЕ: Обновляем URL hash без прокрутки
   if (currentImageId) {
     history.replaceState(null, null, `#${currentImageId}`);
   }
-  
+}
+
+// ИСПРАВЛЕНИЕ: Улучшенная функция открытия lightbox
+function openLightbox(img) {
+  // Обновляем массив изображений перед открытием (на случай если фильтры изменились)
+  updateGalleryImagesArray();
+
+  // Находим индекс текущего изображения
+  currentImageIndex = allGalleryImages.indexOf(img);
+
+  if (currentImageIndex === -1) {
+    console.error('[Lightbox] Image not found in gallery array!');
+    // Пытаемся обновить массив и найти снова
+    updateGalleryImagesArray();
+    currentImageIndex = allGalleryImages.indexOf(img);
+  }
+
   // Обновляем счетчик
   updateCounter();
-  
+
   // Показываем lightbox с анимацией
   lightbox.classList.add("active");
-  
-  console.log(`[Lightbox] Opened image ${currentImageIndex + 1}/${allGalleryImages.length}: "${title}"`);
+
+  // Загружаем изображение с loader и обновляем метаданные после загрузки
+  loadImageWithLoader(img, updateLightboxMetadata);
+
+  const title = img.dataset.title || "Untitled";
+  console.log(`[Lightbox] Opening image ${currentImageIndex + 1}/${allGalleryImages.length}: "${title}"`);
 }
 
 // ИСПРАВЛЕНИЕ: Улучшенная навигация с проверками
@@ -130,24 +173,31 @@ function navigateImage(direction) {
     console.warn('[Lightbox] No images available for navigation');
     return;
   }
-  
+
   // Вычисляем новый индекс с циклическим переходом
   if (direction === 'next') {
     currentImageIndex = (currentImageIndex + 1) % allGalleryImages.length;
   } else if (direction === 'prev') {
     currentImageIndex = (currentImageIndex - 1 + allGalleryImages.length) % allGalleryImages.length;
   }
-  
+
   // Проверяем что новый индекс валиден
   if (currentImageIndex < 0 || currentImageIndex >= allGalleryImages.length) {
     console.error(`[Lightbox] Invalid image index: ${currentImageIndex}`);
     currentImageIndex = Math.max(0, Math.min(currentImageIndex, allGalleryImages.length - 1));
   }
-  
-  // Открываем lightbox с новым изображением
+
+  // Загружаем новое изображение
   const newImg = allGalleryImages[currentImageIndex];
   if (newImg) {
-    openLightbox(newImg);
+    // Обновляем счетчик
+    updateCounter();
+
+    // Загружаем изображение с loader и обновляем метаданные после загрузки
+    loadImageWithLoader(newImg, updateLightboxMetadata);
+
+    const title = newImg.dataset.title || "Untitled";
+    console.log(`[Lightbox] Navigating to image ${currentImageIndex + 1}/${allGalleryImages.length}: "${title}"`);
   } else {
     console.error(`[Lightbox] Image not found at index ${currentImageIndex}`);
   }
@@ -186,6 +236,9 @@ lightbox.addEventListener("click", (e) => {
 // Функция закрытия lightbox
 function closeLightbox() {
   lightbox.classList.remove("active");
+  // Скрываем loader если он был виден
+  lightboxLoader.style.display = "none";
+  lightboxImg.style.opacity = "1";
   // Удаляем hash из URL при закрытии
   history.replaceState(null, null, window.location.pathname);
   console.log('[Lightbox] Closed');
