@@ -75,9 +75,10 @@ function openLightbox(img) {
     currentImageIndex = allGalleryImages.indexOf(img);
   }
   
-  // Устанавливаем изображение
-  lightboxImg.src = img.src;
-  currentImageSrc = img.src;
+  // Устанавливаем изображение (используем full-src для полного разрешения)
+  const fullImageSrc = img.dataset.fullSrc || img.src;
+  lightboxImg.src = fullImageSrc;
+  currentImageSrc = fullImageSrc;
   
   // Устанавливаем метаданные из data-атрибутов
   const title = img.dataset.title || "Untitled";

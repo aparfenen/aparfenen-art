@@ -320,11 +320,17 @@ def generate_artwork_block(row):
     date_created = str(row.get("date_created", "")).strip() if "date_created" in row else ""
     date_created_escaped = date_created.replace('"', '&quot;')
     
+    # Generate thumbnail filename (always .jpg regardless of original extension)
+    filename_base = os.path.splitext(row["filename"])[0]
+    thumbnail_path = f"thumbnails/{row['category']}/{filename_base}.jpg"
+    full_image_path = f"img/{row['category']}/{row['filename']}"
+
     block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{row["title"]} ({row["show_date"]})">
-      <img src="img/{row["category"]}/{row["filename"]}"
+      <img src="{thumbnail_path}"
            alt="{row["title"]}"
            loading="lazy"
            decoding="async"
+           data-full-src="{full_image_path}"
            data-title="{row["title"]}"
            data-date="{row["show_date"]}"
            data-date-created="{date_created_escaped}"
