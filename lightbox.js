@@ -319,12 +319,12 @@ function shareOnPinterest() {
 function copyLink() {
   const copyButton = document.querySelector('.share-button.copy');
   const url = getArtworkURL();
-  
+
   navigator.clipboard.writeText(url).then(() => {
     const originalText = copyButton.innerHTML;
     copyButton.innerHTML = '✓ Copied!';
     copyButton.classList.add('copied');
-    
+
     setTimeout(() => {
       copyButton.innerHTML = originalText;
       copyButton.classList.remove('copied');
@@ -333,6 +333,44 @@ function copyLink() {
     console.error('Failed to copy:', err);
     alert('Link copied to clipboard:\n' + url);
   });
+}
+
+function emailAboutArtwork() {
+  const artworkURL = getArtworkURL();
+  const artworkTitle = currentImageTitle || "this artwork";
+
+  // Get artwork metadata from the lightbox
+  const date = lightboxDate.textContent || "";
+  const description = lightboxDescription.textContent || "";
+  const metadata = lightboxMetadata.textContent || "";
+
+  // Build email subject
+  const subject = encodeURIComponent(`Inquiry about "${artworkTitle}"`);
+
+  // Build email body with artwork details and questions
+  let body = `Hi,\n\nI'm interested in your artwork "${artworkTitle}"`;
+
+  if (date) {
+    body += ` (${date})`;
+  }
+  body += `.\n\n`;
+
+  if (metadata) {
+    body += `Details: ${metadata}\n\n`;
+  }
+
+  body += `I would like to know:\n`;
+  body += `- Is this piece available for purchase?\n`;
+  body += `- What is the price?\n`;
+  body += `- Are prints or reproductions available?\n\n`;
+
+  body += `Link to artwork: ${artworkURL}\n\n`;
+  body += `Thank you!\n`;
+
+  const encodedBody = encodeURIComponent(body);
+
+  // Open mailto link
+  window.location.href = `mailto:ann.parfenen2018@gmail.com?subject=${subject}&body=${encodedBody}`;
 }
 
 
