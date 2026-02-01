@@ -1089,46 +1089,46 @@ nav.main-nav .sub-menu a {
 
 /* ===== LIGHTBOX NAVIGATION ARROWS ===== */
 .lightbox-nav {
-  position: fixed;
+  position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 20px;
+  transform: translateY(-100%);
+  background: transparent;
+  border: none;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1001;
+  transition: all 0.25s ease;
+  z-index: 10;
   opacity: 0;
   pointer-events: none;
-  backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.lightbox-nav svg {
+  width: 24px;
+  height: 24px;
 }
 
 .lightbox.active .lightbox-nav {
-  opacity: 0.4;
+  opacity: 1;
   pointer-events: auto;
 }
 
 .lightbox-nav:hover,
 .lightbox-nav:active {
-  background: rgba(0, 0, 0, 0.6);
-  transform: translateY(-50%) scale(1.08);
-  opacity: 0.9;
-  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.85);
+  transform: translateY(-100%) scale(1.1);
 }
 
 .lightbox-nav.prev {
-  left: 20px;
+  left: -48px;
 }
 
 .lightbox-nav.next {
-  right: 20px;
+  right: -48px;
 }
 
 .lightbox.active .lightbox-counter {
@@ -1186,8 +1186,8 @@ nav.main-nav .sub-menu a {
 }
 
 @media (max-width: 1200px) {
-  .lightbox-nav.prev { left: 20px; }
-  .lightbox-nav.next { right: 20px; }
+  .lightbox-nav.prev { left: 8px; }
+  .lightbox-nav.next { right: 8px; }
 }
 
 @media (max-width: 768px) {
@@ -1237,23 +1237,24 @@ nav.main-nav .sub-menu a {
   .lightbox-nav {
     width: 40px;
     height: 40px;
-    font-size: 20px;
+    color: rgba(255, 255, 255, 0.4);
   }
 
-  .lightbox.active .lightbox-nav {
-    opacity: 0.35;
+  .lightbox-nav svg {
+    width: 22px;
+    height: 22px;
   }
 
   .lightbox-nav:active {
-    opacity: 0.85;
+    color: rgba(255, 255, 255, 0.85);
   }
 
   .lightbox-nav.prev {
-    left: 10px;
+    left: 4px;
   }
 
   .lightbox-nav.next {
-    right: 10px;
+    right: 4px;
   }
   
   .lightbox-counter {
