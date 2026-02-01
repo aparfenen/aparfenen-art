@@ -40,7 +40,7 @@
   /* Lightbox specific */
   --lightbox-overlay: rgba(0, 0, 0, 0.95);
   --lightbox-content-bg: #f9f9f9;
-  --lightbox-info-bg: rgba(255, 255, 255, 0.85);
+  --lightbox-info-bg: rgba(0, 0, 0, 0.85);
 
   /* Activity visualization */
   --activity-empty: #f8f8f8;
@@ -564,25 +564,23 @@ h3.section-title {
   width: 100%;
   padding: 10px 10px;
   background: var(--lightbox-info-bg);
-  border-top: 1px solid var(--border-medium);
-  color: var(--text-primary);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.95);
   border-radius: 0 0 8px 8px;
   box-sizing: border-box;
   text-align: center;
-  box-sizing: border-box;
-
 }
 
 .lightbox-title {
   font-size: 0.9em;
   font-weight: 600;
   margin: 0 0 4px 0;
-  color: var(--text-primary);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .lightbox-date {
   font-size: 0.65em;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.6);
   margin: 0 2px 2px 0;
   font-style: italic;
 }
@@ -590,13 +588,13 @@ h3.section-title {
 .lightbox-description {
   font-size: 0.75em;
   line-height: 1.6;
-  color: var(--text-primary);
+  color: rgba(255, 255, 255, 0.85);
   margin: 0 2px 4px 0;
 }
 
 .lightbox-metadata {
   font-size: 0.6em;
-  color: var(--text-muted);
+  color: rgba(255, 255, 255, 0.6);
   font-style: italic;
   margin: 0;
   padding-top: 10px;
@@ -1094,35 +1092,35 @@ nav.main-nav .sub-menu a {
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.5);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   z-index: 1001;
   opacity: 0;
   pointer-events: none;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 }
 
 .lightbox.active .lightbox-nav {
-  opacity: 0.8;
+  opacity: 0.4;
   pointer-events: auto;
 }
 
 .lightbox-nav:hover,
 .lightbox-nav:active {
-  background: rgba(0, 0, 0, 0.7);
-  transform: translateY(-50%) scale(1.1);
-  opacity: 1;
-  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.08);
+  opacity: 0.9;
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .lightbox-nav.prev {
@@ -1143,7 +1141,7 @@ nav.main-nav .sub-menu a {
   gap: 12px;
   margin-top: 16px;
   padding-top: 12px;
-  border-top: 1px solid var(--border-medium);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -1153,27 +1151,28 @@ nav.main-nav .sub-menu a {
   align-items: center;
   justify-content: center;
   padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--border-medium);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.8);
   white-space: nowrap;
 }
 
 .share-button:hover {
-  background: var(--border-medium);
+  background: rgba(255, 255, 255, 0.15);
   transform: translateY(-1px);
-  border-color: var(--border-strong);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .share-button.copy.copied {
-  background: rgba(40, 167, 69, 0.1);
-  border-color: rgba(40, 167, 69, 0.3);
-  color: var(--accent-success);
+  background: rgba(40, 167, 69, 0.2);
+  border-color: rgba(40, 167, 69, 0.4);
+  color: #32d158;
 }
 
 /* ===== RESPONSIVE - LIGHTBOX ===== */
@@ -1236,23 +1235,25 @@ nav.main-nav .sub-menu a {
   }
   
   .lightbox-nav {
-    width: 48px;
-    height: 48px;
-    font-size: 22px;
-    background: rgba(0, 0, 0, 0.6);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
   }
 
   .lightbox.active .lightbox-nav {
-    opacity: 0.9;
+    opacity: 0.35;
+  }
+
+  .lightbox-nav:active {
+    opacity: 0.85;
   }
 
   .lightbox-nav.prev {
-    left: 12px;
+    left: 10px;
   }
 
   .lightbox-nav.next {
-    right: 12px;
+    right: 10px;
   }
   
   .lightbox-counter {
