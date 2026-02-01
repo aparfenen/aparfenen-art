@@ -937,13 +937,13 @@ nav.main-nav .sub-menu a {
   border-radius: 2px;
   cursor: pointer;
   transition: all 0.15s ease;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid var(--border-light);
   position: relative;
 }
 
 .activity-cell:hover {
   transform: scale(1.5);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-md);
   z-index: 10;
 }
 
@@ -1362,9 +1362,9 @@ footer.contact-info h2 {
   margin: 40px auto;
   padding: 10px 24px;
   box-sizing: border-box;
-  background: #ffffff;
+  background: var(--bg-tertiary);
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Activity heading */
@@ -1395,31 +1395,31 @@ footer.contact-info h2 {
 }
 
 .legend-box.empty {
-  background: #f8f8f8;
+  background: var(--activity-empty);
 }
 
 .legend-box.level-1 {
-  background: #e0e0e0;
+  background: var(--activity-level-1);
 }
 
 .legend-box.level-2 {
-  background: #b8b8b8;
+  background: var(--activity-level-2);
 }
 
 .legend-box.level-3 {
-  background: #909090;
+  background: var(--activity-level-3);
 }
 
 .legend-box.level-4 {
-  background: #686868;
+  background: var(--activity-level-4);
 }
 
 .legend-box.level-5 {
-  background: #404040;
+  background: var(--activity-level-5);
 }
 
 .legend-box.level-6 {
-  background: #1a1a1a;
+  background: var(--activity-level-6);
 }
 
 /* Statistics - 3 cards in a row */
@@ -1429,20 +1429,20 @@ footer.contact-info h2 {
   gap: 24px;
   margin-bottom: 32px;
   padding-bottom: 24px;
-  border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+  border-bottom: 2px solid var(--border-light);
 }
 
 .stat-item {
   text-align: center;
   padding: 16px;
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-hover);
   border-radius: 8px;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
 .stat-item:hover {
   transform: translateY(-2px);
-  background: rgba(0, 0, 0, 0.04);
+  background: var(--bg-hover-strong);
 }
 
 .stat-number {
@@ -1473,13 +1473,13 @@ footer.contact-info h2 {
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.01);
+  background: var(--bg-secondary);
   border-radius: 8px;
   transition: background 0.2s ease;
 }
 
 .activity-year:hover {
-  background: rgba(0, 0, 0, 0.02);
+  background: var(--bg-hover);
 }
 
 .year-label {
@@ -1508,14 +1508,14 @@ footer.contact-info h2 {
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  border: 1px solid var(--border-medium);
   position: relative;
   font-size: 0.75em;
 }
 
 .month-box:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
   z-index: 10;
 }
 
