@@ -9,12 +9,14 @@ const lightboxDate = lightbox.querySelector(".lightbox-date");
 const lightboxDescription = lightbox.querySelector(".lightbox-description");
 const lightboxMetadata = lightbox.querySelector(".lightbox-metadata");
 const lightboxLoader = lightbox.querySelector(".lightbox-loader");
+const swipeHint = lightbox.querySelector(".swipe-hint");
 
 let currentImageSrc = "";
 let currentImageTitle = "";
 let currentImageId = "";
 let allGalleryImages = [];
 let currentImageIndex = -1;
+let hasSeenSwipeHint = localStorage.getItem('hasSeenSwipeHint') === 'true';
 
 // ИСПРАВЛЕНИЕ: Улучшенная функция обновления массива изображений
 function updateGalleryImagesArray() {
@@ -160,6 +162,9 @@ function openLightbox(img) {
   // Показываем lightbox с анимацией
   lightbox.classList.add("active");
 
+  // Показываем подсказку свайпа на мобильных при первом открытии
+  showSwipeHintIfNeeded();
+
   // Загружаем изображение с loader и обновляем метаданные после загрузки
   loadImageWithLoader(img, updateLightboxMetadata);
 
@@ -242,6 +247,32 @@ function closeLightbox() {
   // Удаляем hash из URL при закрытии
   history.replaceState(null, null, window.location.pathname);
   console.log('[Lightbox] Closed');
+}
+
+// Показываем подсказку свайпа на мобильных при первом открытии
+function showSwipeHintIfNeeded() {
+  // Проверяем: мобильное устройство, есть несколько изображений, подсказка еще не показывалась
+  const isMobile = window.innerWidth <= 768 && matchMedia('(hover: none)').matches;
+
+  if (isMobile && !hasSeenSwipeHint && allGalleryImages.length > 1 && swipeHint) {
+    // Показываем подсказку с небольшой задержкой
+    setTimeout(() => {
+      if (swipeHint) {
+        swipeHint.style.animation = 'swipeHintFade 3s ease-in-out';
+        swipeHint.style.display = 'flex';
+
+        // Скрываем подсказку после анимации
+        setTimeout(() => {
+          if (swipeHint) {
+            swipeHint.style.display = 'none';
+          }
+          // Сохраняем что пользователь увидел подсказку
+          hasSeenSwipeHint = true;
+          localStorage.setItem('hasSeenSwipeHint', 'true');
+        }, 3000);
+      }
+    }, 500);
+  }
 }
 
 // ИСПРАВЛЕНИЕ: Улучшенная обработка клавиатуры

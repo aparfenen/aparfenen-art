@@ -441,6 +441,61 @@ h3.section-title {
   margin-bottom: 2%;
 }
 
+/* Swipe hint for mobile */
+.swipe-hint {
+  position: fixed;
+  bottom: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(10px);
+  border-radius: 30px;
+  color: white;
+  font-size: 0.9em;
+  font-weight: 500;
+  z-index: 1004;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  animation: swipeHintFade 3s ease-in-out;
+}
+
+@keyframes swipeHintFade {
+  0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+  20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
+
+@keyframes swipeArrowLeft {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-8px); }
+}
+
+@keyframes swipeArrowRight {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(8px); }
+}
+
+.swipe-hint svg:first-child {
+  animation: swipeArrowLeft 1.5s ease-in-out infinite;
+}
+
+.swipe-hint svg:last-child {
+  animation: swipeArrowRight 1.5s ease-in-out infinite;
+}
+
+/* Show swipe hint on mobile when lightbox is active */
+@media (max-width: 768px) and (hover: none) {
+  .lightbox.active .swipe-hint {
+    display: flex;
+  }
+}
+
 /* Loading spinner */
 .lightbox-loader {
   position: absolute;
@@ -467,26 +522,38 @@ h3.section-title {
 
 /* Close button - FIXED: remains in top right corner */
 .lightbox-close {
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  background: rgba(0, 0, 0, 0.3);
-  border: none;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   color: white;
-  font-size: 20px;
-  width: 30px;
-  height: 30px;
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   line-height: 1;
-  z-index: 15;
+  z-index: 1005;
   backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lightbox.active .lightbox-close {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .lightbox-close:hover {
-  background: rgba(0, 0, 0, 0.5);
-  transform: rotate(90deg);
+  background: rgba(0, 0, 0, 0.8);
+  transform: rotate(90deg) scale(1.1);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Info box */
@@ -553,38 +620,44 @@ h3.section-title {
     margin-top: 16px;
   }
   
-  /* Reduce counter and close button size on mobile */
+  /* Reduce counter size on mobile, keep close button visible */
   .lightbox-counter {
     top: 15px;
     left: 15px;
     padding: 6px 12px;
     font-size: 0.85em;
   }
-  
+
   .lightbox-close {
     top: 15px;
     right: 15px;
-    width: 45px;
-    height: 45px;
-    font-size: 32px;
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
   }
 }
 
 @media (max-width: 768px) {
-  
+
   .lightbox-counter {
-    top: 10px;
-    left: 10px;
-    padding: 5px 10px;
+    top: 12px;
+    left: 12px;
+    padding: 6px 12px;
     font-size: 0.8em;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    color: white;
   }
-  
+
   .lightbox-close {
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 40px;
+    top: 12px;
+    right: 12px;
+    width: 48px;
+    height: 48px;
     font-size: 28px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid rgba(255, 255, 255, 0.4);
   }
 }
 
@@ -1009,42 +1082,46 @@ nav.main-nav .sub-menu a {
 
 /* ===== LIGHTBOX NAVIGATION ARROWS ===== */
 .lightbox-nav {
-  position: absolute;
+  position: fixed;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(157, 157, 157, 0.528);
-  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 50px;
+  height: 50px;
   font-size: 24px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 12px rgba(184, 182, 182, 0.087);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1001;
   opacity: 0;
   pointer-events: none;
+  backdrop-filter: blur(10px);
 }
 
 .lightbox.active .lightbox-nav {
-  opacity: 1;
+  opacity: 0.8;
   pointer-events: auto;
 }
 
-.lightbox-nav:hover {
-  background: rgba(173, 173, 173, 0.325);
+.lightbox-nav:hover,
+.lightbox-nav:active {
+  background: rgba(0, 0, 0, 0.7);
   transform: translateY(-50%) scale(1.1);
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .lightbox-nav.prev {
-  left: -70px;
+  left: 20px;
 }
 
 .lightbox-nav.next {
-  right: -70px;
+  right: 20px;
 }
 
 .lightbox.active .lightbox-counter {
@@ -1101,8 +1178,8 @@ nav.main-nav .sub-menu a {
 }
 
 @media (max-width: 1200px) {
-  .lightbox-nav.prev { left: -70px; }
-  .lightbox-nav.next { right: -70px; }
+  .lightbox-nav.prev { left: 20px; }
+  .lightbox-nav.next { right: 20px; }
 }
 
 @media (max-width: 768px) {
@@ -1150,17 +1227,23 @@ nav.main-nav .sub-menu a {
   }
   
   .lightbox-nav {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.3);
   }
-  
+
+  .lightbox.active .lightbox-nav {
+    opacity: 0.9;
+  }
+
   .lightbox-nav.prev {
-    left: 10px;
+    left: 12px;
   }
-  
+
   .lightbox-nav.next {
-    right: 10px;
+    right: 12px;
   }
   
   .lightbox-counter {

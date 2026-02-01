@@ -21,3 +21,6 @@ __pycache__/
 *.swp
 *.swo
 *~
+
+# Notes & Docs
+notes/
