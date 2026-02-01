@@ -493,7 +493,7 @@ h3.section-title {
 .lightbox-info {
   width: 100%;
   padding: 10px 10px;
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--lightbox-info-bg);
   border-top: 1px solid var(--border-medium);
   color: var(--text-primary);
   border-radius: 0 0 8px 8px;
