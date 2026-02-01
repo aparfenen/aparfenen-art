@@ -512,12 +512,13 @@ const handleSwipeGesture = () => {
   }
 };
 
-lightboxImg.addEventListener('touchstart', (e) => {
+// Attach swipe events to lightbox-content for better coverage
+lightboxContent.addEventListener('touchstart', (e) => {
   touchStartX = e.changedTouches[0].screenX;
   touchStartY = e.changedTouches[0].screenY;
 }, { passive: true });
 
-lightboxImg.addEventListener('touchend', (e) => {
+lightboxContent.addEventListener('touchend', (e) => {
   touchEndX = e.changedTouches[0].screenX;
   touchEndY = e.changedTouches[0].screenY;
   handleSwipeGesture();
