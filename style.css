@@ -231,6 +231,16 @@ h3.section-title {
   margin: 8px 16px;
 }
 
+.support-note {
+  margin-top: 0.8em;
+  opacity: 0.7;
+  font-size: 0.95em;
+}
+.support-note a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* Gallery intro */
 .gallery-intro {
   max-width: 1200px;
@@ -865,6 +875,16 @@ nav.main-nav a {
 
 nav.main-nav a:hover {
   color: var(--accent-primary);
+}
+
+/* Ko-fi support button in nav */
+.nav-support {
+  color: #FF5E5B !important;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-support:hover {
+  color: #e04a47 !important;
 }
 
 /* Dropdown submenu */
