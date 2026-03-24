@@ -887,6 +887,35 @@ nav.main-nav a:hover {
   color: #e04a47 !important;
 }
 
+/* Theme toggle in nav bar */
+.nav-theme-toggle {
+  background: none;
+  border: 1px solid var(--border-medium);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  line-height: 1;
+  color: var(--text-secondary);
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.nav-theme-toggle:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+}
+
+/* Show sun in dark mode, moon in light mode */
+.nav-light-icon { display: none; }
+.nav-dark-icon  { display: inline; }
+
+[data-theme="dark"] .nav-light-icon { display: inline; }
+[data-theme="dark"] .nav-dark-icon  { display: none; }
+
+/* On desktop, sidebar already has the toggle — hide the nav one */
+@media (min-width: 1025px) {
+  .nav-theme-toggle { display: none; }
+}
+
 /* Dropdown submenu */
 nav.main-nav .sub-menu {
   display: none;

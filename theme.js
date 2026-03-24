@@ -71,11 +71,14 @@ class ThemeManager {
   setupToggle() {
     const toggleBtn = document.getElementById('dark-mode-toggle');
     if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        this.toggleTheme();
-      });
+      toggleBtn.addEventListener('click', () => this.toggleTheme());
     } else {
-      console.warn('[Theme] Toggle button not found');
+      console.warn('[Theme] Sidebar toggle button not found');
+    }
+
+    const navToggleBtn = document.getElementById('nav-theme-toggle');
+    if (navToggleBtn) {
+      navToggleBtn.addEventListener('click', () => this.toggleTheme());
     }
   }
 
