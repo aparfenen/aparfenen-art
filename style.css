@@ -4,9 +4,9 @@
   --color-mode: 'light';
 
   /* Backgrounds */
-  --bg-primary: #fefefe;
-  --bg-secondary: #f9f9f9;
-  --bg-tertiary: #ffffff;
+  --bg-primary: #fdfcf9;
+  --bg-secondary: #f7f6f3;
+  --bg-tertiary: #fdfcf9;
   --bg-hover: rgba(0, 0, 0, 0.05);
   --bg-hover-strong: rgba(0, 0, 0, 0.08);
 
@@ -893,7 +893,7 @@ nav.main-nav .sub-menu {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: var(--bg-tertiary)fff;
+  background-color: var(--bg-tertiary);
   border: 1px solid rgba(0,0,0,0.05);
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   border-radius: 6px;
