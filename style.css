@@ -1820,8 +1820,14 @@ footer.contact-info h2 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
+/* Lightbox in dark mode: remove the grey card — image floats on the black overlay */
+[data-theme="dark"] .lightbox-content {
+  background: transparent;
+  box-shadow: none;
+}
+
 [data-theme="dark"] .lightbox img {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+  box-shadow: none;
 }
 
 [data-theme="dark"] .art-block::after {
