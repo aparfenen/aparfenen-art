@@ -386,11 +386,7 @@ h3.section-title {
 /* ===== LIGHTBOX - MINIMAL CHANGES ===== */
 .lightbox {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh; /* Dynamic viewport height for mobile browsers */
+  inset: 0; /* Covers full screen reliably including iOS browser chrome */
   background: var(--lightbox-overlay);
   display: flex;
   flex-direction: column;
@@ -1290,31 +1286,9 @@ nav.main-nav .sub-menu a {
     font-size: 12px;
   }
   
+  /* Hide nav arrows on touch devices — swipe handles navigation */
   .lightbox-nav {
-    width: 44px;
-    height: 44px;
-    color: rgba(255, 255, 255, 0.8);
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 50%;
-    backdrop-filter: blur(4px);
-  }
-
-  .lightbox-nav svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .lightbox-nav:active {
-    color: white;
-    background: rgba(0, 0, 0, 0.65);
-  }
-
-  .lightbox-nav.prev {
-    left: 8px;
-  }
-
-  .lightbox-nav.next {
-    right: 8px;
+    display: none;
   }
   
   .lightbox-counter {

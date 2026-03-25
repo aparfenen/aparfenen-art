@@ -161,6 +161,7 @@ function openLightbox(img) {
 
   // Показываем lightbox с анимацией
   lightbox.classList.add("active");
+  document.body.style.overflow = 'hidden';
 
   // Показываем подсказку свайпа на мобильных при первом открытии
   showSwipeHintIfNeeded();
@@ -241,6 +242,7 @@ lightbox.addEventListener("click", (e) => {
 // Функция закрытия lightbox
 function closeLightbox() {
   lightbox.classList.remove("active");
+  document.body.style.overflow = '';
   // Скрываем loader если он был виден
   lightboxLoader.style.display = "none";
   lightboxImg.style.opacity = "1";
