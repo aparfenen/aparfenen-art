@@ -16,7 +16,7 @@ let currentImageTitle = "";
 let currentImageId = "";
 let allGalleryImages = [];
 let currentImageIndex = -1;
-let hasSeenSwipeHint = localStorage.getItem('hasSeenSwipeHint') === 'true';
+let hasSeenSwipeHint = false; // session-only: show once per page load
 
 // ИСПРАВЛЕНИЕ: Улучшенная функция обновления массива изображений
 function updateGalleryImagesArray() {
@@ -255,23 +255,20 @@ function showSwipeHintIfNeeded() {
   const isMobile = window.innerWidth <= 768 && matchMedia('(hover: none)').matches;
 
   if (isMobile && !hasSeenSwipeHint && allGalleryImages.length > 1 && swipeHint) {
-    // Показываем подсказку с небольшой задержкой
+    hasSeenSwipeHint = true;
     setTimeout(() => {
       if (swipeHint) {
-        swipeHint.style.animation = 'swipeHintFade 3s ease-in-out';
         swipeHint.style.display = 'flex';
+        // Force animation restart
+        swipeHint.style.animation = 'none';
+        void swipeHint.offsetHeight;
+        swipeHint.style.animation = 'swipeHintFade 3s ease-in-out forwards';
 
-        // Скрываем подсказку после анимации
         setTimeout(() => {
-          if (swipeHint) {
-            swipeHint.style.display = 'none';
-          }
-          // Сохраняем что пользователь увидел подсказку
-          hasSeenSwipeHint = true;
-          localStorage.setItem('hasSeenSwipeHint', 'true');
+          if (swipeHint) swipeHint.style.display = 'none';
         }, 3000);
       }
-    }, 500);
+    }, 600);
   }
 }
 
