@@ -276,13 +276,27 @@ class GalleryFilter {
   }
   
   updateCounter() {
-    const visibleCount = this.allArtworks.filter(artwork => 
+    const visibleCount = this.allArtworks.filter(artwork =>
       artwork.element.style.display !== 'none'
     ).length;
-    
+
     const counterElement = document.getElementById('artwork-counter');
     if (counterElement) {
       counterElement.textContent = `${visibleCount} work${visibleCount !== 1 ? 's' : ''}`;
+    }
+
+    // Update filter toggle button badge
+    const totalActive = Object.values(this.activeFilters).reduce((sum, arr) => sum + arr.length, 0)
+      + (this.searchQuery ? 1 : 0);
+    const toggleBtn = document.querySelector('.filter-toggle-btn');
+    if (toggleBtn) {
+      if (totalActive > 0) {
+        toggleBtn.innerHTML = `🔍 Filters <span class="filter-btn-badge">${totalActive}</span>`;
+        toggleBtn.classList.add('has-filters');
+      } else {
+        toggleBtn.innerHTML = '🔍 Filters';
+        toggleBtn.classList.remove('has-filters');
+      }
     }
   }
   
@@ -406,30 +420,19 @@ document.addEventListener('DOMContentLoaded', () => {
   filterToggle.innerHTML = '🔍 Filters';
   filterToggle.onclick = toggleFilterSidebar;
   document.body.appendChild(filterToggle);
-  
+
   // Закрываем sidebar при клике вне его на мобильных
   document.addEventListener('click', (e) => {
     const sidebar = document.querySelector('.filter-sidebar');
     const filterToggle = document.querySelector('.filter-toggle-btn');
-    
-    if (window.innerWidth <= 1024 && 
+
+    if (window.innerWidth <= 1024 &&
         sidebar.classList.contains('mobile-open') &&
-        !sidebar.contains(e.target) && 
+        !sidebar.contains(e.target) &&
         e.target !== filterToggle) {
       closeFilterSidebar();
     }
   });
-  
-  // Закрываем sidebar после применения фильтра на мобильных
-  if (window.innerWidth <= 1024) {
-    document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        setTimeout(() => {
-          closeFilterSidebar();
-        }, 300);
-      });
-    });
-  }
 });
 
 // ===== GLOBAL VIEW SWITCHING FUNCTIONS =====
