@@ -1243,6 +1243,12 @@ nav.main-nav .sub-menu a {
   }
 }
 
+@media (max-width: 768px) {
+  nav.main-nav ul {
+    gap: 16px;
+  }
+}
+
 @media (max-width: 1200px) {
   .lightbox-nav.prev { left: 8px; }
   .lightbox-nav.next { right: 8px; }
