@@ -38,7 +38,7 @@
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
 
   /* Overlays */
-  --sidebar-backdrop: rgba(0, 0, 0, 0.5);
+  --sidebar-backdrop: rgba(0, 0, 0, 0.62);
 
   /* Lightbox specific */
   --lightbox-overlay: rgba(0, 0, 0, 0.95);
@@ -98,7 +98,7 @@
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6);
 
   /* Overlays */
-  --sidebar-backdrop: rgba(0, 0, 0, 0.7);
+  --sidebar-backdrop: rgba(0, 0, 0, 0.78);
 
   /* Lightbox - keep dark overlay, adjust info panel */
   --lightbox-overlay: rgba(0, 0, 0, 0.97);

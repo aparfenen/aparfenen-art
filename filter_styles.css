@@ -3,11 +3,11 @@
   position: fixed;
   left: 0;
   top: 0;
+  bottom: 0;
   width: 280px;
-  height: 100vh;
   background: var(--bg-tertiary);
   border-right: 1px solid var(--border-medium);
-  padding: 20px;
+  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
   overflow-y: auto;
   z-index: 50;
   box-shadow: var(--shadow-sm);
@@ -27,6 +27,39 @@
   font-weight: 600;
   margin: 0;
   color: var(--text-primary);
+}
+
+.filter-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-close-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  background: var(--bg-hover);
+  border: 1px solid var(--border-medium);
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.filter-close-btn:hover {
+  background: var(--bg-hover-strong);
+  color: var(--text-primary);
+}
+
+.filter-close-btn:active {
+  transform: scale(0.88);
 }
 
 #artwork-counter {
@@ -135,10 +168,40 @@
 }
 
 .filter-checkbox {
-  width: 18px;
-  height: 18px;
+  -webkit-appearance: none;
+  appearance: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 4px;
+  background: transparent;
   cursor: pointer;
   flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.filter-checkbox:checked {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.filter-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 8px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg);
+}
+
+.filter-checkbox:focus-visible {
+  outline: 2px solid var(--accent-border);
+  outline-offset: 2px;
 }
 
 .filter-label {
@@ -168,7 +231,7 @@
 .filter-toggle-btn {
   display: none;
   position: fixed;
-  bottom: 28px;
+  bottom: calc(28px + env(safe-area-inset-bottom));
   left: 20px;
   background: rgba(108, 107, 104, 0.95);
   color: white;
@@ -191,6 +254,13 @@
 
 .filter-toggle-btn.has-filters {
   background: rgba(80, 79, 77, 1);
+}
+
+/* Hide the button while the sidebar is open */
+body.filter-open .filter-toggle-btn {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
 }
 
 .filter-btn-badge {
@@ -225,6 +295,10 @@
 
   .filter-toggle-btn {
     display: block;
+  }
+
+  .filter-close-btn {
+    display: flex;
   }
 
   /* Backdrop overlay when sidebar is open */
