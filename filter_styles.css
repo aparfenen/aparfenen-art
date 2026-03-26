@@ -227,55 +227,6 @@
   margin-bottom: 60px;
 }
 
-/* Mobile filter toggle button */
-.filter-toggle-btn {
-  display: none;
-  position: fixed;
-  bottom: calc(28px + env(safe-area-inset-bottom));
-  left: 20px;
-  background: rgba(108, 107, 104, 0.95);
-  color: white;
-  border: none;
-  border-radius: 50px;
-  padding: 12px 20px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  z-index: 60;
-  transition: all 0.2s ease;
-}
-
-.filter-toggle-btn:hover {
-  background: rgba(88, 87, 84, 0.98);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
-}
-
-.filter-toggle-btn.has-filters {
-  background: rgba(80, 79, 77, 1);
-}
-
-/* Hide the button while the sidebar is open */
-body.filter-open .filter-toggle-btn {
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(6px);
-}
-
-.filter-btn-badge {
-  display: inline-block;
-  background: white;
-  color: rgba(80, 79, 77, 1);
-  border-radius: 10px;
-  padding: 1px 7px;
-  font-size: 12px;
-  font-weight: 700;
-  margin-left: 5px;
-  line-height: 1.5;
-  vertical-align: middle;
-}
-
 /* Mobile responsive */
 @media (max-width: 1024px) {
   .filter-sidebar {
@@ -291,10 +242,6 @@ body.filter-open .filter-toggle-btn {
 
   .content-with-sidebar {
     margin-left: 0;
-  }
-
-  .filter-toggle-btn {
-    display: none; /* replaced by nav filter row */
   }
 
   .filter-close-btn {

@@ -285,20 +285,9 @@ class GalleryFilter {
       counterElement.textContent = `${visibleCount} work${visibleCount !== 1 ? 's' : ''}`;
     }
 
-    // Update filter badge on both the floating button and the nav row button
+    // Update filter badge on nav row button
     const totalActive = Object.values(this.activeFilters).reduce((sum, arr) => sum + arr.length, 0)
       + (this.searchQuery ? 1 : 0);
-
-    const toggleBtn = document.querySelector('.filter-toggle-btn');
-    if (toggleBtn) {
-      if (totalActive > 0) {
-        toggleBtn.innerHTML = `🔍 Filters <span class="filter-btn-badge">${totalActive}</span>`;
-        toggleBtn.classList.add('has-filters');
-      } else {
-        toggleBtn.innerHTML = '🔍 Filters';
-        toggleBtn.classList.remove('has-filters');
-      }
-    }
 
     const navFilterBtn = document.querySelector('.nav-filter-btn');
     if (navFilterBtn) {
@@ -425,26 +414,17 @@ function closeFilterSidebar() {
   document.body.classList.remove('filter-open');
 }
 
-// Добавляем кнопку переключения фильтров для мобильных устройств
-document.addEventListener('DOMContentLoaded', () => {
-  const filterToggle = document.createElement('button');
-  filterToggle.className = 'filter-toggle-btn';
-  filterToggle.innerHTML = '🔍 Filters';
-  filterToggle.onclick = toggleFilterSidebar;
-  document.body.appendChild(filterToggle);
+// Close sidebar when tapping outside it on mobile
+document.addEventListener('click', (e) => {
+  const sidebar = document.querySelector('.filter-sidebar');
+  const navFilterBtn = document.querySelector('.nav-filter-btn');
 
-  // Закрываем sidebar при клике вне его на мобильных
-  document.addEventListener('click', (e) => {
-    const sidebar = document.querySelector('.filter-sidebar');
-    const filterToggle = document.querySelector('.filter-toggle-btn');
-
-    if (window.innerWidth <= 1024 &&
-        sidebar.classList.contains('mobile-open') &&
-        !sidebar.contains(e.target) &&
-        e.target !== filterToggle) {
-      closeFilterSidebar();
-    }
-  });
+  if (window.innerWidth <= 1024 &&
+      sidebar.classList.contains('mobile-open') &&
+      !sidebar.contains(e.target) &&
+      !(navFilterBtn && navFilterBtn.contains(e.target))) {
+    closeFilterSidebar();
+  }
 });
 
 // ===== GLOBAL VIEW SWITCHING FUNCTIONS =====
