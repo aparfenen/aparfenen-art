@@ -933,9 +933,9 @@ nav.main-nav a:hover {
 [data-theme="dark"] .nav-light-icon { display: inline; }
 [data-theme="dark"] .nav-dark-icon  { display: none; }
 
-/* On desktop, sidebar already has the toggle — hide the nav one */
+/* On desktop, nav bar has the toggle — hide the sidebar one */
 @media (min-width: 1025px) {
-  .nav-theme-toggle { display: none; }
+  .dark-mode-toggle { display: none; }
 }
 
 /* Nav filter row — mobile only */
