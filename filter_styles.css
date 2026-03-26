@@ -195,25 +195,40 @@
     transition: transform 0.3s ease;
     box-shadow: 0 0 0 rgba(0, 0, 0, 0);
   }
-  
+
   .filter-sidebar.mobile-open {
     transform: translateX(0);
-    box-shadow: 2px 0 20px rgba(0, 0, 0, 0.15);
+    box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
   }
-  
+
   .content-with-sidebar {
     margin-left: 0;
   }
-  
+
   .filter-toggle-btn {
     display: block;
+  }
+
+  /* Backdrop overlay when sidebar is open */
+  body.filter-open::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: var(--sidebar-backdrop);
+    z-index: 49;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 }
 
 @media (max-width: 768px) {
   .filter-sidebar {
-    width: 100%;
-    max-width: 320px;
+    width: 85vw;
+    max-width: 340px;
   }
   
   .filter-header h2 {

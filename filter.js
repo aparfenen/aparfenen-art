@@ -389,12 +389,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===== FILTER SIDEBAR TOGGLE FOR MOBILE =====
 function toggleFilterSidebar() {
   const sidebar = document.querySelector('.filter-sidebar');
-  sidebar.classList.toggle('mobile-open');
+  const isOpen = sidebar.classList.toggle('mobile-open');
+  document.body.classList.toggle('filter-open', isOpen);
 }
 
 function closeFilterSidebar() {
   const sidebar = document.querySelector('.filter-sidebar');
   sidebar.classList.remove('mobile-open');
+  document.body.classList.remove('filter-open');
 }
 
 // Добавляем кнопку переключения фильтров для мобильных устройств
