@@ -1391,8 +1391,7 @@ nav.main-nav .sub-menu a {
   }
 
   .dark-mode-toggle {
-    padding: 9px 14px;
-    font-size: 0.85em;
+    display: none;
   }
 
   .toggle-icon {
