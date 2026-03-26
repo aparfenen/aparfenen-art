@@ -147,17 +147,30 @@ body {
   background-color: var(--bg-primary);
 }
 
+/* Site header wrapper — centers h1 vertically in its whitespace area */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 52px 24px 0;
+}
+
 /* Headings */
 h1 {
   text-align: center;
-  font-weight: 600;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 400;
   font-size: 2.8em;
-  margin: 20px auto;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  letter-spacing: 0.03em;
+  margin: 0 auto;
   max-width: 1200px;
-  padding: 0 24px;
+  padding: 0;
   box-sizing: border-box;
-  color: var(--text-primary);
+  color: #3d3d3d;
+}
+
+[data-theme="dark"] h1 {
+  color: #c0c0c0;
 }
 
 h2.section-title {
