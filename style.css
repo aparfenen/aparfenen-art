@@ -933,11 +933,6 @@ nav.main-nav a:hover {
 [data-theme="dark"] .nav-light-icon { display: inline; }
 [data-theme="dark"] .nav-dark-icon  { display: none; }
 
-/* On desktop, nav bar has the toggle — hide the sidebar one */
-@media (min-width: 1025px) {
-  .dark-mode-toggle { display: none; }
-}
-
 /* Nav filter row — mobile only */
 .nav-filter-item {
   display: none;
@@ -1842,6 +1837,10 @@ footer.contact-info h2 {
 
 .dark-mode-toggle:active {
   transform: scale(0.98);
+}
+
+@media (min-width: 1025px) {
+  .dark-mode-toggle { display: none; }
 }
 
 .toggle-icon {
