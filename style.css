@@ -925,6 +925,64 @@ nav.main-nav a:hover {
   .nav-theme-toggle { display: none; }
 }
 
+/* Nav filter row — mobile only */
+.nav-filter-item {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .nav-filter-item {
+    display: flex;
+    flex-basis: 100%;
+    justify-content: center;
+    border-top: 1px solid var(--border-light);
+    padding: 3px 0 5px;
+    margin-top: 2px;
+  }
+}
+
+.nav-filter-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.82em;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--text-muted);
+  padding: 5px 18px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.nav-filter-btn:hover,
+.nav-filter-btn:active {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.nav-filter-btn.has-filters {
+  color: var(--text-secondary);
+}
+
+.nav-filter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-primary);
+  color: white;
+  border-radius: 8px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 /* Dropdown submenu */
 nav.main-nav .sub-menu {
   display: none;

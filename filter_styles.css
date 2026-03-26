@@ -294,7 +294,7 @@ body.filter-open .filter-toggle-btn {
   }
 
   .filter-toggle-btn {
-    display: block;
+    display: none; /* replaced by nav filter row */
   }
 
   .filter-close-btn {

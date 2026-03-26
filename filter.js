@@ -285,9 +285,10 @@ class GalleryFilter {
       counterElement.textContent = `${visibleCount} work${visibleCount !== 1 ? 's' : ''}`;
     }
 
-    // Update filter toggle button badge
+    // Update filter badge on both the floating button and the nav row button
     const totalActive = Object.values(this.activeFilters).reduce((sum, arr) => sum + arr.length, 0)
       + (this.searchQuery ? 1 : 0);
+
     const toggleBtn = document.querySelector('.filter-toggle-btn');
     if (toggleBtn) {
       if (totalActive > 0) {
@@ -296,6 +297,17 @@ class GalleryFilter {
       } else {
         toggleBtn.innerHTML = '🔍 Filters';
         toggleBtn.classList.remove('has-filters');
+      }
+    }
+
+    const navFilterBtn = document.querySelector('.nav-filter-btn');
+    if (navFilterBtn) {
+      if (totalActive > 0) {
+        navFilterBtn.innerHTML = `Filters <span class="nav-filter-badge">${totalActive}</span>`;
+        navFilterBtn.classList.add('has-filters');
+      } else {
+        navFilterBtn.innerHTML = 'Filters';
+        navFilterBtn.classList.remove('has-filters');
       }
     }
   }
