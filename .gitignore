@@ -24,3 +24,13 @@ __pycache__/
 
 # Notes & Docs
 notes/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
