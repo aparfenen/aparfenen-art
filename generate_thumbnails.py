@@ -7,6 +7,7 @@ Maintains aspect ratio and organizes by category
 
 from PIL import Image
 import os
+import subprocess
 from pathlib import Path
 
 IMG_DIR = "img"
@@ -42,7 +43,7 @@ for category_dir in Path(IMG_DIR).iterdir():
 
     # Process all images in this category
     for img_path in category_dir.glob('*'):
-        if img_path.suffix.lower() not in ['.jpg', '.jpeg', '.png']:
+        if img_path.suffix.lower() not in ['.jpg', '.jpeg', '.png', '.heic', '.heif']:
             continue
 
         total_images += 1
@@ -57,40 +58,52 @@ for category_dir in Path(IMG_DIR).iterdir():
             continue
 
         try:
-            # Open and process image
-            with Image.open(img_path) as img:
-                # Convert to RGB if necessary (for PNG with transparency)
-                if img.mode in ('RGBA', 'LA', 'P'):
-                    # Create white background
-                    background = Image.new('RGB', img.size, (255, 255, 255))
-                    if img.mode == 'P':
-                        img = img.convert('RGBA')
-                    background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
-                    img = background
-                elif img.mode != 'RGB':
-                    img = img.convert('RGB')
-
-                # Calculate new dimensions maintaining aspect ratio
-                width, height = img.size
-                if width <= THUMBNAIL_WIDTH:
-                    # Image is already smaller than thumbnail size
-                    new_width, new_height = width, height
-                else:
-                    # Resize maintaining aspect ratio
-                    new_width = THUMBNAIL_WIDTH
-                    new_height = int((THUMBNAIL_WIDTH / width) * height)
-
-                # Resize image with high-quality downsampling
-                if (new_width, new_height) != (width, height):
-                    img_resized = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
-                else:
-                    img_resized = img
-
-                # Save as JPEG
-                img_resized.save(thumb_path, 'JPEG', quality=QUALITY, optimize=True)
-
+            if img_path.suffix.lower() in ['.heic', '.heif']:
+                # Use sips (macOS built-in) to convert and resize HEIC files
+                result = subprocess.run(
+                    ['sips', '-s', 'format', 'jpeg', '-s', 'formatOptions', str(QUALITY),
+                     '--resampleWidth', str(THUMBNAIL_WIDTH),
+                     str(img_path), '--out', str(thumb_path)],
+                    capture_output=True, text=True
+                )
+                if result.returncode != 0:
+                    raise RuntimeError(result.stderr.strip())
+                dims = subprocess.run(
+                    ['sips', '-g', 'pixelWidth', '-g', 'pixelHeight', str(thumb_path)],
+                    capture_output=True, text=True
+                ).stdout
+                w = next((l.split()[-1] for l in dims.splitlines() if 'pixelWidth' in l), '?')
+                h = next((l.split()[-1] for l in dims.splitlines() if 'pixelHeight' in l), '?')
                 generated += 1
-                print(f"  ✓ {img_path.name} → {new_width}x{new_height}px")
+                print(f"  ✓ {img_path.name} → {w}x{h}px (via sips)")
+            else:
+                # Open and process image with Pillow
+                with Image.open(img_path) as img:
+                    # Convert to RGB if necessary (for PNG with transparency)
+                    if img.mode in ('RGBA', 'LA', 'P'):
+                        background = Image.new('RGB', img.size, (255, 255, 255))
+                        if img.mode == 'P':
+                            img = img.convert('RGBA')
+                        background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+                        img = background
+                    elif img.mode != 'RGB':
+                        img = img.convert('RGB')
+
+                    width, height = img.size
+                    if width <= THUMBNAIL_WIDTH:
+                        new_width, new_height = width, height
+                    else:
+                        new_width = THUMBNAIL_WIDTH
+                        new_height = int((THUMBNAIL_WIDTH / width) * height)
+
+                    if (new_width, new_height) != (width, height):
+                        img_resized = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+                    else:
+                        img_resized = img
+
+                    img_resized.save(thumb_path, 'JPEG', quality=QUALITY, optimize=True)
+                    generated += 1
+                    print(f"  ✓ {img_path.name} → {new_width}x{new_height}px")
 
         except Exception as e:
             errors += 1
