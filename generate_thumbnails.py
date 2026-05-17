@@ -12,8 +12,8 @@ from pathlib import Path
 
 IMG_DIR = "img"
 THUMB_DIR = "thumbnails"
-THUMBNAIL_WIDTH = 1000
-QUALITY = 85  # JPEG quality (0-100)
+THUMBNAIL_WIDTH = 600
+QUALITY = 82  # JPEG quality (0-100)
 
 print("🖼️  Starting thumbnail generation...\n")
 

@@ -369,6 +369,15 @@ h3.section-title {
   transform: translateY(0);
 }
 
+@media (hover: none) {
+  .art-block::after {
+    opacity: 1;
+    transform: translateY(0);
+    font-size: 0.75em;
+    padding: 5px 8px;
+  }
+}
+
 /* ===== FIXED: IMAGES WITH ASPECT RATIO ===== */
 .gallery img {
   width: 100%;
