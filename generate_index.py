@@ -323,7 +323,8 @@ def generate_artwork_block(row):
     # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
     thumbnail_path = f"thumbnails/{row['category']}/{filename_base}.jpg"
-    full_image_path = f"img/{row['category']}/{row['filename']}"
+    jpg_path = f"img/{row['category']}/{filename_base}.jpg"
+    full_image_path = jpg_path if os.path.exists(jpg_path) else f"img/{row['category']}/{row['filename']}"
 
     block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{row["title"]} ({row["show_date"]})">
       <img src="{thumbnail_path}"

@@ -43,7 +43,7 @@ for category_dir in Path(IMG_DIR).iterdir():
 
     # Process all images in this category
     for img_path in category_dir.glob('*'):
-        if img_path.suffix.lower() not in ['.jpg', '.jpeg', '.png', '.heic', '.heif']:
+        if img_path.suffix.lower() not in ['.jpg', '.jpeg', '.png', '.heic', '.heif', '.pdf']:
             continue
 
         total_images += 1
@@ -58,7 +58,7 @@ for category_dir in Path(IMG_DIR).iterdir():
             continue
 
         try:
-            if img_path.suffix.lower() in ['.heic', '.heif']:
+            if img_path.suffix.lower() in ['.heic', '.heif', '.pdf']:
                 # Use sips (macOS built-in) to convert and resize HEIC files
                 result = subprocess.run(
                     ['sips', '-s', 'format', 'jpeg', '-s', 'formatOptions', str(QUALITY),
