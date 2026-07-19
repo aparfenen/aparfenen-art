@@ -323,8 +323,14 @@ def generate_artwork_block(row):
     # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
     thumbnail_path = f"thumbnails/{row['category']}/{filename_base}.jpg"
-    jpg_path = f"img/{row['category']}/{filename_base}.jpg"
-    full_image_path = jpg_path if os.path.exists(jpg_path) else f"img/{row['category']}/{row['filename']}"
+    # Lightbox uses web-sized large/ version (always .jpg, browser-safe, ~2000px).
+    # Fallback to original in img/ only if large/ hasn't been generated yet.
+    large_path = f"large/{row['category']}/{filename_base}.jpg"
+    if os.path.exists(large_path):
+        full_image_path = large_path
+    else:
+        jpg_path = f"img/{row['category']}/{filename_base}.jpg"
+        full_image_path = jpg_path if os.path.exists(jpg_path) else f"img/{row['category']}/{row['filename']}"
 
     block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{row["title"]} ({row["show_date"]})">
       <img src="{thumbnail_path}"
