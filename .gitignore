@@ -3,6 +3,9 @@
 .DS_Store
 img/.DS_Store
 
+# Original full-resolution images (local only; site serves thumbnails/ and large/)
+img/
+
 # IDE
 .idea/
 .vscode/
