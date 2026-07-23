@@ -467,7 +467,13 @@ h3.section-title {
   object-fit: contain;
   display: block;
   box-sizing: border-box;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+/* Blur-up placeholder: shown while the full-res image loads over the thumbnail */
+.lightbox img.is-loading {
+  filter: blur(10px);
+  opacity: 0.7;
 }
 
 /* Counter - FIXED: now in top left corner above image */

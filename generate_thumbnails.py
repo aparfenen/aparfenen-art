@@ -2,9 +2,12 @@
 """
 Generate web images for all gallery images:
   - thumbnails/  600px width  (grid)
-  - large/      3500px width  (lightbox)
+  - large/      2400px width  (lightbox) - also emits a sibling .webp
 Always outputs .jpg, maintains aspect ratio, organizes by category.
 HEIC/PDF originals are converted via sips (macOS built-in).
+
+2400px matches the lightbox's on-screen cap (max-width: min(1200px, 90vw))
+at 2x retina - anything larger is bytes the display can't use.
 """
 
 from PIL import Image
@@ -17,11 +20,13 @@ from pathlib import Path
 
 IMG_DIR = "img"
 
-# (output_dir, max_width, jpeg_quality)
+# (output_dir, max_width, jpeg_quality, also_emit_webp)
 OUTPUTS = [
-    ("thumbnails", 600, 82),   # grid thumbnails
-    ("large", 3500, 85),       # lightbox web versions
+    ("thumbnails", 600, 82, False),   # grid thumbnails
+    ("large", 2400, 85, True),        # lightbox web versions
 ]
+
+WEBP_QUALITY = 80
 
 SUPPORTED = ['.jpg', '.jpeg', '.png', '.heic', '.heif', '.pdf']
 
@@ -82,6 +87,12 @@ def make_resized(img_path, out_path, max_width, quality):
         return f"{new_width}x{new_height}px"
 
 
+def make_webp(jpg_path, webp_path, quality):
+    """Re-encode an already-resized .jpg as .webp (smaller at equivalent quality)."""
+    with Image.open(jpg_path) as img:
+        img.save(webp_path, 'WEBP', quality=quality)
+
+
 # Walk through all category directories
 for category_dir in Path(IMG_DIR).iterdir():
     if not category_dir.is_dir():
@@ -97,23 +108,31 @@ for category_dir in Path(IMG_DIR).iterdir():
         if img_path.suffix.lower() not in SUPPORTED:
             continue
 
-        for out_dir, max_width, quality in OUTPUTS:
+        for out_dir, max_width, quality, also_webp in OUTPUTS:
             total_jobs += 1
 
             out_category_dir = Path(out_dir) / category_name
             out_category_dir.mkdir(parents=True, exist_ok=True)
 
             out_path = out_category_dir / (img_path.stem + '.jpg')
+            webp_path = out_category_dir / (img_path.stem + '.webp')
 
             # Skip if output already exists and is newer than original
-            if out_path.exists() and out_path.stat().st_mtime > img_path.stat().st_mtime:
+            jpg_fresh = out_path.exists() and out_path.stat().st_mtime > img_path.stat().st_mtime
+            webp_fresh = not also_webp or (webp_path.exists() and webp_path.stat().st_mtime > img_path.stat().st_mtime)
+
+            if jpg_fresh and webp_fresh:
                 skipped += 1
                 continue
 
             try:
-                info = make_resized(img_path, out_path, max_width, quality)
+                if not jpg_fresh:
+                    info = make_resized(img_path, out_path, max_width, quality)
+                    print(f"  ✓ [{out_dir}] {img_path.name} → {info}")
+                if also_webp and not webp_fresh:
+                    make_webp(out_path, webp_path, WEBP_QUALITY)
+                    print(f"  ✓ [{out_dir}] {img_path.name} → {webp_path.name}")
                 generated += 1
-                print(f"  ✓ [{out_dir}] {img_path.name} → {info}")
             except Exception as e:
                 errors += 1
                 print(f"  ✗ [{out_dir}] Error processing {img_path.name}: {e}")

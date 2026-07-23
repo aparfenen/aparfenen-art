@@ -63,44 +63,82 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log(`[Lightbox] Initialized with ${imageCount} images`);
 });
 
+// Возвращает предпочтительный (webp) и запасной (jpg) путь к полноразмерному изображению
+function getFullImageSources(imgElement) {
+  const jpgSrc = imgElement.dataset.fullSrc || imgElement.src;
+  const webpSrc = imgElement.dataset.fullSrcWebp || "";
+  return { jpgSrc, webpSrc };
+}
+
+// Тихая предзагрузка соседних (next/prev) изображений в кэш браузера,
+// чтобы навигация в lightbox ощущалась мгновенной
+function prefetchNeighborImages() {
+  if (allGalleryImages.length < 2 || currentImageIndex === -1) return;
+
+  const nextIdx = (currentImageIndex + 1) % allGalleryImages.length;
+  const prevIdx = (currentImageIndex - 1 + allGalleryImages.length) % allGalleryImages.length;
+
+  [nextIdx, prevIdx].forEach(idx => {
+    const img = allGalleryImages[idx];
+    if (!img) return;
+    const { jpgSrc, webpSrc } = getFullImageSources(img);
+    const prefetch = new Image();
+    prefetch.src = webpSrc || jpgSrc;
+  });
+}
+
 // Функция для предзагрузки изображения с loader
 function loadImageWithLoader(imgElement, onLoadComplete) {
   // Показываем loader
   lightboxLoader.style.display = "block";
-  lightboxImg.style.opacity = "0.3";
+  lightboxImg.classList.add("is-loading");
 
-  // Получаем путь к полному изображению
-  const fullImageSrc = imgElement.dataset.fullSrc || imgElement.src;
+  // Blur-up: сразу показываем уже загруженный thumbnail как placeholder,
+  // пока грузится полноразмерная версия
+  lightboxImg.src = imgElement.src;
+
+  const { jpgSrc, webpSrc } = getFullImageSources(imgElement);
+  let triedFallback = false;
 
   // Создаем новый объект Image для предзагрузки
   const preloadImg = new Image();
 
   preloadImg.onload = function() {
     // Изображение загружено - обновляем lightbox
-    lightboxImg.src = fullImageSrc;
-    currentImageSrc = fullImageSrc;
+    lightboxImg.src = preloadImg.src;
+    currentImageSrc = preloadImg.src;
 
     // Скрываем loader
     lightboxLoader.style.display = "none";
-    lightboxImg.style.opacity = "1";
+    lightboxImg.classList.remove("is-loading");
 
     // Вызываем callback для обновления метаданных
     if (onLoadComplete) {
       onLoadComplete(imgElement);
     }
 
-    console.log(`[Lightbox] Image loaded: ${fullImageSrc}`);
+    console.log(`[Lightbox] Image loaded: ${preloadImg.src}`);
+
+    // Подгружаем соседние изображения в фоне для мгновенной навигации
+    prefetchNeighborImages();
   };
 
   preloadImg.onerror = function() {
-    console.error(`[Lightbox] Failed to load image: ${fullImageSrc}`);
+    // Если webp не удалось загрузить (старый браузер, отсутствующий файл) - пробуем jpg
+    if (!triedFallback && preloadImg.src !== jpgSrc) {
+      triedFallback = true;
+      preloadImg.src = jpgSrc;
+      return;
+    }
+
+    console.error(`[Lightbox] Failed to load image: ${preloadImg.src}`);
     // Скрываем loader даже при ошибке
     lightboxLoader.style.display = "none";
-    lightboxImg.style.opacity = "1";
+    lightboxImg.classList.remove("is-loading");
   };
 
-  // Начинаем загрузку
-  preloadImg.src = fullImageSrc;
+  // Начинаем загрузку (webp приоритетнее, если доступен)
+  preloadImg.src = webpSrc || jpgSrc;
 }
 
 // Функция для обновления метаданных
@@ -245,7 +283,7 @@ function closeLightbox() {
   document.body.style.overflow = '';
   // Скрываем loader если он был виден
   lightboxLoader.style.display = "none";
-  lightboxImg.style.opacity = "1";
+  lightboxImg.classList.remove("is-loading");
   // Удаляем hash из URL при закрытии
   history.replaceState(null, null, window.location.pathname);
   console.log('[Lightbox] Closed');

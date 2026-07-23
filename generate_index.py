@@ -195,6 +195,40 @@ df = df.sort_values('parsed_date', ascending=False)
 
 print(f"✓ Sorted {len(df)} artworks chronologically (newest first)\n")
 
+# ===== Precompute unique art-block ids =====
+# Two works can share the same title (e.g. two pieces both called "Landscapes"),
+# which used to produce duplicate DOM ids and broke deep-links (#slug always
+# resolved to whichever one appeared first in the HTML).
+def slugify(text):
+    s = re.sub(r'[^\w\s-]', '', str(text).lower())
+    s = re.sub(r'[-\s]+', '-', s).strip('-')
+    return s
+
+_base_slug_counts = df['title'].apply(slugify).value_counts()
+_dup_base_slugs = set(_base_slug_counts[_base_slug_counts > 1].index)
+
+_unique_ids = {}
+_seen_ids = set()
+for idx, row in df.iterrows():
+    base = slugify(row['title'])
+    if base in _dup_base_slugs:
+        suffix = slugify(row.get('show_date', ''))
+        candidate = f"{base}-{suffix}" if suffix else base
+    else:
+        candidate = base
+    if candidate in _seen_ids:
+        n = 2
+        while f"{candidate}-{n}" in _seen_ids:
+            n += 1
+        candidate = f"{candidate}-{n}"
+    _seen_ids.add(candidate)
+    _unique_ids[idx] = candidate
+
+if len(_dup_base_slugs) > 0:
+    print(f"✓ Disambiguated {len(_dup_base_slugs)} duplicate title(s): {sorted(_dup_base_slugs)}\n")
+
+_missing_fullsize = []
+
 # ===== STEP 4: Collect filter values - FIXED =====
 # Используем category как основную таксономию
 unique_categories = sorted(df['category'].unique())
@@ -294,6 +328,7 @@ def generate_filter_sidebar():
 # ===== STEP 6: Generate artwork block - FIXED =====
 def generate_artwork_block(row):
     desc_escaped = str(row["description"]).replace('"', '&quot;')
+    global _missing_fullsize
     dimensions = str(row.get("dimensions", "")).strip() if "dimensions" in row and pd.notna(row.get("dimensions")) else ""
     medium = str(row.get("medium", "")).strip() if "medium" in row and pd.notna(row.get("medium")) else ""
     tags = str(row.get("tags", "")).strip() if "tags" in row and pd.notna(row.get("tags")) else ""
@@ -314,8 +349,7 @@ def generate_artwork_block(row):
     category_escaped = category.replace('"', '&quot;')
     year_escaped = year.replace('"', '&quot;')
     
-    unique_id = re.sub(r'[^\w\s-]', '', str(row["title"]).lower())
-    unique_id = re.sub(r'[-\s]+', '-', unique_id).strip('-')
+    unique_id = _unique_ids[row.name]
     
     date_created = str(row.get("date_created", "")).strip() if "date_created" in row else ""
     date_created_escaped = date_created.replace('"', '&quot;')
@@ -323,21 +357,36 @@ def generate_artwork_block(row):
     # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
     thumbnail_path = f"thumbnails/{row['category']}/{filename_base}.jpg"
-    # Lightbox uses web-sized large/ version (always .jpg, browser-safe, ~2000px).
+    # Lightbox uses web-sized large/ version (always .jpg, browser-safe, 2400px).
     # Fallback to original in img/ only if large/ hasn't been generated yet.
     large_path = f"large/{row['category']}/{filename_base}.jpg"
+    large_webp_path = f"large/{row['category']}/{filename_base}.webp"
     if os.path.exists(large_path):
         full_image_path = large_path
+        full_image_webp_path = large_webp_path if os.path.exists(large_webp_path) else ""
     else:
         jpg_path = f"img/{row['category']}/{filename_base}.jpg"
-        full_image_path = jpg_path if os.path.exists(jpg_path) else f"img/{row['category']}/{row['filename']}"
+        orig_path = f"img/{row['category']}/{row['filename']}"
+        if os.path.exists(jpg_path):
+            full_image_path = jpg_path
+        elif os.path.exists(orig_path):
+            full_image_path = orig_path
+        else:
+            # img/ is gitignored (local-only) and no large/ was ever generated for this
+            # piece - fall back to the thumbnail so the lightbox shows something
+            # instead of a broken image on the deployed site.
+            full_image_path = thumbnail_path
+            _missing_fullsize.append(f"{row['category']}/{row['filename']} ({row['title']})")
+        full_image_webp_path = ""
+
+    webp_attr = f'\n           data-full-src-webp="{full_image_webp_path}"' if full_image_webp_path else ""
 
     block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{row["title"]} ({row["show_date"]})">
       <img src="{thumbnail_path}"
            alt="{row["title"]}"
            loading="lazy"
            decoding="async"
-           data-full-src="{full_image_path}"
+           data-full-src="{full_image_path}"{webp_attr}
            data-title="{row["title"]}"
            data-date="{row["show_date"]}"
            data-date-created="{date_created_escaped}"
@@ -444,4 +493,8 @@ print(f"  - {len(sorted_categories)} category sections")
 print(f"  - {len(unique_mediums)} mediums")
 print(f"  - {len(unique_tags)} tags")
 print(f"  - Auto-filled {auto_filled_dates} dates from filenames")
+if _missing_fullsize:
+    print(f"  ⚠ {len(_missing_fullsize)} works have no large/ or img/ source - lightbox falls back to thumbnail:")
+    for entry in _missing_fullsize:
+        print(f"      - {entry}")
 print("="*60)

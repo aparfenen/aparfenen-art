@@ -3,26 +3,52 @@
 // Activity data - будет заполнено из CSV
 let activityData = {};
 
-// Правильный парсинг CSV с учетом кавычек
-function parseCSVLine(line) {
-  const result = [];
+// Правильный парсинг CSV с учетом кавычек, включая переносы строк внутри кавычек
+// (нельзя резать текст по '\n' заранее - многострочные description поломают выравнивание колонок)
+function parseCSV(text) {
+  const rows = [];
+  let row = [];
   let current = '';
   let inQuotes = false;
-  
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i];
-    
-    if (char === '"') {
-      inQuotes = !inQuotes;
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim());
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    if (inQuotes) {
+      if (char === '"') {
+        if (text[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = false;
+        }
+      } else {
+        current += char;
+      }
+    } else if (char === '"') {
+      inQuotes = true;
+    } else if (char === ',') {
+      row.push(current.trim());
+      current = '';
+    } else if (char === '\r') {
+      // skip, handled by \n
+    } else if (char === '\n') {
+      row.push(current.trim());
+      rows.push(row);
+      row = [];
       current = '';
     } else {
       current += char;
     }
   }
-  result.push(current.trim());
-  return result;
+
+  // Последняя строка без завершающего \n
+  if (current.length > 0 || row.length > 0) {
+    row.push(current.trim());
+    rows.push(row);
+  }
+
+  return rows.filter(r => r.some(cell => cell !== ''));
 }
 
 // Парсим show_date: "August 2025" → { month: 8, year: 2025 }
@@ -51,27 +77,27 @@ async function loadActivityFromCSV() {
     const resp = await fetch('gallery_metadata.csv');
     if (!resp.ok) throw new Error(`Failed to load CSV: ${resp.status}`);
     const text = await resp.text();
-    
-    const lines = text.split('\n').filter(line => line.trim());
-    const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase().trim());
-    
+
+    const rows = parseCSV(text);
+    const headers = rows[0].map(h => h.toLowerCase().trim());
+
     const showDateIndex = headers.indexOf('show_date');
     const visibleIndex = headers.indexOf('visible');
-    
+
     if (showDateIndex === -1) {
       console.error('[Activity] show_date column not found. Headers:', headers);
       return;
     }
-    
+
     console.log(`[Activity] Found show_date at index ${showDateIndex}`);
-    
+
     const data = {};
     let parsed = 0;
     let skipped = 0;
-    
-    for (let i = 1; i < lines.length; i++) {
-      const cols = parseCSVLine(lines[i]);
-      
+
+    for (let i = 1; i < rows.length; i++) {
+      const cols = rows[i];
+
       // Проверяем visible = yes
       const visible = cols[visibleIndex]?.toLowerCase().trim();
       if (visible !== 'yes') {
