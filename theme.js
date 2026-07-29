@@ -1,13 +1,6 @@
 // ===== DARK MODE THEME MANAGER =====
-
-// Apply theme immediately (before body renders) to prevent flash
-(function() {
-  try {
-    const stored = localStorage.getItem('theme');
-    const theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', theme);
-  } catch (e) {}
-})();
+// Note: the flash-prevention snippet that used to live here now runs inline
+// in index.html's <head> (before first paint, without an extra network request).
 
 class ThemeManager {
   constructor() {

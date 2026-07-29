@@ -21,31 +21,38 @@ let hasSeenSwipeHint = false; // session-only: show once per page load
 // ИСПРАВЛЕНИЕ: Улучшенная функция обновления массива изображений
 function updateGalleryImagesArray() {
   // Определяем активную галерею
-  const activeGallery = document.querySelector('.gallery-container.active .gallery');
-  
+  // ВАЖНО: контейнер (.gallery-container) может содержать НЕСКОЛЬКО .gallery
+  // блоков - в тематическом виде каждая категория рендерится в своём
+  // собственном .gallery внутри .theme-section (см. generate_index.py).
+  // Раньше здесь стоял querySelector('.gallery-container.active .gallery')
+  // (в единственном числе), который находил только .gallery ПЕРВОЙ секции -
+  // из-за этого при просмотре любой категории кроме первой стрелки prev/next
+  // молча уводили в начало первой категории. Ищем по всему контейнеру, как
+  // и filter.js делает в collectArtworks().
+  const activeGallery = document.querySelector('.gallery-container.active');
+
   if (activeGallery) {
     // ИСПРАВЛЕНИЕ: Фильтруем только видимые изображения (не скрытые фильтрами)
-    allGalleryImages = Array.from(activeGallery.querySelectorAll('img'))
+    // Видимость артворков управляется исключительно инлайновым style.display
+    // (см. filter.js), поэтому getComputedStyle() здесь не нужен - он лишь
+    // форсирует пересчёт стилей для каждого блока на каждый вызов этой функции.
+    allGalleryImages = Array.from(activeGallery.querySelectorAll('.art-block img'))
       .filter(img => {
         const artBlock = img.closest('.art-block');
         // Проверяем что блок существует и не скрыт
-        return artBlock && 
-               artBlock.style.display !== 'none' && 
-               getComputedStyle(artBlock).display !== 'none';
+        return artBlock && artBlock.style.display !== 'none';
       });
     console.log(`[Lightbox] Updated gallery images: ${allGalleryImages.length} visible images in active gallery`);
   } else {
     // Fallback: используем хронологическую галерею если нет активной
-    const chronoGallery = document.querySelector('#chronological-gallery .gallery') || 
-                          document.querySelector('.gallery');
-    
+    const chronoGallery = document.getElementById('chronological-gallery') ||
+                          document.querySelector('.gallery-container');
+
     if (chronoGallery) {
-      allGalleryImages = Array.from(chronoGallery.querySelectorAll('img'))
+      allGalleryImages = Array.from(chronoGallery.querySelectorAll('.art-block img'))
         .filter(img => {
           const artBlock = img.closest('.art-block');
-          return artBlock && 
-                 artBlock.style.display !== 'none' &&
-                 getComputedStyle(artBlock).display !== 'none';
+          return artBlock && artBlock.style.display !== 'none';
         });
       console.log(`[Lightbox] Updated gallery images (fallback): ${allGalleryImages.length} visible images`);
     } else {
@@ -368,20 +375,23 @@ function getArtworkURL() {
 
 function shareOnFacebook() {
   const url = encodeURIComponent(getArtworkURL());
-  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400');
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400,noopener,noreferrer');
 }
 
 function shareOnTwitter() {
   const url = encodeURIComponent(getArtworkURL());
   const text = encodeURIComponent(`Check out "${currentImageTitle}" by aparfenen`);
-  window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+  window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400,noopener,noreferrer');
 }
 
 function shareOnPinterest() {
   const url = encodeURIComponent(getArtworkURL());
-  const imageUrl = encodeURIComponent(window.location.origin + window.location.pathname.replace('index.html', '') + currentImageSrc);
+  // currentImageSrc is set from preloadImg.src (see loadImageWithLoader), which the
+  // browser already resolves to an absolute URL - prefixing origin+pathname again
+  // used to glue two absolute URLs together into one broken address.
+  const imageUrl = encodeURIComponent(currentImageSrc);
   const description = encodeURIComponent(currentImageTitle);
-  window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${imageUrl}&description=${description}`, '_blank', 'width=600,height=400');
+  window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${imageUrl}&description=${description}`, '_blank', 'width=600,height=400,noopener,noreferrer');
 }
 
 function copyLink() {
@@ -465,28 +475,37 @@ backToTopBtn.addEventListener('click', () => {
 });
 
 // Показ/скрытие кнопок навигации при прокрутке
+// ОПТИМИЗАЦИЯ: батчим чтение/запись через rAF, чтобы не гонять layout на каждый
+// scroll-event (их может быть десятки за кадр при инерционном скролле)
 let lastScrollTop = 0;
+let navButtonsScrollTicking = false;
 window.addEventListener('scroll', () => {
-  const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-  const scrollHeight = document.documentElement.scrollHeight;
-  const clientHeight = document.documentElement.clientHeight;
-  
-  // Кнопка "Вверх" - показываем когда прокрутили вниз
-  if (scrollTop > 300) {
-    backToTopBtn.classList.add('visible');
-  } else {
-    backToTopBtn.classList.remove('visible');
-  }
-  
-  // Кнопка "Вниз" - скрываем когда близко к низу
-  if (scrollTop + clientHeight >= scrollHeight - 200) {
-    scrollDownBtn.classList.add('hidden');
-  } else {
-    scrollDownBtn.classList.remove('hidden');
-  }
-  
-  lastScrollTop = scrollTop;
-});
+  if (navButtonsScrollTicking) return;
+  navButtonsScrollTicking = true;
+
+  requestAnimationFrame(() => {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+
+    // Кнопка "Вверх" - показываем когда прокрутили вниз
+    if (scrollTop > 300) {
+      backToTopBtn.classList.add('visible');
+    } else {
+      backToTopBtn.classList.remove('visible');
+    }
+
+    // Кнопка "Вниз" - скрываем когда близко к низу
+    if (scrollTop + clientHeight >= scrollHeight - 200) {
+      scrollDownBtn.classList.add('hidden');
+    } else {
+      scrollDownBtn.classList.remove('hidden');
+    }
+
+    lastScrollTop = scrollTop;
+    navButtonsScrollTicking = false;
+  });
+}, { passive: true });
 
 
 // ===== CATEGORY INDICATOR =====
@@ -520,7 +539,16 @@ function updateCategoryIndicator() {
   }
 }
 
-window.addEventListener('scroll', updateCategoryIndicator);
+// ОПТИМИЗАЦИЯ: та же rAF-батчировка, что и для кнопок навигации выше
+let categoryScrollTicking = false;
+window.addEventListener('scroll', () => {
+  if (categoryScrollTicking) return;
+  categoryScrollTicking = true;
+  requestAnimationFrame(() => {
+    updateCategoryIndicator();
+    categoryScrollTicking = false;
+  });
+}, { passive: true });
 updateCategoryIndicator(); // Начальная проверка
 
 

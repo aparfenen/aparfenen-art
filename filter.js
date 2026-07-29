@@ -170,9 +170,10 @@ class GalleryFilter {
   }
   
   applyFilters() {
-    // ОПТИМИЗАЦИЯ: Обновляем коллекцию артворков перед фильтрацией
-    this.collectArtworks();
-    
+    // Артворки уже собраны через collectArtworks() при init() и при переключении
+    // вида (setupViewSwitcher). Пересборка на каждый клик/символ поиска не нужна
+    // (DOM статический) и раньше сводила на нет кеш _searchText ниже, так как
+    // collectArtworks() создавал новые объекты артворков без него на каждый вызов.
     let visibleCount = 0;
     let hiddenCount = 0;
     

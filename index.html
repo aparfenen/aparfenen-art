@@ -37,7 +37,19 @@
   <meta name="twitter:description" content="Watercolor, colored pencil and mixed media. Commissions open." />
   <meta name="twitter:image"       content="https://aparfenen.art/thumbnails/Between%20Waking/05-14-2026_gua1_cutted.jpg" />
 
-  <script src="theme.js"></script>
+  <script>
+    // Apply theme immediately (before body renders) to prevent flash.
+    // Inlined (rather than an external theme.js request) so it can't block
+    // first paint on a network round-trip. Rest of theme.js loads at the
+    // bottom with the other scripts.
+    (function() {
+      try {
+        var stored = localStorage.getItem('theme');
+        var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
 </head>
 
 <body>
@@ -11154,10 +11166,8 @@ She is not here, she fades into shadow. Yet I stay, holding her place."
   </div>
 </div>
 
-<!-- PapaParse library for CSV parsing -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-
 <!-- My scripts -->
+<script src="theme.js"></script>
 <script src="filter.js"></script>
 <script src="lightbox.js"></script>
 <script src="activity.js"></script>
