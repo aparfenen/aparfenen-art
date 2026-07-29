@@ -1,6 +1,9 @@
 import pandas as pd
 from collections import defaultdict
 import re
+# aliased: generate_filter_sidebar() uses a local variable named `html` as its
+# string accumulator, which would shadow a plain `import html`.
+from html import escape as escape_html
 from datetime import datetime
 from pathlib import Path
 import os
@@ -279,9 +282,10 @@ def generate_filter_sidebar():
         html += '      <div class="filter-section-header">Category</div>\n'
         html += '      <div class="filter-options">\n'
         for category in unique_categories:
+            category_esc = escape_html(category)
             html += f'        <label class="filter-option">\n'
-            html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="category" value="{category}">\n'
-            html += f'          <span class="filter-label">{category}</span>\n'
+            html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="category" value="{category_esc}">\n'
+            html += f'          <span class="filter-label">{category_esc}</span>\n'
             html += f'        </label>\n'
         html += '      </div>\n'
         html += '    </div>\n\n'
@@ -291,9 +295,10 @@ def generate_filter_sidebar():
         html += '      <div class="filter-section-header">Year</div>\n'
         html += '      <div class="filter-options">\n'
         for year in unique_years:
+            year_esc = escape_html(year)
             html += f'        <label class="filter-option">\n'
-            html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="year" value="{year}">\n'
-            html += f'          <span class="filter-label">{year}</span>\n'
+            html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="year" value="{year_esc}">\n'
+            html += f'          <span class="filter-label">{year_esc}</span>\n'
             html += f'        </label>\n'
         html += '      </div>\n'
         html += '    </div>\n\n'
@@ -316,9 +321,10 @@ def generate_filter_sidebar():
         html += '      <div class="filter-section-header">Tags</div>\n'
         html += '      <div class="filter-options">\n'
         for tag in unique_tags:
+            tag_esc = escape_html(tag)
             html += f'        <label class="filter-option">\n'
-            html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="tags" value="{tag}">\n'
-            html += f'          <span class="filter-label">{tag}</span>\n'
+            html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="tags" value="{tag_esc}">\n'
+            html += f'          <span class="filter-label">{tag_esc}</span>\n'
             html += f'        </label>\n'
         html += '      </div>\n'
         html += '    </div>\n\n'
@@ -327,7 +333,12 @@ def generate_filter_sidebar():
 
 # ===== STEP 6: Generate artwork block - FIXED =====
 def generate_artwork_block(row):
-    desc_escaped = str(row["description"]).replace('"', '&quot;')
+    # escape_html() (not just a bare .replace('"', '&quot;')) so a stray & < > "
+    # in any field can't produce malformed attributes - title/show_date used to
+    # go in completely unescaped, and everything else only had quotes handled.
+    title_escaped = escape_html(str(row["title"]))
+    show_date_escaped = escape_html(str(row["show_date"]))
+    desc_escaped = escape_html(str(row["description"]))
     global _missing_fullsize
     dimensions = str(row.get("dimensions", "")).strip() if "dimensions" in row and pd.notna(row.get("dimensions")) else ""
     medium = str(row.get("medium", "")).strip() if "medium" in row and pd.notna(row.get("medium")) else ""
@@ -342,17 +353,17 @@ def generate_artwork_block(row):
             year = str(year_raw).strip()
     else:
         year = ""
-    
-    dimensions_escaped = dimensions.replace('"', '&quot;')
-    medium_escaped = medium.replace('"', '&quot;')
-    tags_escaped = tags.replace('"', '&quot;')
-    category_escaped = category.replace('"', '&quot;')
-    year_escaped = year.replace('"', '&quot;')
-    
+
+    dimensions_escaped = escape_html(dimensions)
+    medium_escaped = escape_html(medium)
+    tags_escaped = escape_html(tags)
+    category_escaped = escape_html(category)
+    year_escaped = escape_html(year)
+
     unique_id = _unique_ids[row.name]
-    
+
     date_created = str(row.get("date_created", "")).strip() if "date_created" in row else ""
-    date_created_escaped = date_created.replace('"', '&quot;')
+    date_created_escaped = escape_html(date_created)
     
     # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
@@ -381,14 +392,14 @@ def generate_artwork_block(row):
 
     webp_attr = f'\n           data-full-src-webp="{full_image_webp_path}"' if full_image_webp_path else ""
 
-    block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{row["title"]} ({row["show_date"]})">
+    block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{title_escaped} ({show_date_escaped})">
       <img src="{thumbnail_path}"
-           alt="{row["title"]}"
+           alt="{title_escaped}"
            loading="lazy"
            decoding="async"
            data-full-src="{full_image_path}"{webp_attr}
-           data-title="{row["title"]}"
-           data-date="{row["show_date"]}"
+           data-title="{title_escaped}"
+           data-date="{show_date_escaped}"
            data-date-created="{date_created_escaped}"
            data-description="{desc_escaped}"
            data-dimensions="{dimensions_escaped}"

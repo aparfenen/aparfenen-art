@@ -440,13 +440,17 @@ function switchToChronological() {
   }
 }
 
-function switchToThematic() {
+function switchToThematic(targetId) {
   if (galleryFilter) {
     const thematicBtn = document.getElementById('thematic-view-btn');
     if (thematicBtn) thematicBtn.click();
   }
-  const gallery = document.getElementById('gallery');
-  if (gallery) {
-    setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 100);
+  // Category-specific nav links pass their own section id so we scroll straight
+  // there; the plain "Thematic View" link passes nothing and lands on #gallery.
+  // Without this, every category link's native #anchor jump used to get
+  // overridden 100ms later by a hardcoded scroll back to the top of the gallery.
+  const target = targetId ? document.getElementById(targetId) : document.getElementById('gallery');
+  if (target) {
+    setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 100);
   }
 }

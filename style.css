@@ -1495,43 +1495,6 @@ nav.main-nav .sub-menu a {
   }
 }
 
-/* ===== CURRENT CATEGORY INDICATOR ===== */
-.category-indicator {
-  position: fixed;
-  top: 70px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--lightbox-info-bg);
-  backdrop-filter: blur(10px);
-  padding: 8px 20px;
-  border-radius: 20px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  font-size: 0.9em;
-  font-weight: 500;
-  color: var(--text-secondary);
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s ease;
-  z-index: 99;
-}
-
-.category-indicator.visible {
-  opacity: 1;
-}
-
-@media (max-width: 768px) {
-  .category-indicator {
-    top: 60px;
-    font-size: 0.85em;
-    padding: 6px 16px;
-  }
-  
-  .view-btn {
-    padding: 10px 20px;
-    font-size: 0.9em;
-  }
-}
-
 /* FOOTER */
 .footer-separator {
   margin: 60px auto 30px auto;
