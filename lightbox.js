@@ -64,12 +64,6 @@ function updateGalleryImagesArray() {
   return allGalleryImages.length;
 }
 
-// Инициализация при загрузке DOM
-document.addEventListener("DOMContentLoaded", () => {
-  const imageCount = updateGalleryImagesArray();
-  console.log(`[Lightbox] Initialized with ${imageCount} images`);
-});
-
 // Возвращает предпочтительный (webp) и запасной (jpg) путь к полноразмерному изображению
 function getFullImageSources(imgElement) {
   const jpgSrc = imgElement.dataset.fullSrc || imgElement.src;

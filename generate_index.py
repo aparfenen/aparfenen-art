@@ -369,26 +369,23 @@ def generate_artwork_block(row):
     filename_base = os.path.splitext(row["filename"])[0]
     thumbnail_path = f"thumbnails/{row['category']}/{filename_base}.jpg"
     # Lightbox uses web-sized large/ version (always .jpg, browser-safe, 2400px).
-    # Fallback to original in img/ only if large/ hasn't been generated yet.
     large_path = f"large/{row['category']}/{filename_base}.jpg"
     large_webp_path = f"large/{row['category']}/{filename_base}.webp"
     if os.path.exists(large_path):
         full_image_path = large_path
         full_image_webp_path = large_webp_path if os.path.exists(large_webp_path) else ""
     else:
-        jpg_path = f"img/{row['category']}/{filename_base}.jpg"
-        orig_path = f"img/{row['category']}/{row['filename']}"
-        if os.path.exists(jpg_path):
-            full_image_path = jpg_path
-        elif os.path.exists(orig_path):
-            full_image_path = orig_path
-        else:
-            # img/ is gitignored (local-only) and no large/ was ever generated for this
-            # piece - fall back to the thumbnail so the lightbox shows something
-            # instead of a broken image on the deployed site.
-            full_image_path = thumbnail_path
-            _missing_fullsize.append(f"{row['category']}/{row['filename']} ({row['title']})")
+        # img/ is gitignored (local-only) - a data-full-src pointing there would
+        # load fine in a local preview and then 404 once deployed, since GitHub
+        # Pages never sees that folder. This bit the site before (see commit
+        # d7e613b: "51 missing full-size images"): the previous fallback checked
+        # img/ on disk and silently used it whenever it happened to exist locally,
+        # so the break stayed invisible until deploy. Always fall back to the
+        # thumbnail (which *is* deployed) instead, and warn so large/ gets
+        # regenerated before pushing.
+        full_image_path = thumbnail_path
         full_image_webp_path = ""
+        _missing_fullsize.append(f"{row['category']}/{row['filename']} ({row['title']})")
 
     webp_attr = f'\n           data-full-src-webp="{full_image_webp_path}"' if full_image_webp_path else ""
 
