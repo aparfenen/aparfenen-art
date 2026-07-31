@@ -160,7 +160,7 @@ h1 {
   text-align: center;
   font-family: 'Meie Script', cursive;
   font-weight: 400;
-  font-size: 5.25em;
+  font-size: 4.4em;
   letter-spacing: 0.01em;
   margin: 0 auto;
   max-width: 1200px;
@@ -174,17 +174,17 @@ h1 {
 }
 
 @media (max-width: 768px) {
-  h1 { font-size: 3em; }
+  h1 { font-size: 2.6em; }
   .site-header { padding: 20px 16px 0; }
 }
 
 @media (max-width: 480px) {
-  h1 { font-size: 2.4em; }
+  h1 { font-size: 2.1em; }
 }
 
 h2.section-title {
   text-align: center;
-  font-size: 2em;
+  font-size: 1.7em;
   font-weight: 600;
   margin-top: 36px;
   margin-bottom: 0.6em;
@@ -195,7 +195,7 @@ h2.section-title {
 h3.section-title {
   margin-top: 20px;
   margin-bottom: 0.4em;
-  font-size: 1.8em;
+  font-size: 1.5em;
   font-weight: 500;
   text-align: center;
   color: var(--text-tertiary);
