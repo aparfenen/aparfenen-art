@@ -152,7 +152,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 52px 24px 0;
+  padding: 32px 24px 0;
 }
 
 /* Headings */
@@ -175,7 +175,7 @@ h1 {
 
 @media (max-width: 768px) {
   h1 { font-size: 3em; }
-  .site-header { padding: 28px 16px 0; }
+  .site-header { padding: 20px 16px 0; }
 }
 
 @media (max-width: 480px) {
@@ -186,15 +186,15 @@ h2.section-title {
   text-align: center;
   font-size: 2em;
   font-weight: 600;
-  margin-top: 60px;
-  margin-bottom: 1em;
+  margin-top: 36px;
+  margin-bottom: 0.6em;
   color: var(--text-primary);
   scroll-margin-top: 90px; /* keeps heading clear of the sticky nav on anchor jumps */
 }
 
 h3.section-title {
-  margin-top: 30px;
-  margin-bottom: 0.5em;
+  margin-top: 20px;
+  margin-bottom: 0.4em;
   font-size: 1.8em;
   font-weight: 500;
   text-align: center;
@@ -230,8 +230,8 @@ h3.section-title {
   line-height: 1.7;
   color: var(--text-primary);
   max-width: 1200px;
-  margin: 20px auto;
-  padding: 10px 24px;
+  margin: 12px auto;
+  padding: 16px 24px;
   box-sizing: border-box;
   border: 1px solid var(--border-medium);
   border-radius: 8px;
@@ -247,7 +247,7 @@ h3.section-title {
   line-height: 1.7;
   color: var(--text-primary);
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 12px auto;
   /* padding: 10px 24px; */
   box-sizing: border-box;
   border: 1px solid var(--border-medium);
@@ -265,7 +265,7 @@ h3.section-title {
 }
 
 .commissions p {
-  margin: 8px 16px;
+  margin: 12px 24px;
 }
 
 .support-note {
@@ -281,7 +281,7 @@ h3.section-title {
 /* Gallery intro */
 .gallery-intro {
   max-width: 1200px;
-  margin: 10px auto 10px auto;
+  margin: 6px auto 8px auto;
   text-align: center;
   font-size: 1.15em;
   color: var(--text-primary);
@@ -292,7 +292,7 @@ h3.section-title {
   display: flex;
   justify-content: center;
   gap: 12px;
-  margin: 20px auto 30px auto;
+  margin: 14px auto 20px auto;
   max-width: 1200px;
 }
 
@@ -425,7 +425,7 @@ h3.section-title {
 
 /* Theme sections (for thematic view) */
 .theme-section {
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 
 
@@ -835,7 +835,7 @@ h3.section-title {
 
 /* FOOTER */
 .footer-separator {
-  margin: 60px auto 30px auto;
+  margin: 36px auto 20px auto;
   border: none;
   border-top: 1px solid var(--border-medium);
   max-width: 1200px;
@@ -844,7 +844,7 @@ h3.section-title {
 
 footer.contact-info {
   max-width: 1200px;
-  margin: 60px auto;
+  margin: 36px auto;
   text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.1em;
@@ -1513,7 +1513,7 @@ nav.main-nav .sub-menu a {
 
 /* FOOTER */
 .footer-separator {
-  margin: 60px auto 30px auto;
+  margin: 36px auto 20px auto;
   border: none;
   border-top: 1px solid var(--border-medium);
   max-width: 1200px;
@@ -1522,7 +1522,7 @@ nav.main-nav .sub-menu a {
 
 footer.contact-info {
   max-width: 1200px;
-  margin: 60px auto;
+  margin: 36px auto;
   text-align: center;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.1em;
