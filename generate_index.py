@@ -332,7 +332,7 @@ def generate_filter_sidebar():
     return html
 
 # ===== STEP 6: Generate artwork block - FIXED =====
-def generate_artwork_block(row):
+def generate_artwork_block(row, include_id=True):
     # escape_html() (not just a bare .replace('"', '&quot;')) so a stray & < > "
     # in any field can't produce malformed attributes - title/show_date used to
     # go in completely unescaped, and everything else only had quotes handled.
@@ -413,7 +413,14 @@ def generate_artwork_block(row):
         {img_tag}
       </picture>'''
 
-    block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{title_escaped} ({show_date_escaped})">
+    # Every artwork is rendered twice - once in the chronological view, once
+    # in its category section of the thematic view. Emitting id="{unique_id}"
+    # both times produced 313 duplicate DOM ids (invalid HTML) and made
+    # #hash deep-links resolve to whichever copy happened to come first in
+    # the markup. Only the chronological copy (the default active view)
+    # keeps the id; the thematic copy is still identifiable via data-id.
+    id_attr = f' id="{unique_id}"' if include_id else ''
+    block = f'''    <div class="art-block"{id_attr} data-hover-title="{title_escaped} ({show_date_escaped})">
       {img_tag}
     </div>'''
     return block
@@ -473,11 +480,42 @@ for category in sorted_categories:
     
     gallery_html += '    <div class="gallery">\n'
     for row in rows:
-        gallery_html += generate_artwork_block(row) + '\n'
+        gallery_html += generate_artwork_block(row, include_id=False) + '\n'
     gallery_html += '    </div>\n'
     gallery_html += '  </div>\n\n'
 
 gallery_html += '  </div>\n'
+
+# ===== STEP 7b: Compute Activity stats (mirrors activity.js's own math) =====
+# activity.js recomputes these from the CSV client-side and overwrites the
+# static numbers on load - but the static numbers are what ships in the HTML
+# (and what anyone/anything without JS sees), so they need to be regenerated
+# here too instead of being hand-typed once and left to rot.
+_MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                'August', 'September', 'October', 'November', 'December']
+_activity_counts = defaultdict(int)
+for _, row in df.iterrows():
+    show_date = str(row.get('show_date', '')).strip()
+    if not show_date:
+        continue
+    try:
+        parsed = datetime.strptime(show_date, '%B %Y')
+    except ValueError:
+        continue
+    _activity_counts[(parsed.year, parsed.month)] += 1
+
+total_works_stat = len(df)
+
+if _activity_counts:
+    (_peak_year, _peak_month), _peak_count = max(_activity_counts.items(), key=lambda kv: kv[1])
+    most_productive_stat = f"{_MONTH_NAMES[_peak_month - 1][:3]} {_peak_year} ({_peak_count})"
+else:
+    most_productive_stat = ""
+
+_current_year = datetime.now().year
+current_year_stat = sum(c for (y, m), c in _activity_counts.items() if y == _current_year)
+
+print(f"✓ Activity stats: {total_works_stat} total, peak {most_productive_stat}, {current_year_stat} this year\n")
 
 # ===== STEP 8: Read and update index.html =====
 with open(INDEX_PATH, "r", encoding="utf-8") as f:
@@ -499,6 +537,13 @@ if FILTER_START_MARKER in before_gallery and FILTER_END_MARKER in before_gallery
 else:
     new_content = f"{before_gallery}{START_MARKER}\n{gallery_html}\n{END_MARKER}{after_gallery}"
     print("⚠ Filter markers not found - only gallery updated")
+
+new_content = re.sub(r'(id="total-works">)[^<]*(</div>)',
+                      lambda m: f'{m.group(1)}{total_works_stat}{m.group(2)}', new_content, count=1)
+new_content = re.sub(r'(id="most-productive-month">)[^<]*(</div>)',
+                      lambda m: f'{m.group(1)}{escape_html(most_productive_stat)}{m.group(2)}', new_content, count=1)
+new_content = re.sub(r'(id="current-year-count">)[^<]*(</div>)',
+                      lambda m: f'{m.group(1)}{current_year_stat}{m.group(2)}', new_content, count=1)
 
 with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
     f.write(new_content)
