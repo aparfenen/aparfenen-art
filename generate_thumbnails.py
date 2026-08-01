@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 """
 Generate web images for all gallery images:
-  - thumbnails/  600px width  (grid)
-  - large/      2400px width  (lightbox) - also emits a sibling .webp
+  - thumbnails-300/  300px width  (grid, 1x displays and phones)
+  - thumbnails/      600px width  (grid, 2x displays)
+  - large/          2400px width  (lightbox) - also emits a sibling .webp
 Always outputs .jpg, maintains aspect ratio, organizes by category.
 HEIC/PDF originals are converted via sips (macOS built-in).
 
 2400px matches the lightbox's on-screen cap (max-width: min(1200px, 90vw))
 at 2x retina - anything larger is bytes the display can't use.
+
+The grid renders each thumbnail in a ~288px slot on desktop and ~180px on a
+phone, so 600px is the 2x candidate and 300px the 1x one; generate_index.py
+offers both via srcset and lets the browser pick.
 """
 
 from PIL import Image
@@ -22,8 +27,9 @@ IMG_DIR = "img"
 
 # (output_dir, max_width, jpeg_quality, also_emit_webp)
 OUTPUTS = [
-    ("thumbnails", 600, 82, True),   # grid thumbnails
-    ("large", 2400, 85, True),        # lightbox web versions
+    ("thumbnails-300", 300, 82, True),  # grid thumbnails, 1x displays
+    ("thumbnails", 600, 82, True),      # grid thumbnails, 2x displays
+    ("large", 2400, 85, True),          # lightbox web versions
 ]
 
 WEBP_QUALITY = 80
@@ -87,6 +93,28 @@ def make_resized(img_path, out_path, max_width, quality):
         return f"{new_width}x{new_height}px"
 
 
+def is_current(out_path, img_path, max_width):
+    """An output counts as current only if it is newer than the original AND no
+    wider than the cap that produced it.
+
+    The mtime test alone is not enough: 53 thumbnails were still 1000px wide
+    from before this script capped the grid at 600, and because they were newer
+    than their originals every run skipped them, so the gallery kept shipping
+    ~3x the pixels it could display. Checking the width makes a lowered cap
+    actually take effect.
+    """
+    if not out_path.exists():
+        return False
+    if out_path.stat().st_mtime <= img_path.stat().st_mtime:
+        return False
+    try:
+        with Image.open(out_path) as img:
+            return img.size[0] <= max_width
+    except Exception:
+        # Unreadable/truncated output - regenerate it.
+        return False
+
+
 def make_webp(jpg_path, webp_path, quality):
     """Re-encode an already-resized .jpg as .webp (smaller at equivalent quality)."""
     with Image.open(jpg_path) as img:
@@ -117,9 +145,10 @@ for category_dir in Path(IMG_DIR).iterdir():
             out_path = out_category_dir / (img_path.stem + '.jpg')
             webp_path = out_category_dir / (img_path.stem + '.webp')
 
-            # Skip if output already exists and is newer than original
-            jpg_fresh = out_path.exists() and out_path.stat().st_mtime > img_path.stat().st_mtime
-            webp_fresh = not also_webp or (webp_path.exists() and webp_path.stat().st_mtime > img_path.stat().st_mtime)
+            # Skip if output already exists, is newer than original, and is sized
+            # for the current cap
+            jpg_fresh = is_current(out_path, img_path, max_width)
+            webp_fresh = not also_webp or is_current(webp_path, img_path, max_width)
 
             if jpg_fresh and webp_fresh:
                 skipped += 1

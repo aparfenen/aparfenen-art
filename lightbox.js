@@ -95,8 +95,11 @@ function loadImageWithLoader(imgElement, onLoadComplete) {
   lightboxImg.classList.add("is-loading");
 
   // Blur-up: сразу показываем уже загруженный thumbnail как placeholder,
-  // пока грузится полноразмерная версия
-  lightboxImg.src = imgElement.src;
+  // пока грузится полноразмерная версия.
+  // currentSrc, а не src: у миниатюр в сетке есть srcset (300/600px, webp/jpg),
+  // и браузер уже скачал ровно один из вариантов - src вернул бы 600px .jpg,
+  // то есть ещё один запрос вместо кадра, который уже лежит в кэше.
+  lightboxImg.src = imgElement.currentSrc || imgElement.src;
 
   const { jpgSrc, webpSrc } = getFullImageSources(imgElement);
   let triedFallback = false;

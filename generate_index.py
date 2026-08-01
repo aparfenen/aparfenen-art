@@ -6,6 +6,8 @@ import re
 from html import escape as escape_html
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import quote as url_quote
+from PIL import Image
 import os
 
 CSV_PATH = "gallery_metadata.csv"
@@ -13,6 +15,16 @@ CATEGORY_DESC_PATH = "category_descriptions.csv"  # FIXED: использую ca
 INDEX_PATH = "index.html"
 OUTPUT_PATH = "index.html"
 IMG_DIR = "img"
+THUMB_DIR = "thumbnails"          # 600px - 2x displays
+THUMB_SMALL_DIR = "thumbnails-300"  # 300px - 1x displays and phones
+
+# What the grid actually reserves for one thumbnail, so the browser can pick the
+# right srcset candidate instead of always taking the largest:
+#   <=768px   grid is repeat(auto-fill, minmax(150px, 1fr)) with a 10px gap over
+#             the full viewport - 2 columns on a 375px phone, ~48vw each
+#   <=1200px  minmax(240px, 1fr) with a 16px gap, 3 columns, ~33vw each
+#   wider     the grid is capped at 1200px: 4 columns of (1200 - 3*16)/4 = 288px
+GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 288px"
 
 START_MARKER = "<!-- START GALLERY -->"
 END_MARKER = "<!-- END GALLERY -->"
@@ -331,6 +343,49 @@ def generate_filter_sidebar():
     
     return html
 
+# ===== Image dimensions / srcset helpers =====
+# Every work is emitted twice (chronological + thematic view), so cache the
+# header reads instead of opening ~650 files twice.
+_dimension_cache = {}
+
+def image_dimensions(path):
+    """(width, height) of an image on disk, or None if it isn't there."""
+    if path not in _dimension_cache:
+        try:
+            with Image.open(path) as img:
+                _dimension_cache[path] = img.size
+        except Exception:
+            _dimension_cache[path] = None
+    return _dimension_cache[path]
+
+
+def srcset_candidates(*paths):
+    """['small.jpg 300w', 'big.jpg 600w'] for whichever of `paths` exist on disk.
+
+    Widths come from the files themselves rather than from the nominal cap,
+    because a work whose original is narrower than the cap comes out smaller
+    (one thumbnail is 376px) and a lying descriptor makes the browser pick the
+    wrong candidate.
+
+    URLs are percent-encoded, which is not cosmetic here: srcset splits
+    candidates on whitespace, so "thumbnails/Between Waking/x.webp" parses as
+    the URL "thumbnails/Between" plus the invalid descriptor "Waking/x.webp"
+    and the candidate is dropped. Verified in headless Chrome: with the raw
+    space the <source> stops matching and the browser silently falls back to
+    the JPEG - which is what every category with a space in its name has been
+    doing since WebP thumbnails were added.
+    """
+    candidates = []
+    seen_widths = set()
+    for path in paths:
+        dims = image_dimensions(path)
+        if dims is None or dims[0] in seen_widths:
+            continue
+        seen_widths.add(dims[0])
+        candidates.append(f"{url_quote(path)} {dims[0]}w")
+    return candidates
+
+
 # ===== STEP 6: Generate artwork block - FIXED =====
 def generate_artwork_block(row, include_id=True):
     # escape_html() (not just a bare .replace('"', '&quot;')) so a stray & < > "
@@ -367,9 +422,11 @@ def generate_artwork_block(row, include_id=True):
     
     # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
-    thumbnail_path = f"thumbnails/{row['category']}/{filename_base}.jpg"
-    thumbnail_webp_path = f"thumbnails/{row['category']}/{filename_base}.webp"
+    thumbnail_path = f"{THUMB_DIR}/{row['category']}/{filename_base}.jpg"
+    thumbnail_webp_path = f"{THUMB_DIR}/{row['category']}/{filename_base}.webp"
     thumbnail_webp_exists = os.path.exists(thumbnail_webp_path)
+    thumbnail_small_path = f"{THUMB_SMALL_DIR}/{row['category']}/{filename_base}.jpg"
+    thumbnail_small_webp_path = f"{THUMB_SMALL_DIR}/{row['category']}/{filename_base}.webp"
     # Lightbox uses web-sized large/ version (always .jpg, browser-safe, 2400px).
     large_path = f"large/{row['category']}/{filename_base}.jpg"
     large_webp_path = f"large/{row['category']}/{filename_base}.webp"
@@ -391,10 +448,22 @@ def generate_artwork_block(row, include_id=True):
 
     webp_attr = f'\n           data-full-src-webp="{full_image_webp_path}"' if full_image_webp_path else ""
 
+    # width/height keep the grid slot reserved before the bytes arrive. The CSS
+    # already pins every cell to aspect-ratio 3/4 with object-fit: cover, so
+    # these are the intrinsic size of the file, not the rendered box - they only
+    # matter for the moment before style.css applies.
+    thumbnail_dims = image_dimensions(thumbnail_path)
+    size_attrs = (f'\n           width="{thumbnail_dims[0]}" height="{thumbnail_dims[1]}"'
+                  if thumbnail_dims else "")
+
+    jpg_candidates = srcset_candidates(thumbnail_small_path, thumbnail_path)
+    srcset_attr = (f'\n           srcset="{", ".join(jpg_candidates)}"'
+                   f'\n           sizes="{GALLERY_SIZES}"') if len(jpg_candidates) > 1 else ""
+
     img_tag = f'''<img src="{thumbnail_path}"
            alt="{title_escaped}"
            loading="lazy"
-           decoding="async"
+           decoding="async"{size_attrs}{srcset_attr}
            data-full-src="{full_image_path}"{webp_attr}
            data-title="{title_escaped}"
            data-date="{show_date_escaped}"
@@ -408,8 +477,11 @@ def generate_artwork_block(row, include_id=True):
            data-id="{unique_id}" />'''
 
     if thumbnail_webp_exists:
+        webp_candidates = srcset_candidates(thumbnail_small_webp_path, thumbnail_webp_path)
         img_tag = f'''<picture>
-        <source srcset="{thumbnail_webp_path}" type="image/webp" />
+        <source srcset="{", ".join(webp_candidates)}"
+                sizes="{GALLERY_SIZES}"
+                type="image/webp" />
         {img_tag}
       </picture>'''
 
