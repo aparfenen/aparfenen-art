@@ -3,6 +3,11 @@
 // Activity data - будет заполнено из CSV
 let activityData = {};
 
+// Всего видимых работ - считается по всем visible=yes строкам, а не только по тем,
+// у которых распарсился show_date, чтобы "Total Works" совпадал со счётчиком в шапке
+// (и с len(df) в generate_index.py).
+let totalVisibleWorks = 0;
+
 // Правильный парсинг CSV с учетом кавычек, включая переносы строк внутри кавычек
 // (нельзя резать текст по '\n' заранее - многострочные description поломают выравнивание колонок)
 function parseCSV(text) {
@@ -94,6 +99,7 @@ async function loadActivityFromCSV() {
     const data = {};
     let parsed = 0;
     let skipped = 0;
+    let visibleCount = 0;
 
     for (let i = 1; i < rows.length; i++) {
       const cols = rows[i];
@@ -104,7 +110,9 @@ async function loadActivityFromCSV() {
         skipped++;
         continue;
       }
-      
+
+      visibleCount++;
+
       const showDate = cols[showDateIndex]?.trim();
       
       if (!showDate) {
@@ -127,6 +135,7 @@ async function loadActivityFromCSV() {
     }
     
     activityData = data;
+    totalVisibleWorks = visibleCount;
     console.log(`[Activity] Successfully parsed ${parsed} dates, skipped ${skipped}`);
     console.log('[Activity] Months:', Object.keys(data).sort());
     console.log('[Activity] Top months:', 
@@ -263,13 +272,15 @@ function updateStats() {
   }
   
   // Count total works
-  const totalWorks = counts.reduce((sum, count) => sum + count, 0);
-  
-  // Find most productive month
+  const totalWorks = totalVisibleWorks || counts.reduce((sum, count) => sum + count, 0);
+
+  // Find most productive month. При равном количестве работ выигрывает более поздний
+  // месяц - иначе результат зависел бы от порядка строк в CSV и мог разойтись
+  // с цифрой, вшитой в разметку generate_index.py.
   let maxMonth = '';
   let maxCount = 0;
   for (const [month, count] of Object.entries(activityData)) {
-    if (count > maxCount) {
+    if (count > maxCount || (count === maxCount && month > maxMonth)) {
       maxCount = count;
       maxMonth = month;
     }

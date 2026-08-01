@@ -507,7 +507,9 @@ for _, row in df.iterrows():
 total_works_stat = len(df)
 
 if _activity_counts:
-    (_peak_year, _peak_month), _peak_count = max(_activity_counts.items(), key=lambda kv: kv[1])
+    # Tie-break on the later month, same rule as activity.js - otherwise a tie would
+    # resolve by row order and the static number could disagree with the JS one.
+    (_peak_year, _peak_month), _peak_count = max(_activity_counts.items(), key=lambda kv: (kv[1], kv[0]))
     most_productive_stat = f"{_MONTH_NAMES[_peak_month - 1][:3]} {_peak_year} ({_peak_count})"
 else:
     most_productive_stat = ""
@@ -538,12 +540,14 @@ else:
     new_content = f"{before_gallery}{START_MARKER}\n{gallery_html}\n{END_MARKER}{after_gallery}"
     print("⚠ Filter markers not found - only gallery updated")
 
-new_content = re.sub(r'(id="total-works">)[^<]*(</div>)',
-                      lambda m: f'{m.group(1)}{total_works_stat}{m.group(2)}', new_content, count=1)
-new_content = re.sub(r'(id="most-productive-month">)[^<]*(</div>)',
-                      lambda m: f'{m.group(1)}{escape_html(most_productive_stat)}{m.group(2)}', new_content, count=1)
-new_content = re.sub(r'(id="current-year-count">)[^<]*(</div>)',
-                      lambda m: f'{m.group(1)}{current_year_stat}{m.group(2)}', new_content, count=1)
+for _stat_id, _stat_value in (("total-works", total_works_stat),
+                              ("most-productive-month", escape_html(most_productive_stat)),
+                              ("current-year-count", current_year_stat)):
+    new_content, _n = re.subn(rf'(id="{_stat_id}">)[^<]*(</div>)',
+                              lambda m: f'{m.group(1)}{_stat_value}{m.group(2)}', new_content, count=1)
+    if _n != 1:
+        # A silent no-op here is exactly how the block drifted to stale numbers before.
+        raise ValueError(f'Activity stat placeholder id="{_stat_id}" not found in index.html')
 
 with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
     f.write(new_content)
