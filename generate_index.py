@@ -368,6 +368,8 @@ def generate_artwork_block(row):
     # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
     thumbnail_path = f"thumbnails/{row['category']}/{filename_base}.jpg"
+    thumbnail_webp_path = f"thumbnails/{row['category']}/{filename_base}.webp"
+    thumbnail_webp_exists = os.path.exists(thumbnail_webp_path)
     # Lightbox uses web-sized large/ version (always .jpg, browser-safe, 2400px).
     large_path = f"large/{row['category']}/{filename_base}.jpg"
     large_webp_path = f"large/{row['category']}/{filename_base}.webp"
@@ -389,8 +391,7 @@ def generate_artwork_block(row):
 
     webp_attr = f'\n           data-full-src-webp="{full_image_webp_path}"' if full_image_webp_path else ""
 
-    block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{title_escaped} ({show_date_escaped})">
-      <img src="{thumbnail_path}"
+    img_tag = f'''<img src="{thumbnail_path}"
            alt="{title_escaped}"
            loading="lazy"
            decoding="async"
@@ -404,7 +405,16 @@ def generate_artwork_block(row):
            data-tags="{tags_escaped}"
            data-category="{category_escaped}"
            data-year="{year_escaped}"
-           data-id="{unique_id}" />
+           data-id="{unique_id}" />'''
+
+    if thumbnail_webp_exists:
+        img_tag = f'''<picture>
+        <source srcset="{thumbnail_webp_path}" type="image/webp" />
+        {img_tag}
+      </picture>'''
+
+    block = f'''    <div class="art-block" id="{unique_id}" data-hover-title="{title_escaped} ({show_date_escaped})">
+      {img_tag}
     </div>'''
     return block
 

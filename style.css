@@ -387,6 +387,12 @@ h3.section-title {
   }
 }
 
+/* <picture> defaults to display:inline, same inline-spacing issue img had below - neutralize the wrapper box entirely */
+.gallery picture,
+.art-block picture {
+  display: contents;
+}
+
 /* ===== FIXED: IMAGES WITH ASPECT RATIO ===== */
 .gallery img {
   width: 100%;

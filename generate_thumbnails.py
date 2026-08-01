@@ -22,7 +22,7 @@ IMG_DIR = "img"
 
 # (output_dir, max_width, jpeg_quality, also_emit_webp)
 OUTPUTS = [
-    ("thumbnails", 600, 82, False),   # grid thumbnails
+    ("thumbnails", 600, 82, True),   # grid thumbnails
     ("large", 2400, 85, True),        # lightbox web versions
 ]
 
