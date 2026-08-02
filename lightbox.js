@@ -153,7 +153,10 @@ function updateLightboxMetadata(img) {
   currentImageId = img.dataset.id || "";
 
   lightboxTitle.textContent = title;
-  lightboxDate.textContent = img.dataset.date || "";
+  // Точная дата (data-date-exact, "May 28, 2026") показывается вместо
+  // месяца-года там, где она есть в CSV; для остальных работ остаётся
+  // прежний data-date ("May 2026"), так что строка выглядит одинаково.
+  lightboxDate.textContent = img.dataset.dateExact || img.dataset.date || "";
   lightboxDescription.textContent = img.dataset.description || "";
 
   // Строим строку метаданных (размеры и материал)

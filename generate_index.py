@@ -221,6 +221,27 @@ def parse_date(row):
 
     return datetime(1900, 1, 1)
 
+
+def format_exact_date(row):
+    """
+    Human-readable exact date ("May 28, 2026") when date_finished holds a full
+    M/D/YYYY date. Only date_finished is precise to the day - date_created is
+    month/year and show_date is text, so both are left to the existing
+    data-date attribute. Returns "" when there is no day-level date.
+    """
+    date_finished = str(row.get('date_finished', '')).strip()
+    if not date_finished or date_finished.lower() == 'nan' or '/' not in date_finished:
+        return ""
+    parts = date_finished.split('/')
+    if len(parts) != 3:
+        return ""
+    try:
+        month, day, year = int(parts[0]), int(parts[1]), int(parts[2])
+        dt = datetime(year, month, day)
+    except (ValueError, IndexError):
+        return ""
+    return f"{dt.strftime('%B')} {dt.day}, {dt.year}"
+
 df['parsed_date'] = df.apply(parse_date, axis=1)
 df = df.sort_values('parsed_date', ascending=False)
 
@@ -435,6 +456,9 @@ def generate_artwork_block(row, include_id=True):
 
     date_created = str(row.get("date_created", "")).strip() if "date_created" in row else ""
     date_created_escaped = escape_html(date_created)
+    # Day-level date when the CSV has one; the lightbox prefers it over the
+    # month-only data-date and falls back to that when it's empty.
+    date_exact_escaped = escape_html(format_exact_date(row))
     
     # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
@@ -484,6 +508,7 @@ def generate_artwork_block(row, include_id=True):
            data-title="{title_escaped}"
            data-date="{show_date_escaped}"
            data-date-created="{date_created_escaped}"
+           data-date-exact="{date_exact_escaped}"
            data-description="{desc_escaped}"
            data-dimensions="{dimensions_escaped}"
            data-medium="{medium_escaped}"
