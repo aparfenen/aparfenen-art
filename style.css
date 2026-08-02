@@ -21,7 +21,7 @@
 
   /* Accent colors */
   --accent-primary: #3366cc;
-  --accent-light: var(--accent-light);
+  --accent-light: rgba(51, 102, 204, 0.15);
   --accent-border: rgba(51, 102, 204, 0.4);
   --accent-success: #28a745;
 
