@@ -80,8 +80,21 @@ except Exception as e:
 
 # Load CSV
 df = pd.read_csv(CSV_PATH, sep=',')
-df['category'] = df['category'].str.strip()
-df['filename'] = df['filename'].str.strip()
+# Numbers leaves fully blank rows behind, and pandas reads their cells as NaN
+# floats - which used to blow up 40 lines later inside extract_date_from_filename
+# with a bare "expected string or bytes-like object, got 'float'" and no hint of
+# which row was at fault. Normalise to strings here and name the offenders.
+df['category'] = df['category'].fillna('').astype(str).str.strip()
+df['filename'] = df['filename'].fillna('').astype(str).str.strip()
+
+_no_filename = df.index[df['filename'] == '']
+if len(_no_filename) > 0:
+    # +2: CSV line numbers count the header and are 1-based, spreadsheet-style.
+    print(f"⚠ {len(_no_filename)} CSV row(s) have no filename and cannot be rendered:")
+    for _i in _no_filename:
+        _title = str(df.at[_i, 'title']) if pd.notna(df.at[_i, 'title']) else '(untitled)'
+        print(f"    - line {_i + 2}: {_title}")
+    print("    Delete them in gallery_metadata.numbers; they are skipped for now.\n")
 
 print(f"✓ Loaded {len(df)} artworks from CSV\n")
 
@@ -115,6 +128,9 @@ auto_filled_dates = 0
 for idx, row in df.iterrows():
     filename = row['filename']
     year_val = row.get('year')
+
+    if not filename:
+        continue
 
     if pd.isna(row.get('date_created')) or pd.isna(year_val) or str(year_val).strip() == '':
         date_created, year = extract_date_from_filename(filename)
