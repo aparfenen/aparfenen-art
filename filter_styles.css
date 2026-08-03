@@ -96,7 +96,8 @@
   color: var(--text-dimmed);
 }
 
-#clear-filters {
+#clear-filters,
+#copy-filter-link {
   background: var(--bg-hover);
   border: 1px solid var(--border-medium);
   border-radius: 6px;
@@ -110,9 +111,21 @@
   width: 100%;
 }
 
-#clear-filters:hover {
+#clear-filters:hover,
+#copy-filter-link:hover {
   background: var(--border-medium);
   border-color: var(--border-strong);
+}
+
+/* "Copy link" ставится сразу под "Clear All" (создаётся в filter.js),
+   поэтому нижний отступ переезжает на него */
+#clear-filters {
+  margin-bottom: 8px;
+}
+
+#copy-filter-link.copied {
+  color: var(--accent-border);
+  border-color: var(--accent-border);
 }
 
 /* Filter Sections */

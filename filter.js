@@ -1,6 +1,10 @@
 // ===== MULTI-DIMENSIONAL FILTER SYSTEM WITH SEARCH =====
 // ПРОВЕРЕНО И ОПТИМИЗИРОВАНО: Улучшена производительность и надежность
 
+const FILTER_GROUPS = ['category', 'year', 'medium', 'tags'];
+const VIEWS = ['chronological', 'thematic'];
+const MAX_SEARCH_LENGTH = 100;
+
 class GalleryFilter {
   constructor() {
     this.allArtworks = [];
@@ -12,33 +16,197 @@ class GalleryFilter {
     };
     this.searchQuery = '';
     this.currentView = 'chronological';
-    
+
+    // Заголовок страницы без фильтров - к нему возвращаемся при сбросе
+    this.baseTitle = document.title;
+    // Допустимые значения каждой группы (по чекбоксам в разметке), чтобы не
+    // принимать из URL мусор. Заполняется в collectKnownFilterValues().
+    this.knownValues = {};
+    // Набор символов в поиске не должен плодить записи в истории: подряд идущие
+    // правки строки поиска пишутся через replaceState (см. syncURL).
+    this.lastSyncWasSearch = false;
+
     this.init();
   }
-  
+
   init() {
-    // Собираем артворки только из активной галереи
-    this.collectArtworks();
-    
+    this.collectKnownFilterValues();
+
     this.setupSearch();
     this.setupCheckboxes();
-    
+
     const clearButton = document.getElementById('clear-filters');
     if (clearButton) {
       clearButton.addEventListener('click', () => {
         this.clearAllFilters();
       });
     }
-    
+
+    this.setupShareLink();
     this.setupCollapsibleSections();
     this.setupViewSwitcher();
-    
-    // Начальное обновление счетчика
-    this.updateCounter();
-    
+
+    // Восстанавливаем вид, фильтры и поиск из URL. applyState сам собирает
+    // артворки и применяет фильтры, поэтому отдельный collectArtworks() тут
+    // не нужен. 'replace' приводит адрес к каноничному виду (выбрасывает
+    // неизвестные значения) не создавая лишнюю запись в истории.
+    this.applyState(this.readStateFromURL(), { updateURL: 'replace' });
+
+    // Кнопки "назад"/"вперёд" возвращают ровно то состояние фильтров,
+    // которое было записано в адрес
+    window.addEventListener('popstate', () => this.handlePopState());
+
     console.log(`✅ [Gallery Filter] Initialized with ${this.allArtworks.length} unique artworks`);
   }
-  
+
+  // ===== URL-СОСТОЯНИЕ =====
+  // Фильтры, поиск и вид живут в query-строке:
+  //   ?category=Fragile+Systems&year=2026&q=leaf&view=thematic
+  // Несколько значений одной группы разделяются запятой - в самих значениях
+  // запятой быть не может: теги в CSV как раз разбиваются по ней
+  // (generate_index.py), а категории и годы - цельные поля.
+  // Hash (#id работы) остаётся за лайтбоксом и здесь всегда сохраняется.
+
+  collectKnownFilterValues() {
+    FILTER_GROUPS.forEach(group => {
+      const values = new Set();
+      document.querySelectorAll(`input[data-filter-group="${group}"]`).forEach(cb => {
+        values.add(cb.value);
+      });
+      this.knownValues[group] = values;
+    });
+  }
+
+  readStateFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const filters = {};
+
+    FILTER_GROUPS.forEach(group => {
+      const raw = params.get(group) || '';
+      filters[group] = raw
+        .split(',')
+        .map(value => value.trim())
+        .filter(value => this.knownValues[group].has(value));
+    });
+
+    const view = params.get('view');
+
+    return {
+      filters,
+      q: (params.get('q') || '').toLowerCase().trim().slice(0, MAX_SEARCH_LENGTH),
+      view: VIEWS.includes(view) ? view : 'chronological'
+    };
+  }
+
+  currentState() {
+    const filters = {};
+    FILTER_GROUPS.forEach(group => { filters[group] = this.activeFilters[group]; });
+    return { filters, q: this.searchQuery, view: this.currentView };
+  }
+
+  // Строка для сравнения двух состояний (порядок групп фиксирован)
+  stateKey(state) {
+    return JSON.stringify([
+      FILTER_GROUPS.map(group => state.filters[group] || []),
+      state.q,
+      state.view
+    ]);
+  }
+
+  buildQueryString() {
+    const params = new URLSearchParams();
+
+    FILTER_GROUPS.forEach(group => {
+      if (this.activeFilters[group].length > 0) {
+        params.set(group, this.activeFilters[group].join(','));
+      }
+    });
+    if (this.searchQuery) {
+      params.set('q', this.searchQuery);
+    }
+    // Хронологический вид - значение по умолчанию, в адрес его не пишем
+    if (this.currentView !== 'chronological') {
+      params.set('view', this.currentView);
+    }
+
+    // URLSearchParams кодирует запятую как %2C; в query-строке она допустима,
+    // и ссылка со списком категорий читается человеком гораздо лучше
+    const query = params.toString().replace(/%2C/g, ',');
+    return query ? `?${query}` : '';
+  }
+
+  syncURL(mode = 'push') {
+    const url = `${window.location.pathname}${this.buildQueryString()}${window.location.hash}`;
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+
+    // Ничего не изменилось (например, "Clear All" при пустых фильтрах) -
+    // не плодим одинаковые записи в истории
+    if (url === current) return;
+
+    if (mode === 'replace') {
+      history.replaceState(history.state, '', url);
+    } else {
+      history.pushState(null, '', url);
+    }
+  }
+
+  applyState(state, { updateURL = false } = {}) {
+    FILTER_GROUPS.forEach(group => {
+      this.activeFilters[group] = (state.filters[group] || []).slice();
+    });
+    this.searchQuery = state.q;
+
+    // Приводим контролы в соответствие состоянию.
+    // Идём по самим чекбоксам, а не по селектору со значением: значения -
+    // произвольный текст из CSV (кавычки, апострофы) и в селектор не годятся.
+    const searchInput = document.getElementById('filter-search');
+    if (searchInput) {
+      searchInput.value = state.q;
+    }
+    document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+      const group = checkbox.dataset.filterGroup;
+      checkbox.checked = Boolean(group && this.activeFilters[group] &&
+        this.activeFilters[group].includes(checkbox.value));
+    });
+
+    // setView пересобирает артворки активной галереи и применяет фильтры
+    this.setView(state.view, { updateURL: false });
+
+    this.updateDocumentTitle();
+    if (updateURL) {
+      this.syncURL(updateURL);
+    }
+  }
+
+  handlePopState() {
+    const state = this.readStateFromURL();
+
+    // Лайтбокс меняет только hash (#id работы), фильтры при этом те же -
+    // перефильтровывать всю сетку на каждый шаг навигации по картинкам не нужно
+    if (this.stateKey(state) === this.stateKey(this.currentState())) return;
+
+    this.applyState(state);
+    this.lastSyncWasSearch = false;
+  }
+
+  // Заголовок вкладки отражает выбранную подборку: так её видно в истории
+  // браузера, в закладках и во вкладках с несколькими открытыми подборками
+  updateDocumentTitle() {
+    const parts = [];
+    FILTER_GROUPS.forEach(group => {
+      if (this.activeFilters[group].length > 0) {
+        parts.push(this.activeFilters[group].join(', '));
+      }
+    });
+    if (this.searchQuery) {
+      parts.push(`“${this.searchQuery}”`);
+    }
+
+    document.title = parts.length > 0
+      ? `${parts.join(' · ')} — ${this.baseTitle}`
+      : this.baseTitle;
+  }
+
   setupSearch() {
     const searchInput = document.getElementById('filter-search');
     if (searchInput) {
@@ -47,9 +215,14 @@ class GalleryFilter {
       searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(() => {
-          this.searchQuery = e.target.value.toLowerCase().trim();
+          this.searchQuery = e.target.value.toLowerCase().trim().slice(0, MAX_SEARCH_LENGTH);
           this.applyFilters();
           this.updateCounter();
+          this.updateDocumentTitle();
+          // Правка уже введённого запроса заменяет текущую запись в истории:
+          // иначе "назад" пришлось бы жать по разу на каждое слово
+          this.syncURL(this.lastSyncWasSearch ? 'replace' : 'push');
+          this.lastSyncWasSearch = true;
         }, 300); // Задержка 300ms для оптимизации
       });
     }
@@ -58,51 +231,46 @@ class GalleryFilter {
   setupViewSwitcher() {
     const chronoBtn = document.getElementById('chronological-view-btn');
     const thematicBtn = document.getElementById('thematic-view-btn');
-    const chronoGallery = document.getElementById('chronological-gallery');
-    const thematicGallery = document.getElementById('thematic-gallery');
-    
+
     if (!chronoBtn || !thematicBtn) {
       console.warn('[Gallery Filter] View switcher buttons not found');
       return;
     }
-    
-    chronoBtn.addEventListener('click', () => {
-      this.currentView = 'chronological';
-      chronoBtn.classList.add('active');
-      thematicBtn.classList.remove('active');
-      chronoGallery.classList.add('active');
-      thematicGallery.classList.remove('active');
-      
-      this.collectArtworks();
-      this.applyFilters();
-      
-      // Обновляем массив изображений для lightbox
-      if (typeof updateGalleryImagesArray === 'function') {
-        updateGalleryImagesArray();
-      }
-      
-      console.log('[Gallery Filter] Switched to chronological view');
-    });
-    
-    thematicBtn.addEventListener('click', () => {
-      this.currentView = 'thematic';
-      thematicBtn.classList.add('active');
-      chronoBtn.classList.remove('active');
-      thematicGallery.classList.add('active');
-      chronoGallery.classList.remove('active');
-      
-      this.collectArtworks();
-      this.applyFilters();
-      
-      // Обновляем массив изображений для lightbox
-      if (typeof updateGalleryImagesArray === 'function') {
-        updateGalleryImagesArray();
-      }
-      
-      console.log('[Gallery Filter] Switched to thematic view');
-    });
+
+    chronoBtn.addEventListener('click', () => this.setView('chronological'));
+    thematicBtn.addEventListener('click', () => this.setView('thematic'));
   }
-  
+
+  // Единая точка переключения вида: используется и кнопками, и восстановлением
+  // состояния из URL (там updateURL: false, чтобы не перезаписывать адрес,
+  // который мы только что прочитали)
+  setView(view, { updateURL = true } = {}) {
+    this.currentView = VIEWS.includes(view) ? view : 'chronological';
+
+    const chronoBtn = document.getElementById('chronological-view-btn');
+    const thematicBtn = document.getElementById('thematic-view-btn');
+    const chronoGallery = document.getElementById('chronological-gallery');
+    const thematicGallery = document.getElementById('thematic-gallery');
+    const isChrono = this.currentView === 'chronological';
+
+    if (chronoBtn) chronoBtn.classList.toggle('active', isChrono);
+    if (thematicBtn) thematicBtn.classList.toggle('active', !isChrono);
+    if (chronoGallery) chronoGallery.classList.toggle('active', isChrono);
+    if (thematicGallery) thematicGallery.classList.toggle('active', !isChrono);
+
+    // applyFilters() сам обновляет массив изображений для lightbox
+    this.collectArtworks();
+    this.applyFilters();
+    this.updateCounter();
+
+    if (updateURL) {
+      this.lastSyncWasSearch = false;
+      this.syncURL('push');
+    }
+
+    console.log(`[Gallery Filter] Switched to ${this.currentView} view`);
+  }
+
   collectArtworks() {
     this.allArtworks = [];
     const activeGallery = this.currentView === 'chronological' 
@@ -131,9 +299,7 @@ class GalleryFilter {
   }
   
   setupCheckboxes() {
-    const filterGroups = ['category', 'year', 'medium', 'tags'];
-    
-    filterGroups.forEach(group => {
+    FILTER_GROUPS.forEach(group => {
       const checkboxes = document.querySelectorAll(`input[data-filter-group="${group}"]`);
       checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', (e) => {
@@ -144,6 +310,46 @@ class GalleryFilter {
     });
   }
   
+  // Кнопка "Copy link" под "Clear All": теперь, когда подборка целиком описана
+  // адресом, её можно отправить как ссылку - но об этом надо сказать явно,
+  // адресную строку на телефоне никто не открывает.
+  // Кнопка создаётся здесь, а не в generate_index.py, чтобы разметка галереи
+  // не зависела от этой части UI (так же сделаны кнопки прокрутки в lightbox.js).
+  setupShareLink() {
+    const clearButton = document.getElementById('clear-filters');
+    if (!clearButton) return;
+
+    const button = document.createElement('button');
+    button.id = 'copy-filter-link';
+    button.type = 'button';
+    button.textContent = 'Copy link to this view';
+    clearButton.insertAdjacentElement('afterend', button);
+
+    button.addEventListener('click', () => {
+      // Без hash: ссылка ведёт на подборку, а не на конкретную работу
+      const url = `${window.location.origin}${window.location.pathname}${this.buildQueryString()}`;
+
+      const confirmCopy = () => {
+        button.textContent = '✓ Link copied';
+        button.classList.add('copied');
+        clearTimeout(this.copyLinkTimeout);
+        this.copyLinkTimeout = setTimeout(() => {
+          button.textContent = 'Copy link to this view';
+          button.classList.remove('copied');
+        }, 2000);
+      };
+
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(confirmCopy).catch(err => {
+          console.error('[Gallery Filter] Failed to copy link:', err);
+          window.prompt('Copy this link:', url);
+        });
+      } else {
+        window.prompt('Copy this link:', url);
+      }
+    });
+  }
+
   setupCollapsibleSections() {
     document.querySelectorAll('.filter-section-header').forEach(header => {
       header.addEventListener('click', () => {
@@ -164,9 +370,12 @@ class GalleryFilter {
     
     console.log(`[Gallery Filter] Filter changed: ${group}=${value} (${isChecked ? 'ON' : 'OFF'})`);
     console.log(`[Gallery Filter] Active filters:`, this.getActiveFilterSummary());
-    
+
     this.applyFilters();
     this.updateCounter();
+    this.updateDocumentTitle();
+    this.lastSyncWasSearch = false;
+    this.syncURL('push');
   }
   
   applyFilters() {
@@ -377,7 +586,10 @@ class GalleryFilter {
     // Применяем (показываем всё)
     this.applyFilters();
     this.updateCounter();
-    
+    this.updateDocumentTitle();
+    this.lastSyncWasSearch = false;
+    this.syncURL('push');
+
     console.log('[Gallery Filter] All filters cleared');
   }
   

@@ -18,6 +18,40 @@ let allGalleryImages = [];
 let currentImageIndex = -1;
 let hasSeenSwipeHint = false; // session-only: show once per page load
 
+// ===== ЛАЙТБОКС И ИСТОРИЯ БРАУЗЕРА =====
+// Открытие работы добавляет запись в историю (#id работы), поэтому "назад"
+// закрывает лайтбокс и возвращает к той же подборке, а не уводит со страницы.
+// Флаг говорит, что запись создали мы: если лайтбокс открылся по внешней
+// ссылке с hash, отдельной записи нет и history.back() увёл бы с сайта.
+let lightboxOwnsHistoryEntry = false;
+
+// Фильтры и поиск живут в query-строке (см. filter.js) - при работе с hash её
+// нужно сохранять, иначе открытие/закрытие работы сбрасывало бы подборку
+function urlWithHash(id) {
+  const base = `${window.location.pathname}${window.location.search}`;
+  return id ? `${base}#${id}` : base;
+}
+
+// Ищет изображение работы в активной галерее.
+// id проставлен только на хронологической копии блока (в тематическом виде
+// каждая работа рендерится второй раз без id - см. generate_index.py), поэтому
+// сначала ищем по data-id внутри активного контейнера и лишь потом по id.
+function findImageById(id) {
+  if (!id) return null;
+
+  const activeGallery = document.querySelector('.gallery-container.active');
+  if (activeGallery) {
+    // Перебором, а не селектором [data-id="..."]: id собирается из названия
+    // работы и в селекторе пришлось бы экранировать спецсимволы
+    const img = Array.from(activeGallery.querySelectorAll('.art-block img'))
+      .find(candidate => candidate.dataset.id === id);
+    if (img) return img;
+  }
+
+  const artBlock = document.getElementById(id);
+  return artBlock ? artBlock.querySelector('img') : null;
+}
+
 // ===== БЛОКИРОВКА ПРОКРУТКИ ФОНА (iOS-safe) =====
 // document.body.style.overflow = 'hidden' на iOS Safari не работает: страница
 // продолжает прокручиваться под оверлеем, и это видно сквозь полупрозрачный фон.
@@ -211,14 +245,17 @@ function updateLightboxMetadata(img) {
     lightboxMetadata.style.display = "none";
   }
 
-  // ИСПРАВЛЕНИЕ: Обновляем URL hash без прокрутки
+  // ИСПРАВЛЕНИЕ: Обновляем URL hash без прокрутки.
+  // Именно replaceState: запись в истории создаётся один раз при открытии
+  // (openLightbox), а перелистывание стрелками/свайпом лишь обновляет её -
+  // иначе после десятка работ пришлось бы столько же раз жать "назад".
   if (currentImageId) {
-    history.replaceState(null, null, `#${currentImageId}`);
+    history.replaceState({ artwork: currentImageId }, '', urlWithHash(currentImageId));
   }
 }
 
 // ИСПРАВЛЕНИЕ: Улучшенная функция открытия lightbox
-function openLightbox(img) {
+function openLightbox(img, { fromHistory = false } = {}) {
   // Обновляем массив изображений перед открытием (на случай если фильтры изменились)
   updateGalleryImagesArray();
 
@@ -226,10 +263,23 @@ function openLightbox(img) {
   currentImageIndex = allGalleryImages.indexOf(img);
 
   if (currentImageIndex === -1) {
-    console.error('[Lightbox] Image not found in gallery array!');
-    // Пытаемся обновить массив и найти снова
-    updateGalleryImagesArray();
-    currentImageIndex = allGalleryImages.indexOf(img);
+    // Работа скрыта текущими фильтрами (например, ссылка вида ?year=2026#work
+    // ведёт на работу другого года). Показываем её, добавив в начало списка,
+    // чтобы счётчик и навигация остались согласованными.
+    console.warn('[Lightbox] Image not in the filtered set - showing it anyway');
+    allGalleryImages = [img, ...allGalleryImages];
+    currentImageIndex = 0;
+  }
+
+  // Открытие по клику добавляет запись в историю: "назад" тогда закрывает
+  // лайтбокс и возвращает подборку. При открытии из истории (popstate или
+  // hash в адресе при загрузке) запись уже существует.
+  if (!fromHistory) {
+    const id = img.dataset.id || '';
+    if (id) {
+      history.pushState({ artwork: id }, '', urlWithHash(id));
+      lightboxOwnsHistoryEntry = true;
+    }
   }
 
   // Обновляем счетчик
@@ -316,15 +366,50 @@ lightbox.addEventListener("click", (e) => {
 });
 
 // Функция закрытия lightbox
-function closeLightbox() {
+function closeLightbox(fromHistory = false) {
   lightbox.classList.remove("active");
   unlockPageScroll();
   // Скрываем loader если он был виден
   lightboxLoader.style.display = "none";
   lightboxImg.classList.remove("is-loading");
-  // Удаляем hash из URL при закрытии
-  history.replaceState(null, null, window.location.pathname);
+
+  if (fromHistory) {
+    // Закрытие пришло от кнопки "назад" - адрес уже обновил браузер
+    lightboxOwnsHistoryEntry = false;
+  } else if (lightboxOwnsHistoryEntry) {
+    // Снимаем нашу запись из истории: адрес вернётся к состоянию фильтров,
+    // и "вперёд" снова откроет ту же работу
+    lightboxOwnsHistoryEntry = false;
+    history.back();
+  } else {
+    // Лайтбокс открылся по внешней ссылке с hash - своей записи нет,
+    // просто убираем hash, сохраняя фильтры в query-строке
+    history.replaceState(history.state, '', urlWithHash(''));
+  }
+
   console.log('[Lightbox] Closed');
+}
+
+// "Назад"/"вперёд" открывают и закрывают лайтбокс вслед за адресом.
+// Фильтры на popstate восстанавливает filter.js; его обработчик должен
+// отработать раньше, чтобы мы искали работу уже в нужном (и отфильтрованном)
+// виде - поэтому подписка живёт в DOMContentLoaded ниже, а не здесь: filter.js
+// подписывается на popstate внутри своего DOMContentLoaded, а он идёт первым
+// (скрипт подключён выше в index.html).
+function handleLightboxPopState() {
+  const id = window.location.hash.substring(1);
+  const isOpen = lightbox.classList.contains('active');
+
+  if (id) {
+    const img = findImageById(id);
+    if (img) {
+      if (!isOpen || img !== allGalleryImages[currentImageIndex]) {
+        openLightbox(img, { fromHistory: true });
+      }
+    }
+  } else if (isOpen) {
+    closeLightbox(true);
+  }
 }
 
 // Показываем подсказку свайпа на мобильных при первом открытии
@@ -374,25 +459,25 @@ window.addEventListener("DOMContentLoaded", () => {
   // Инициализируем массив изображений
   const imageCount = updateGalleryImagesArray();
   console.log(`[Lightbox] Page loaded with ${imageCount} images`);
-  
+
+  window.addEventListener('popstate', handleLightboxPopState);
+
   // Проверяем есть ли hash в URL
   const hash = window.location.hash.substring(1); // Убираем #
   if (hash) {
     console.log(`[Lightbox] Found hash in URL: ${hash}`);
-    // Находим artwork с этим ID
-    const artBlock = document.getElementById(hash);
-    if (artBlock) {
-      const img = artBlock.querySelector("img");
-      if (img) {
-        // Небольшая задержка чтобы страница полностью загрузилась
-        setTimeout(() => {
-          openLightbox(img);
-        }, 300);
-      } else {
-        console.warn(`[Lightbox] No image found in artblock ${hash}`);
-      }
+    // Находим artwork с этим ID (в активном виде, каким бы он ни был - вид
+    // тоже приходит из адреса, см. filter.js)
+    const img = findImageById(hash);
+    if (img) {
+      // Небольшая задержка чтобы страница полностью загрузилась.
+      // fromHistory: запись в истории для этого адреса уже есть - своей
+      // не добавляем, иначе "назад" открывал бы ту же работу повторно.
+      setTimeout(() => {
+        openLightbox(img, { fromHistory: true });
+      }, 300);
     } else {
-      console.warn(`[Lightbox] Artblock not found: ${hash}`);
+      console.warn(`[Lightbox] Artwork not found: ${hash}`);
     }
   }
 });
