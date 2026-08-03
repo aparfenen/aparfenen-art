@@ -452,6 +452,25 @@ h3.section-title {
   padding-bottom: max(20px, env(safe-area-inset-bottom));
   box-sizing: border-box;
   overflow: hidden;
+  /* Прокручивать внутри оверлея нечего - не отдаём жест странице под ним.
+     pinch-zoom, а не none: масштабирование работы двумя пальцами остаётся. */
+  overscroll-behavior: none;
+  touch-action: pinch-zoom;
+}
+
+/* Заморозка страницы, пока открыт lightbox.
+   overflow:hidden на <body> Safari на iOS игнорирует - фон продолжает
+   прокручиваться под пальцем и это видно сквозь полупрозрачный оверлей.
+   Работает только position:fixed со смещением на текущую прокрутку;
+   само смещение (top) и его восстановление - в lockPageScroll/unlockPageScroll
+   в lightbox.js. */
+body.scroll-locked {
+  position: fixed;
+  left: 0;
+  right: 0;
+  width: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 .lightbox.active {

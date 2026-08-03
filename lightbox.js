@@ -18,6 +18,37 @@ let allGalleryImages = [];
 let currentImageIndex = -1;
 let hasSeenSwipeHint = false; // session-only: show once per page load
 
+// ===== БЛОКИРОВКА ПРОКРУТКИ ФОНА (iOS-safe) =====
+// document.body.style.overflow = 'hidden' на iOS Safari не работает: страница
+// продолжает прокручиваться под оверлеем, и это видно сквозь полупрозрачный фон.
+// Единственный надёжный способ - "заморозить" body через position:fixed
+// (класс .scroll-locked в style.css) со смещением на текущую прокрутку,
+// а при закрытии вернуть страницу на то же место.
+let lockedScrollY = 0;
+let isScrollLocked = false;
+
+function lockPageScroll() {
+  if (isScrollLocked) return;
+  lockedScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+  document.body.style.top = `-${lockedScrollY}px`;
+  document.body.classList.add('scroll-locked');
+  isScrollLocked = true;
+}
+
+function unlockPageScroll() {
+  if (!isScrollLocked) return;
+  document.body.classList.remove('scroll-locked');
+  document.body.style.top = '';
+  isScrollLocked = false;
+  // Возвращаем страницу на прежнее место мгновенно: с html { scroll-behavior:
+  // smooth } (style.css) она бы "доезжала" анимацией уже после закрытия
+  const root = document.documentElement;
+  const prevScrollBehavior = root.style.scrollBehavior;
+  root.style.scrollBehavior = 'auto';
+  window.scrollTo(0, lockedScrollY);
+  root.style.scrollBehavior = prevScrollBehavior;
+}
+
 // ИСПРАВЛЕНИЕ: Улучшенная функция обновления массива изображений
 function updateGalleryImagesArray() {
   // Определяем активную галерею
@@ -206,7 +237,7 @@ function openLightbox(img) {
 
   // Показываем lightbox с анимацией
   lightbox.classList.add("active");
-  document.body.style.overflow = 'hidden';
+  lockPageScroll();
 
   // Показываем подсказку свайпа на мобильных при первом открытии
   showSwipeHintIfNeeded();
@@ -287,7 +318,7 @@ lightbox.addEventListener("click", (e) => {
 // Функция закрытия lightbox
 function closeLightbox() {
   lightbox.classList.remove("active");
-  document.body.style.overflow = '';
+  unlockPageScroll();
   // Скрываем loader если он был виден
   lightboxLoader.style.display = "none";
   lightboxImg.classList.remove("is-loading");
@@ -582,6 +613,16 @@ lightboxContent.addEventListener('touchstart', (e) => {
   touchStartX = e.changedTouches[0].screenX;
   touchStartY = e.changedTouches[0].screenY;
 }, { passive: true });
+
+// Даже при замороженном body iOS "резиново" тянет страницу за оверлеем, если
+// жест начался на нём. touch-action в CSS Safari учитывает не везде, поэтому
+// глушим одиночный touchmove явно (свайпы навигации живут на touchstart/touchend,
+// им preventDefault не мешает; жесты двумя пальцами не трогаем - это pinch-zoom).
+lightbox.addEventListener('touchmove', (e) => {
+  if (lightbox.classList.contains('active') && e.touches.length === 1) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
 lightboxContent.addEventListener('touchend', (e) => {
   touchEndX = e.changedTouches[0].screenX;
