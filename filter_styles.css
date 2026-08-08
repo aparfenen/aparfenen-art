@@ -7,10 +7,29 @@
   width: 280px;
   background: var(--bg-tertiary);
   border-right: 1px solid var(--border-medium);
-  padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+  /* Runs the full height and clears the nav with padding rather than `top`, so
+     nothing has to move (and no strip of page shows through at the top) when
+     the bar hides itself on scroll. --nav-h already includes the safe-area
+     inset, which the nav carries as its own padding-top. */
+  padding: calc(var(--nav-h) + 20px) 20px calc(20px + env(safe-area-inset-bottom));
   overflow-y: auto;
-  z-index: 50;
+  /* Under the nav (900), above the page and its backdrop */
+  z-index: 850;
   box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease;
+}
+
+/* Above 1024px the sidebar is docked, so the header's Filters button collapses
+   it out of the way instead of sliding it in - otherwise that button would be
+   inert on exactly the widths where it is most visible. */
+@media (min-width: 1025px) {
+  body.filters-collapsed .filter-sidebar {
+    transform: translateX(-100%);
+  }
+
+  body.filters-collapsed .content-with-sidebar {
+    margin-left: 0;
+  }
 }
 
 .filter-header {
@@ -231,7 +250,9 @@
 /* Main content with sidebar */
 .content-with-sidebar {
   margin-left: 280px;
-  padding: 20px;
+  /* The nav is fixed, so it no longer reserves flow space of its own. Only a
+     small gap beyond it - the site title sits right below the bar. */
+  padding: calc(var(--nav-h) + 8px) 20px 20px;
   transition: margin-left 0.3s ease;
 }
 
@@ -244,7 +265,6 @@
 @media (max-width: 1024px) {
   .filter-sidebar {
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
     box-shadow: 0 0 0 rgba(0, 0, 0, 0);
   }
 
@@ -261,13 +281,14 @@
     display: flex;
   }
 
-  /* Backdrop overlay when sidebar is open */
+  /* Backdrop overlay when sidebar is open. Starts below the nav so the Filters
+     button that closes the drawer again stays lit and clickable. */
   body.filter-open::before {
     content: '';
     position: fixed;
-    inset: 0;
+    inset: var(--nav-h) 0 0 0;
     background: var(--sidebar-backdrop);
-    z-index: 49;
+    z-index: 840;
     animation: fadeIn 0.3s ease;
   }
 

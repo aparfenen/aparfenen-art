@@ -44,7 +44,20 @@ class GalleryFilter {
 
     this.setupShareLink();
     this.setupCollapsibleSections();
+    this.setupCategorySections();
     this.setupViewSwitcher();
+
+    // Число колонок сетки меняется с шириной окна, а от него зависит размер
+    // превью - пересчитываем, но не чаще, чем раз в 150мс
+    let previewResizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(previewResizeTimer);
+      previewResizeTimer = setTimeout(() => {
+        this.refreshCategoryPreviews();
+        layoutMasonry();
+        if (typeof updateGalleryImagesArray === 'function') updateGalleryImagesArray();
+      }, 150);
+    });
 
     // Восстанавливаем вид, фильтры и поиск из URL. applyState сам собирает
     // артворки и применяет фильтры, поэтому отдельный collectArtworks() тут
@@ -401,7 +414,15 @@ class GalleryFilter {
     });
     
     console.log(`[Gallery Filter] Applied filters: ${visibleCount} visible, ${hiddenCount} hidden`);
-    
+
+    // Порядок важен: сначала фильтры проставили style.display, теперь превью
+    // решает, сколько из уцелевших работ показать, и только после этого можно
+    // собирать список для лайтбокса - иначе в навигацию попадут работы,
+    // спрятанные под свёрнутой категорией.
+    this.refreshCategoryPreviews();
+
+    layoutMasonry();
+
     // Обновляем массив изображений для lightbox навигации
     if (typeof updateGalleryImagesArray === 'function') {
       updateGalleryImagesArray();
@@ -420,10 +441,8 @@ class GalleryFilter {
       }
     }
     
-    // Обновляем видимость секций тем в тематическом виде
-    if (this.currentView === 'thematic') {
-      this.updateThemeSectionsVisibility();
-    }
+    // Секции есть в обоих видах: категории в тематическом, годы в хронологическом
+    this.updateThemeSectionsVisibility();
     
     // Показываем сообщение если нет результатов
     this.updateNoResultsMessage(visibleCount);
@@ -499,15 +518,28 @@ class GalleryFilter {
     const totalActive = Object.values(this.activeFilters).reduce((sum, arr) => sum + arr.length, 0)
       + (this.searchQuery ? 1 : 0);
 
+    // Только бейдж, без перезаписи innerHTML: в кнопке нет текста, есть svg
+    // с иконкой фильтров, которую сборка строки затирала бы на каждый клик.
     const navFilterBtn = document.querySelector('.nav-filter-btn');
     if (navFilterBtn) {
+      let badge = navFilterBtn.querySelector('.nav-filter-badge');
       if (totalActive > 0) {
-        navFilterBtn.innerHTML = `Filters <span class="nav-filter-badge">${totalActive}</span>`;
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'nav-filter-badge';
+          navFilterBtn.appendChild(badge);
+        }
+        badge.textContent = totalActive;
         navFilterBtn.classList.add('has-filters');
       } else {
-        navFilterBtn.innerHTML = 'Filters';
+        if (badge) badge.remove();
         navFilterBtn.classList.remove('has-filters');
       }
+      // Подписи у кнопки нет, поэтому имя для скринридера и всплывающая
+      // подсказка - единственное, что объясняет иконку и счётчик на ней
+      const label = totalActive > 0 ? `Filters (${totalActive} active)` : 'Filters';
+      navFilterBtn.setAttribute('aria-label', label);
+      navFilterBtn.setAttribute('title', label);
     }
   }
   
@@ -536,14 +568,134 @@ class GalleryFilter {
     }
   }
   
+  // ===== СВОРАЧИВАЕМЫЕ КАТЕГОРИИ (тематический вид) =====
+  // Все категории закрыты изначально; видно заголовок, число работ и первый
+  // ряд миниатюр как превью. Клик по заголовку раскрывает остальное.
+  // Разметку кнопки строим здесь, а не в generate_index.py, по той же причине,
+  // что и "Copy link" выше: сгенерированная сетка не должна зависеть от этой
+  // части UI.
+  setupCategorySections() {
+    // Оба вида: тематический сгруппирован по категориям, хронологический -
+    // по годам, но разметка секций одна и та же, поэтому и механика общая
+    document.querySelectorAll('.gallery-container .theme-section').forEach(section => {
+      if (section.dataset.collapsibleReady) return;
+      section.dataset.collapsibleReady = '1';
+
+      const heading = section.querySelector('.section-title');
+      const gallery = section.querySelector('.gallery');
+      if (!heading || !gallery) return;
+
+      const title = heading.textContent.trim();
+      // id заголовка - это якорь категории (#boston), его трогать нельзя;
+      // сетке даём свой, чтобы связать с кнопкой через aria-controls
+      if (!gallery.id) gallery.id = `${heading.id || title.toLowerCase().replace(/\s+/g, '-')}-works`;
+
+      // Заголовок - только подпись со счётчиком, не элемент управления:
+      // раскрытием заведует одна кнопка "Show all / Show less" под превью.
+      const headingRow = document.createElement('div');
+      headingRow.className = 'category-toggle';
+      headingRow.innerHTML =
+        '<span class="category-toggle-main">' +
+          '<span class="category-toggle-label"></span>' +
+          '<span class="category-count"></span>' +
+        '</span>';
+      headingRow.querySelector('.category-toggle-label').textContent = title;
+
+      heading.textContent = '';
+      heading.appendChild(headingRow);
+
+      const more = document.createElement('button');
+      more.type = 'button';
+      more.className = 'category-show-all';
+      more.setAttribute('aria-controls', gallery.id);
+      more.setAttribute('aria-expanded', 'false');
+      gallery.insertAdjacentElement('afterend', more);
+
+      section.classList.add('is-collapsible', 'is-collapsed');
+
+      more.addEventListener('click', () => {
+        const wasCollapsed = section.classList.contains('is-collapsed');
+        this.setCategoryExpanded(section, wasCollapsed);
+        // Сворачивая снизу, человек оказался бы посреди следующей категории -
+        // возвращаем его к заголовку той, которую только что закрыл
+        if (!wasCollapsed) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
+  setCategoryExpanded(section, expanded) {
+    if (!section) return;
+    section.classList.toggle('is-collapsed', !expanded);
+    const more = section.querySelector('.category-show-all');
+    if (more) more.setAttribute('aria-expanded', String(expanded));
+    this.refreshCategoryPreviews();
+    layoutMasonry();
+    if (typeof updateGalleryImagesArray === 'function') updateGalleryImagesArray();
+  }
+
+  // Сколько работ показывать в свёрнутом виде: два ряда сетки. Число колонок
+  // читаем у самой сетки, поэтому оно верное на любой ширине и не требует
+  // отдельных брейкпоинтов (8 работ на десктопе, 6 на планшете, 4 на телефоне).
+  previewCount(gallery) {
+    const columns = getComputedStyle(gallery).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+    return columns * 2;
+  }
+
+  refreshCategoryPreviews() {
+    const activeGallery = document.querySelector('.gallery-container.active');
+    if (!activeGallery) return;
+
+    // Прятать результаты поиска за свёрнутой категорией нельзя - человек уже
+    // сказал, что именно он ищет, поэтому при активном запросе всё раскрыто.
+    const forceOpen = Boolean(this.searchQuery);
+
+    activeGallery.querySelectorAll('.theme-section.is-collapsible').forEach(section => {
+      const gallery = section.querySelector('.gallery');
+      if (!gallery) return;
+
+      // style.display принадлежит фильтрам; превью пользуется отдельным
+      // классом, чтобы эти два механизма не перетирали друг друга
+      const matching = Array.from(gallery.querySelectorAll('.art-block'))
+        .filter(block => block.style.display !== 'none');
+
+      const previewLimit = this.previewCount(gallery);
+      const collapsed = section.classList.contains('is-collapsed') && !forceOpen;
+      const limit = collapsed ? previewLimit : matching.length;
+
+      matching.forEach((block, i) => {
+        block.classList.toggle('is-preview-hidden', i >= limit);
+      });
+
+      // Категория целиком помещается в превью - разворачивать нечего, поэтому
+      // и шеврон, и кнопка внизу для неё бессмысленны
+      const expandable = matching.length > previewLimit;
+      section.classList.toggle('is-static', !expandable);
+      section.classList.toggle('has-more', collapsed && expandable);
+
+      const count = section.querySelector('.category-count');
+      if (count) count.textContent = `${matching.length}`;
+
+      // Кнопка внизу - переключатель, а не только "развернуть": после
+      // раскрытия категории на 70+ работ заголовок с шевроном уезжает далеко
+      // вверх, и свернуть обратно было нечем, не отлистав назад.
+      const more = section.querySelector('.category-show-all');
+      if (more) {
+        // Прятать её имеет смысл, только когда превью и так показывает всё
+        more.hidden = !expandable || forceOpen;
+        more.textContent = collapsed ? `Show all ${matching.length} works` : 'Show less';
+        more.setAttribute('aria-expanded', String(!collapsed));
+      }
+    });
+  }
+
   updateThemeSectionsVisibility() {
-    const thematicGallery = document.getElementById('thematic-gallery');
-    if (!thematicGallery) return;
+    const activeGallery = document.querySelector('.gallery-container.active');
+    if (!activeGallery) return;
     
     let visibleSections = 0;
     let hiddenSections = 0;
     
-    thematicGallery.querySelectorAll('.theme-section').forEach(section => {
+    activeGallery.querySelectorAll('.theme-section').forEach(section => {
       const gallery = section.querySelector('.gallery');
       const visibleWorks = Array.from(gallery.querySelectorAll('.art-block'))
         .filter(block => block.style.display !== 'none');
@@ -607,6 +759,38 @@ class GalleryFilter {
   }
 }
 
+// ===== МАСОНРИ-РАСКЛАДКА =====
+// Работы больше не обрезаются под общий формат 3/4, поэтому высота у каждой
+// своя. Сетка в style.css задаёт мелкий шаг строк (--masonry-unit), а здесь
+// каждому блоку проставляется, сколько таких строк он занимает - так соседние
+// колонки смыкаются без рваных провалов, которые дал бы обычный grid, где
+// строка высотой с самую высокую ячейку.
+function layoutMasonry() {
+  const container = document.querySelector('.gallery-container.active');
+  if (!container) return;
+
+  container.querySelectorAll('.gallery').forEach(gallery => {
+    const styles = getComputedStyle(gallery);
+    const unit = parseFloat(styles.getPropertyValue('--masonry-unit')) || 4;
+    const gap = parseFloat(styles.getPropertyValue('--masonry-gap')) || 16;
+
+    const blocks = Array.from(gallery.querySelectorAll('.art-block'))
+      .filter(block => block.style.display !== 'none'
+        && !block.classList.contains('is-preview-hidden'));
+
+    // Сначала читаем все высоты, потом пишем все span: вперемешку это заставило
+    // бы браузер пересчитывать раскладку на каждый из 300+ блоков.
+    // Высота известна ещё до загрузки картинки - width/height у <img>
+    // проставляет generate_index.py, и браузер резервирует место сам.
+    const heights = blocks.map(block => block.getBoundingClientRect().height);
+
+    blocks.forEach((block, i) => {
+      if (!heights[i]) return;
+      block.style.gridRowEnd = `span ${Math.max(1, Math.ceil((heights[i] + gap) / unit))}`;
+    });
+  });
+}
+
 // Инициализация системы фильтров при готовности DOM
 let galleryFilter;
 document.addEventListener('DOMContentLoaded', () => {
@@ -614,31 +798,115 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('[Gallery Filter] System initialized');
 });
 
-// ===== FILTER SIDEBAR TOGGLE FOR MOBILE =====
+// ===== FILTER SIDEBAR TOGGLE =====
+// Кнопка "Filters" живёт в шапке на всех ширинах. Ниже 1024px сайдбар выезжает
+// поверх страницы (.mobile-open), выше - он закреплён слева и кнопка только
+// подсвечивает состояние фильтров, ничего не сдвигая.
+const DOCKED_SIDEBAR_QUERY = '(min-width: 1025px)';
+
+function sidebarIsDocked() {
+  // Тот же порог, что и в @media (max-width: 1024px) в filter_styles.css
+  return window.matchMedia
+    ? window.matchMedia(DOCKED_SIDEBAR_QUERY).matches
+    : window.innerWidth > 1024;
+}
+
+function setFilterButtonExpanded(isOpen) {
+  const navFilterBtn = document.querySelector('.nav-filter-btn');
+  if (navFilterBtn) navFilterBtn.setAttribute('aria-expanded', String(isOpen));
+}
+
 function toggleFilterSidebar() {
   const sidebar = document.querySelector('.filter-sidebar');
+  if (!sidebar) return;
+
+  if (sidebarIsDocked()) {
+    const collapsed = document.body.classList.toggle('filters-collapsed');
+    setFilterButtonExpanded(!collapsed);
+    return;
+  }
+
   const isOpen = sidebar.classList.toggle('mobile-open');
   document.body.classList.toggle('filter-open', isOpen);
+  setFilterButtonExpanded(isOpen);
+}
+
+// Открыт ли сейчас блок фильтров - в любом из двух его видов
+function filtersAreOpen() {
+  const sidebar = document.querySelector('.filter-sidebar');
+  if (!sidebar) return false;
+  return sidebarIsDocked()
+    ? !document.body.classList.contains('filters-collapsed')
+    : sidebar.classList.contains('mobile-open');
 }
 
 function closeFilterSidebar() {
   const sidebar = document.querySelector('.filter-sidebar');
-  sidebar.classList.remove('mobile-open');
-  document.body.classList.remove('filter-open');
+  if (!sidebar) return;
+  if (sidebarIsDocked()) {
+    document.body.classList.add('filters-collapsed');
+  } else {
+    sidebar.classList.remove('mobile-open');
+    document.body.classList.remove('filter-open');
+  }
+  setFilterButtonExpanded(false);
 }
 
-// Close sidebar when tapping outside it on mobile
+// Клик вне блока фильтров закрывает его - и выехавшую панель, и закреплённую
+// слева. Кнопка в шапке исключена: она сама переключатель, иначе открытие и
+// закрытие пришлись бы на один и тот же клик.
 document.addEventListener('click', (e) => {
   const sidebar = document.querySelector('.filter-sidebar');
-  const navFilterBtn = document.querySelector('.nav-filter-btn');
+  if (!sidebar || !filtersAreOpen()) return;
 
-  if (window.innerWidth <= 1024 &&
-      sidebar.classList.contains('mobile-open') &&
-      !sidebar.contains(e.target) &&
-      !(navFilterBtn && navFilterBtn.contains(e.target))) {
-    closeFilterSidebar();
-  }
+  // Пока открыт лайтбокс, он перекрывает страницу целиком - клики по нему
+  // к фильтрам отношения не имеют
+  const lightboxEl = document.getElementById('lightbox');
+  if (lightboxEl && lightboxEl.classList.contains('active')) return;
+
+  const navFilterBtn = document.querySelector('.nav-filter-btn');
+  if (sidebar.contains(e.target)) return;
+  if (navFilterBtn && navFilterBtn.contains(e.target)) return;
+
+  closeFilterSidebar();
 });
+
+// Esc закрывает блок фильтров в любом из двух его видов. Если открыт лайтбокс,
+// Esc принадлежит ему.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape' || !filtersAreOpen()) return;
+  const lightboxEl = document.getElementById('lightbox');
+  if (lightboxEl && lightboxEl.classList.contains('active')) return;
+  closeFilterSidebar();
+});
+
+// У кнопки два режима (выезжающая панель / свёрнутый закреплённый сайдбар).
+// При переходе через 1024px состояние другого режима надо сбросить, иначе
+// сайдбар может остаться скрытым на ширине, где скрывать его нечем.
+(function syncSidebarAcrossBreakpoint() {
+  const apply = () => {
+    const docked = sidebarIsDocked();
+    if (docked) {
+      const sidebar = document.querySelector('.filter-sidebar');
+      if (sidebar) sidebar.classList.remove('mobile-open');
+      document.body.classList.remove('filter-open');
+      setFilterButtonExpanded(!document.body.classList.contains('filters-collapsed'));
+    } else {
+      // filters-collapsed намеренно не сбрасываем: ниже 1025px это правило
+      // ничего не делает, а свёрнутое состояние - значение по умолчанию, и
+      // возврат на широкий экран не должен внезапно раскрывать сайдбар
+      const sidebar = document.querySelector('.filter-sidebar');
+      setFilterButtonExpanded(Boolean(sidebar && sidebar.classList.contains('mobile-open')));
+    }
+  };
+
+  const mq = window.matchMedia && window.matchMedia(DOCKED_SIDEBAR_QUERY);
+  if (mq && mq.addEventListener) mq.addEventListener('change', apply);
+  else if (mq && mq.addListener) mq.addListener(apply);
+  else window.addEventListener('resize', apply);
+
+  document.addEventListener('DOMContentLoaded', apply);
+})();
 
 // ===== GLOBAL VIEW SWITCHING FUNCTIONS =====
 function switchToChronological() {
@@ -661,7 +929,12 @@ function switchToThematic(targetId) {
   // there; the plain "Thematic View" link passes nothing and lands on #gallery.
   // Without this, every category link's native #anchor jump used to get
   // overridden 100ms later by a hardcoded scroll back to the top of the gallery.
+  // Переход по конкретной категории из меню должен сразу показывать её работы,
+  // иначе ссылка приводит к свёрнутому заголовку и требует лишнего клика
   const target = targetId ? document.getElementById(targetId) : document.getElementById('gallery');
+  if (galleryFilter && targetId && target) {
+    galleryFilter.setCategoryExpanded(target.closest('.theme-section'), true);
+  }
   if (target) {
     setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 100);
   }

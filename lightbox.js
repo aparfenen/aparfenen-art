@@ -9,14 +9,14 @@ const lightboxDate = lightbox.querySelector(".lightbox-date");
 const lightboxDescription = lightbox.querySelector(".lightbox-description");
 const lightboxMetadata = lightbox.querySelector(".lightbox-metadata");
 const lightboxLoader = lightbox.querySelector(".lightbox-loader");
-const swipeHint = lightbox.querySelector(".swipe-hint");
+const lightboxDownload = lightbox.querySelector(".lightbox-download");
+const lightboxToast = lightbox.querySelector(".lightbox-toast");
 
 let currentImageSrc = "";
 let currentImageTitle = "";
 let currentImageId = "";
 let allGalleryImages = [];
 let currentImageIndex = -1;
-let hasSeenSwipeHint = false; // session-only: show once per page load
 
 // ===== ЛАЙТБОКС И ИСТОРИЯ БРАУЗЕРА =====
 // Открытие работы добавляет запись в историю (#id работы), поэтому "назад"
@@ -104,8 +104,12 @@ function updateGalleryImagesArray() {
     allGalleryImages = Array.from(activeGallery.querySelectorAll('.art-block img'))
       .filter(img => {
         const artBlock = img.closest('.art-block');
-        // Проверяем что блок существует и не скрыт
-        return artBlock && artBlock.style.display !== 'none';
+        // Два независимых способа спрятать работу: инлайновый display от
+        // фильтров и класс от свёрнутой категории (см. refreshCategoryPreviews
+        // в filter.js). Учитывать надо оба, иначе стрелки перелистывают на
+        // работы, которых на экране нет.
+        return artBlock && artBlock.style.display !== 'none'
+          && !artBlock.classList.contains('is-preview-hidden');
       });
     console.log(`[Lightbox] Updated gallery images: ${allGalleryImages.length} visible images in active gallery`);
   } else {
@@ -186,6 +190,9 @@ function loadImageWithLoader(imgElement, onLoadComplete) {
       onLoadComplete(imgElement);
     }
 
+    // Пропорции новой работы другие - пересчитываем низ картинки для тап-зон
+    positionTouchNav();
+
     console.log(`[Lightbox] Image loaded: ${preloadImg.src}`);
 
     // Подгружаем соседние изображения в фоне для мгновенной навигации
@@ -209,6 +216,24 @@ function loadImageWithLoader(imgElement, onLoadComplete) {
   // Начинаем загрузку (webp приоритетнее, если доступен)
   preloadImg.src = webpSrc || jpgSrc;
 }
+
+// Тап-зоны листания на мобильных прижаты к низу самой картинки, а не всего
+// окна: высота подписи меняется от работы к работе, поэтому расстояние от низа
+// окна до низа изображения замеряем и отдаём в CSS (см. --lb-img-bottom).
+function positionTouchNav() {
+  if (!lightbox.classList.contains('active')) return;
+  const contentRect = lightboxContent.getBoundingClientRect();
+  const imgRect = lightboxImg.getBoundingClientRect();
+  if (!imgRect.height) return;
+  const fromBottom = Math.max(0, Math.round(contentRect.bottom - imgRect.bottom));
+  lightboxContent.style.setProperty('--lb-img-bottom', `${fromBottom}px`);
+}
+
+let touchNavResizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(touchNavResizeTimer);
+  touchNavResizeTimer = setTimeout(positionTouchNav, 120);
+});
 
 // Функция для обновления метаданных
 function updateLightboxMetadata(img) {
@@ -235,6 +260,19 @@ function updateLightboxMetadata(img) {
     metadataText = dimensions;
   } else if (medium) {
     metadataText = medium;
+  }
+
+  // Ссылка на скачивание: отдаём jpg из large/, а не webp - его без вопросов
+  // откроет любая программа. Имя файла берём от названия работы, иначе
+  // сохранится что-нибудь вроде "05-14-2026_gua1_cutted.jpg".
+  if (lightboxDownload) {
+    const source = img.dataset.fullSrc || img.currentSrc || img.src;
+    const extension = (source.split('.').pop() || 'jpg').split(/[?#]/)[0];
+    const safeTitle = title.replace(/[\\/:*?"<>|]+/g, '-').trim() || 'artwork';
+    lightboxDownload.href = source;
+    lightboxDownload.setAttribute('download', `${safeTitle}.${extension}`);
+    lightboxDownload.setAttribute('aria-label', `Download “${title}”`);
+    lightboxDownload.setAttribute('title', `Download “${title}”`);
   }
 
   // Показываем или скрываем секцию метаданных
@@ -289,9 +327,6 @@ function openLightbox(img, { fromHistory = false } = {}) {
   lightbox.classList.add("active");
   lockPageScroll();
 
-  // Показываем подсказку свайпа на мобильных при первом открытии
-  showSwipeHintIfNeeded();
-
   // Загружаем изображение с loader и обновляем метаданные после загрузки
   loadImageWithLoader(img, updateLightboxMetadata);
 
@@ -322,6 +357,7 @@ function navigateImage(direction) {
   // Загружаем новое изображение
   const newImg = allGalleryImages[currentImageIndex];
   if (newImg) {
+    setZoomed(false);
     // Обновляем счетчик
     updateCounter();
 
@@ -358,6 +394,154 @@ document.querySelectorAll(".gallery img").forEach(img => {
   });
 });
 
+// ===== SHARE =====
+// "Поделиться" здесь означает "скопировать ссылку", поэтому подтверждение
+// говорит об этом прямо - иначе кнопка выглядит так, будто ничего не сделала.
+let lightboxToastTimer;
+function showLightboxToast(message) {
+  if (!lightboxToast) return;
+  lightboxToast.textContent = message;
+  lightboxToast.classList.add('is-visible');
+  clearTimeout(lightboxToastTimer);
+  lightboxToastTimer = setTimeout(() => lightboxToast.classList.remove('is-visible'), 2200);
+}
+
+function artworkShareURL() {
+  const base = `${window.location.origin}${window.location.pathname}`;
+  return currentImageId ? `${base}#${currentImageId}` : base;
+}
+
+// Запасной путь для контекстов без Clipboard API (не-https, file://)
+function copyViaTextarea(text) {
+  try {
+    const field = document.createElement('textarea');
+    field.value = text;
+    field.setAttribute('readonly', '');
+    field.style.position = 'fixed';
+    field.style.top = '0';
+    field.style.opacity = '0';
+    document.body.appendChild(field);
+    field.select();
+    const copied = document.execCommand('copy');
+    field.remove();
+    return copied;
+  } catch (e) {
+    return false;
+  }
+}
+
+function copyArtworkLink() {
+  const url = artworkShareURL();
+  const confirmCopied = () => showLightboxToast('Link copied to clipboard');
+  const tryFallback = () => {
+    if (copyViaTextarea(url)) confirmCopied();
+    else window.prompt('Copy this link:', url);
+  };
+
+  // navigator.clipboard отсутствует вне защищённого контекста - без проверки
+  // здесь был бы TypeError
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(confirmCopied).catch(tryFallback);
+  } else {
+    tryFallback();
+  }
+}
+
+function openShareWindow(href) {
+  window.open(href, '_blank', 'width=600,height=460,noopener,noreferrer');
+}
+
+const SHARE_TARGETS = {
+  copy: copyArtworkLink,
+  facebook() {
+    openShareWindow('https://www.facebook.com/sharer/sharer.php?u=' +
+      encodeURIComponent(artworkShareURL()));
+  },
+  x() {
+    const text = encodeURIComponent(`“${currentImageTitle}” by aparfenen`);
+    openShareWindow(`https://x.com/intent/tweet?url=${encodeURIComponent(artworkShareURL())}&text=${text}`);
+  },
+  pinterest() {
+    // currentImageSrc уже абсолютный (его ставит preloadImg.src), поэтому
+    // origin к нему приклеивать не надо - на этом раньше ломалась ссылка
+    openShareWindow('https://pinterest.com/pin/create/button/'
+      + `?url=${encodeURIComponent(artworkShareURL())}`
+      + `&media=${encodeURIComponent(currentImageSrc)}`
+      + `&description=${encodeURIComponent(currentImageTitle)}`);
+  }
+};
+
+// ===== МЕНЮ "ПОДЕЛИТЬСЯ" =====
+const shareButton = lightbox.querySelector('.lightbox-share');
+const shareMenu = lightbox.querySelector('.lightbox-share-menu');
+
+function closeShareMenu() {
+  if (!shareMenu) return;
+  shareMenu.hidden = true;
+  if (shareButton) shareButton.setAttribute('aria-expanded', 'false');
+}
+
+function toggleShareMenu() {
+  if (!shareMenu) return;
+  const willOpen = shareMenu.hidden;
+  shareMenu.hidden = !willOpen;
+  if (shareButton) shareButton.setAttribute('aria-expanded', String(willOpen));
+}
+
+if (shareButton && shareMenu) {
+  shareButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleShareMenu();
+  });
+
+  shareMenu.addEventListener('click', (e) => {
+    const item = e.target.closest('[data-share]');
+    if (!item) return;
+    closeShareMenu();
+    const run = SHARE_TARGETS[item.dataset.share];
+    if (run) run();
+  });
+
+  // Клик мимо и Esc закрывают меню; Esc при этом не должен закрыть заодно и
+  // сам лайтбокс, поэтому событие останавливаем
+  lightbox.addEventListener('click', () => closeShareMenu());
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape' || shareMenu.hidden) return;
+    e.stopPropagation();
+    closeShareMenu();
+    shareButton.focus();
+  }, true);
+}
+
+// На мобильных стрелки не показываются постоянно - это просто невидимые зоны
+// в нижней части картинки (см. медиазапрос в style.css). Тап и листает, и на
+// секунду проявляет саму стрелку, чтобы было видно, что именно сработало,
+// после чего она снова гаснет.
+let navPeekTimer;
+function peekTouchNav() {
+  lightbox.classList.add('nav-peek');
+  clearTimeout(navPeekTimer);
+  navPeekTimer = setTimeout(() => lightbox.classList.remove('nav-peek'), 1300);
+}
+
+lightbox.querySelectorAll('.lightbox-nav').forEach(btn => {
+  btn.addEventListener('click', peekTouchNav);
+});
+
+// ===== УВЕЛИЧЕНИЕ ПО КЛИКУ =====
+// Клик по картине разворачивает её на весь экран (и обратно). Сбрасывается при
+// закрытии и при переходе к другой работе - иначе следующая открывалась бы уже
+// увеличенной, без подписи.
+function setZoomed(on) {
+  lightbox.classList.toggle('is-zoomed', on);
+  lightboxImg.style.cursor = on ? 'zoom-out' : 'zoom-in';
+}
+
+lightboxImg.addEventListener('click', (e) => {
+  e.stopPropagation();
+  setZoomed(!lightbox.classList.contains('is-zoomed'));
+});
+
 // Закрытие lightbox при клике вне изображения
 lightbox.addEventListener("click", (e) => {
   if (e.target === lightbox) {
@@ -368,6 +552,12 @@ lightbox.addEventListener("click", (e) => {
 // Функция закрытия lightbox
 function closeLightbox(fromHistory = false) {
   lightbox.classList.remove("active");
+  lightbox.classList.remove("nav-peek");
+  clearTimeout(navPeekTimer);
+  setZoomed(false);
+  if (lightboxToast) lightboxToast.classList.remove('is-visible');
+  clearTimeout(lightboxToastTimer);
+  closeShareMenu();
   unlockPageScroll();
   // Скрываем loader если он был виден
   lightboxLoader.style.display = "none";
@@ -409,29 +599,6 @@ function handleLightboxPopState() {
     }
   } else if (isOpen) {
     closeLightbox(true);
-  }
-}
-
-// Показываем подсказку свайпа на мобильных при первом открытии
-function showSwipeHintIfNeeded() {
-  // Проверяем: мобильное устройство, есть несколько изображений, подсказка еще не показывалась
-  const isMobile = window.innerWidth <= 768 && matchMedia('(hover: none)').matches;
-
-  if (isMobile && !hasSeenSwipeHint && allGalleryImages.length > 1 && swipeHint) {
-    hasSeenSwipeHint = true;
-    setTimeout(() => {
-      if (swipeHint) {
-        swipeHint.style.display = 'flex';
-        // Force animation restart
-        swipeHint.style.animation = 'none';
-        void swipeHint.offsetHeight;
-        swipeHint.style.animation = 'swipeHintFade 3s ease-in-out forwards';
-
-        setTimeout(() => {
-          if (swipeHint) swipeHint.style.display = 'none';
-        }, 3000);
-      }
-    }, 600);
   }
 }
 
@@ -483,111 +650,78 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
-// ===== SHARE FUNCTIONS =====
-function getArtworkURL() {
-  const baseUrl = window.location.origin + window.location.pathname;
-  return currentImageId ? `${baseUrl}#${currentImageId}` : baseUrl;
+// ===== ШАГ ПРОКРУТКИ КНОПКАМИ ↑ / ↓ =====
+// В тематическом виде шаг - это категория: кнопка перескакивает на следующий
+// (предыдущий) заголовок и ставит его чуть выше середины экрана, чтобы под
+// названием сразу было видно превью, а не только само название по центру.
+// Там, где заголовков нет (хронологический вид), шаг - экран.
+// Обе кнопки ходят одинаково: "вверх" раньше прыгала сразу в самое начало.
+const HEADING_STOP = 0.32;   // доля экрана сверху до заголовка
+const SCREEN_STEP = 0.8;
+
+function activeSectionOffsets() {
+  const container = document.querySelector('.gallery-container.active');
+  if (!container) return [];
+  // Только заголовки категорий: в хронологическом виде их внутри контейнера
+  // нет, поэтому список пустой и шаг остаётся экранным
+  return Array.from(container.querySelectorAll('.section-title'))
+    .filter(heading => heading.offsetParent !== null)
+    .map(heading => heading.getBoundingClientRect().top + window.pageYOffset)
+    .sort((a, b) => a - b);
 }
 
-function shareOnFacebook() {
-  const url = encodeURIComponent(getArtworkURL());
-  window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank', 'width=600,height=400,noopener,noreferrer');
-}
+function scrollByStep(direction) {
+  const stops = activeSectionOffsets();
+  const anchor = window.pageYOffset + window.innerHeight * HEADING_STOP;
 
-function shareOnTwitter() {
-  const url = encodeURIComponent(getArtworkURL());
-  const text = encodeURIComponent(`Check out "${currentImageTitle}" by aparfenen`);
-  window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400,noopener,noreferrer');
-}
+  const target = direction > 0
+    ? stops.find(top => top > anchor + 8)
+    : stops.slice().reverse().find(top => top < anchor - 8);
 
-function shareOnPinterest() {
-  const url = encodeURIComponent(getArtworkURL());
-  // currentImageSrc is set from preloadImg.src (see loadImageWithLoader), which the
-  // browser already resolves to an absolute URL - prefixing origin+pathname again
-  // used to glue two absolute URLs together into one broken address.
-  const imageUrl = encodeURIComponent(currentImageSrc);
-  const description = encodeURIComponent(currentImageTitle);
-  window.open(`https://pinterest.com/pin/create/button/?url=${url}&media=${imageUrl}&description=${description}`, '_blank', 'width=600,height=400,noopener,noreferrer');
-}
-
-function copyLink() {
-  const copyButton = document.querySelector('.share-button.copy');
-  const url = getArtworkURL();
-
-  navigator.clipboard.writeText(url).then(() => {
-    const originalText = copyButton.innerHTML;
-    copyButton.innerHTML = '✓ Copied!';
-    copyButton.classList.add('copied');
-
-    setTimeout(() => {
-      copyButton.innerHTML = originalText;
-      copyButton.classList.remove('copied');
-    }, 2000);
-  }).catch(err => {
-    console.error('Failed to copy:', err);
-    alert('Link copied to clipboard:\n' + url);
-  });
-}
-
-function emailAboutArtwork() {
-  const artworkURL = getArtworkURL();
-  const artworkTitle = currentImageTitle || "this artwork";
-
-  // Get artwork metadata from the lightbox
-  const date = lightboxDate.textContent || "";
-  const description = lightboxDescription.textContent || "";
-  const metadata = lightboxMetadata.textContent || "";
-
-  // Build email subject
-  const subject = encodeURIComponent(`Inquiry about "${artworkTitle}"`);
-
-  // Build email body with artwork details and questions
-  let body = `Hi,\n\nI'm interested in your artwork "${artworkTitle}"`;
-
-  if (date) {
-    body += ` (${date})`;
-  }
-  body += `.\n\n`;
-
-  if (metadata) {
-    body += `Details: ${metadata}\n\n`;
+  if (target !== undefined) {
+    window.scrollTo({
+      top: Math.max(0, target - window.innerHeight * HEADING_STOP),
+      behavior: 'smooth'
+    });
+    return;
   }
 
-  body += `I would like to know:\n`;
-  body += `- Is this piece available for purchase?\n`;
-  body += `- What is the price?\n`;
-  body += `- Are prints or reproductions available?\n\n`;
-
-  body += `Link to artwork: ${artworkURL}\n\n`;
-  body += `Thank you!\n`;
-
-  const encodedBody = encodeURIComponent(body);
-
-  // Open mailto link
-  window.location.href = `mailto:ann.parfenen2018@gmail.com?subject=${subject}&body=${encodedBody}`;
+  window.scrollBy({ top: direction * window.innerHeight * SCREEN_STEP, behavior: 'smooth' });
 }
 
-
-// ===== SCROLL DOWN BUTTON (TOP - fixed position) =====
+// ===== SCROLL DOWN BUTTON =====
 const scrollDownBtn = document.createElement('button');
 scrollDownBtn.className = 'scroll-down';
 scrollDownBtn.innerHTML = '↓';
 scrollDownBtn.setAttribute('aria-label', 'Scroll down');
 document.body.appendChild(scrollDownBtn);
 
-scrollDownBtn.addEventListener('click', () => {
-  window.scrollBy({ top: window.innerHeight * 0.8, behavior: 'smooth' });
-});
+scrollDownBtn.addEventListener('click', () => scrollByStep(1));
 
-// ===== BACK TO TOP BUTTON (BOTTOM - fixed position) =====
+// ===== SCROLL UP BUTTON =====
 const backToTopBtn = document.createElement('button');
 backToTopBtn.className = 'back-to-top';
 backToTopBtn.innerHTML = '↑';
-backToTopBtn.setAttribute('aria-label', 'Back to top');
+backToTopBtn.setAttribute('aria-label', 'Scroll up');
 document.body.appendChild(backToTopBtn);
 
+// Один клик - шаг назад (как у стрелки вниз), два подряд - сразу в самое
+// начало страницы: длинный список категорий иначе пришлось бы отщёлкивать
+// по одной.
+const DOUBLE_CLICK_WINDOW = 450;
+let lastUpClickAt = 0;
+
 backToTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const now = performance.now();
+  const isDoubleClick = now - lastUpClickAt < DOUBLE_CLICK_WINDOW;
+  lastUpClickAt = now;
+
+  if (isDoubleClick) {
+    // Второй клик перебивает прокрутку, начатую первым
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+  scrollByStep(-1);
 });
 
 // Показ/скрытие кнопок навигации при прокрутке
@@ -622,50 +756,6 @@ window.addEventListener('scroll', () => {
     navButtonsScrollTicking = false;
   });
 }, { passive: true });
-
-
-// ===== CATEGORY INDICATOR =====
-const categoryIndicator = document.createElement('div');
-categoryIndicator.className = 'category-indicator';
-document.body.appendChild(categoryIndicator);
-
-// Получаем все заголовки секций
-const sections = document.querySelectorAll('h3.section-title');
-
-// Обновление индикатора категории при прокрутке
-function updateCategoryIndicator() {
-  const scrollPosition = window.pageYOffset + 150;
-  
-  let currentSection = null;
-  
-  sections.forEach(section => {
-    const sectionTop = section.offsetTop;
-    const sectionBottom = sectionTop + section.offsetHeight + 400; // Включаем часть галереи
-    
-    if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-      currentSection = section.textContent;
-    }
-  });
-  
-  if (currentSection && window.pageYOffset > 500) {
-    categoryIndicator.textContent = currentSection;
-    categoryIndicator.classList.add('visible');
-  } else {
-    categoryIndicator.classList.remove('visible');
-  }
-}
-
-// ОПТИМИЗАЦИЯ: та же rAF-батчировка, что и для кнопок навигации выше
-let categoryScrollTicking = false;
-window.addEventListener('scroll', () => {
-  if (categoryScrollTicking) return;
-  categoryScrollTicking = true;
-  requestAnimationFrame(() => {
-    updateCategoryIndicator();
-    categoryScrollTicking = false;
-  });
-}, { passive: true });
-updateCategoryIndicator(); // Начальная проверка
 
 
 // ===== TOUCH/SWIPE SUPPORT FOR MOBILE =====
@@ -704,9 +794,16 @@ lightboxContent.addEventListener('touchstart', (e) => {
 // глушим одиночный touchmove явно (свайпы навигации живут на touchstart/touchend,
 // им preventDefault не мешает; жесты двумя пальцами не трогаем - это pinch-zoom).
 lightbox.addEventListener('touchmove', (e) => {
-  if (lightbox.classList.contains('active') && e.touches.length === 1) {
-    e.preventDefault();
-  }
+  if (!lightbox.classList.contains('active') || e.touches.length !== 1) return;
+
+  // Если рамка не поместилась и её можно прокрутить - не мешаем: иначе до
+  // подписи и кнопок под высокой картиной было бы не добраться. Гасим только
+  // жест по самому оверлею, из-за которого iOS "резиново" тянет страницу
+  // позади.
+  const scroller = e.target.closest && e.target.closest('.lightbox-content');
+  if (scroller && scroller.scrollHeight > scroller.clientHeight) return;
+
+  e.preventDefault();
 }, { passive: false });
 
 lightboxContent.addEventListener('touchend', (e) => {

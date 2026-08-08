@@ -22,9 +22,10 @@ THUMB_SMALL_DIR = "thumbnails-300"  # 300px - 1x displays and phones
 # right srcset candidate instead of always taking the largest:
 #   <=768px   grid is repeat(auto-fill, minmax(150px, 1fr)) with a 10px gap over
 #             the full viewport - 2 columns on a 375px phone, ~48vw each
-#   <=1200px  minmax(240px, 1fr) with a 16px gap, 3 columns, ~33vw each
-#   wider     the grid is capped at 1200px: 4 columns of (1200 - 3*16)/4 = 288px
-GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 288px"
+#   <=1200px  minmax(300px, 1fr) with a 16px gap, 3 columns, ~33vw each
+#   wider     the grid is capped at --gallery-max (1520px): 4 columns of
+#             (1520 - 3*16)/4 = 368px
+GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
 
 START_MARKER = "<!-- START GALLERY -->"
 END_MARKER = "<!-- END GALLERY -->"
@@ -544,12 +545,39 @@ gallery_html += '    <button id="chronological-view-btn" class="view-btn active"
 gallery_html += '    <button id="thematic-view-btn" class="view-btn">By Category</button>\n'
 gallery_html += '  </div>\n\n'
 
-# Chronological view
+# Chronological view - grouped into years, using the same .theme-section shape
+# as the thematic view below, so filter.js gives both views the same collapsing,
+# preview and counter behaviour without knowing which one it is looking at.
 gallery_html += '  <div id="chronological-gallery" class="gallery-container active">\n'
-gallery_html += '    <div class="gallery">\n'
+
+grouped_by_year = defaultdict(list)
 for _, row in df.iterrows():
-    gallery_html += generate_artwork_block(row) + '\n'
-gallery_html += '    </div>\n'
+    year_raw = row.get('year', '')
+    try:
+        year_label = str(int(float(year_raw))) if str(year_raw).strip() else ''
+    except (ValueError, TypeError):
+        year_label = str(year_raw).strip()
+    grouped_by_year[year_label or 'Undated'].append(row)
+
+# df is already newest-first; keep the groups in that order too, with anything
+# that has no usable year last rather than sorted in among the numbers
+def year_sort_key(label):
+    return (0, -int(label)) if label.isdigit() else (1, label)
+
+for year_label in sorted(grouped_by_year, key=year_sort_key):
+    rows = grouped_by_year[year_label]
+    # "year-" prefix keeps these out of the way of the artwork slugs and the
+    # category anchors, which share the same id namespace
+    anchor = f"year-{slugify(year_label)}"
+
+    gallery_html += '  <div class="theme-section">\n'
+    gallery_html += f'    <h3 id="{anchor}" class="section-title">{escape_html(year_label)}</h3>\n'
+    gallery_html += '    <div class="gallery">\n'
+    for row in rows:
+        gallery_html += generate_artwork_block(row) + '\n'
+    gallery_html += '    </div>\n'
+    gallery_html += '  </div>\n\n'
+
 gallery_html += '  </div>\n\n'
 
 # Thematic (category) view
