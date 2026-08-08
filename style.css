@@ -369,18 +369,6 @@ h3.section-title {
   margin-bottom: 0;
 }
 
-/* Was opacity: 0.7, which read as the line fading out rather than as a quieter
-   aside. Muted through the colour instead, so it stays crisp. */
-.support-note {
-  margin-top: 1.15em;
-  font-size: 0.97em;
-  color: var(--text-quaternary);
-}
-.support-note a {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 /* Gallery intro */
 .gallery-intro {
   max-width: 1200px;
