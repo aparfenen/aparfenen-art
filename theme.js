@@ -43,7 +43,7 @@ class ThemeManager {
       metaThemeColor.setAttribute('name', 'theme-color');
       document.head.appendChild(metaThemeColor);
     }
-    metaThemeColor.setAttribute('content', theme === 'dark' ? '#1a1a1a' : '#fdfcf9');
+    metaThemeColor.setAttribute('content', theme === 'dark' ? '#1c1a17' : '#faf8f4');
 
     this.updateButtonText(theme);
     console.log(`[Theme] Applied ${theme} mode`);

@@ -30,42 +30,47 @@
 
   /* Slightly translucent so artwork scrolling underneath stays hinted at, but
      opaque enough that the links keep their contrast over an arbitrary painting */
-  --nav-bg: rgba(253, 252, 249, 0.92);
+  --nav-bg: rgba(250, 248, 244, 0.92);
 
-  /* Backgrounds */
-  --bg-primary: #fdfcf9;
-  --bg-secondary: #f7f6f3;
-  --bg-tertiary: #fdfcf9;
-  --bg-hover: rgba(0, 0, 0, 0.05);
-  --bg-hover-strong: rgba(0, 0, 0, 0.08);
+  /* Backgrounds - warm paper rather than the old cool cream */
+  --bg-primary: #faf8f4;
+  --bg-secondary: #f2eee6;
+  --bg-tertiary: #faf8f4;
+  /* Hover tints are mixed from the ink colour rather than pure black, so they
+     warm the surface instead of greying it */
+  --bg-hover: rgba(43, 40, 35, 0.05);
+  --bg-hover-strong: rgba(43, 40, 35, 0.08);
 
-  /* Text colors */
-  --text-primary: #222;
-  --text-secondary: #333;
-  --text-tertiary: #444;
-  --text-quaternary: #555;
-  --text-muted: #666;
-  --text-dimmed: #999;
-  --text-disabled: #bbb;
+  /* Text colors - a warm charcoal ramp */
+  --text-primary: #2b2823;
+  --text-secondary: #3a362f;
+  --text-tertiary: #4a453d;
+  --text-quaternary: #5c564c;
+  --text-muted: #6f6a5f;
+  --text-dimmed: #9a9488;
+  --text-disabled: #bdb7ab;
 
-  /* Accent colors */
-  --accent-primary: #3366cc;
-  --accent-light: rgba(51, 102, 204, 0.15);
-  --accent-border: rgba(51, 102, 204, 0.4);
-  --accent-success: #28a745;
+  /* Accent - the dusty iris violet from the palette, darkened until body links
+     clear 4.5:1 against the paper (the swatch itself sits near 3.5:1) */
+  --accent-primary: #6b6394;
+  --accent-light: rgba(107, 99, 148, 0.14);
+  --accent-border: rgba(107, 99, 148, 0.42);
+  --accent-success: #5b7f57;
+  --support-accent: #b0564f;
+  --support-accent-hover: #8f4340;
 
-  /* Borders and dividers */
-  --border-light: rgba(0, 0, 0, 0.05);
-  --border-medium: rgba(0, 0, 0, 0.1);
-  --border-strong: rgba(0, 0, 0, 0.2);
-  --border-heavy: rgba(0, 0, 0, 0.3);
+  /* Borders and dividers - tinted with the ink, not neutral black */
+  --border-light: rgba(43, 40, 35, 0.05);
+  --border-medium: rgba(43, 40, 35, 0.1);
+  --border-strong: rgba(43, 40, 35, 0.2);
+  --border-heavy: rgba(43, 40, 35, 0.3);
 
   /* Rule under the category name, and the shade it casts. Kept faint on
      purpose: it is a boundary, not a divider competing with the artwork. */
-  --chip-edge-strong: rgba(0, 0, 0, 0.045);
-  --chip-edge-hover-strong: rgba(0, 0, 0, 0.09);
-  --chip-shade: rgba(0, 0, 0, 0.035);
-  --chip-shade-hover: rgba(0, 0, 0, 0.07);
+  --chip-edge-strong: rgba(43, 40, 35, 0.05);
+  --chip-edge-hover-strong: rgba(43, 40, 35, 0.1);
+  --chip-shade: rgba(43, 40, 35, 0.04);
+  --chip-shade-hover: rgba(43, 40, 35, 0.08);
 
 
   /* Shadows */
@@ -75,63 +80,65 @@
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
 
   /* Overlays */
-  --sidebar-backdrop: rgba(0, 0, 0, 0.62);
+  --sidebar-backdrop: rgba(30, 27, 23, 0.62);
 
   /* Lightbox specific */
-  --lightbox-overlay: rgba(0, 0, 0, 0.95);
-  --lightbox-content-bg: #f9f9f9;
-  --lightbox-info-bg: rgba(0, 0, 0, 0.85);
+  --lightbox-overlay: rgba(26, 23, 20, 0.95);
+  --lightbox-content-bg: #f7f5f0;
+  --lightbox-info-bg: rgba(26, 23, 20, 0.85);
 
   /* Activity visualization */
-  --activity-empty: #f8f8f8;
-  --activity-level-1: #e0e0e0;
-  --activity-level-2: #b8b8b8;
-  --activity-level-3: #909090;
-  --activity-level-4: #686868;
-  --activity-level-5: #404040;
-  --activity-level-6: #1a1a1a;
+  --activity-empty: #f4f0e9;
+  --activity-level-1: #e2dcd0;
+  --activity-level-2: #c2bbab;
+  --activity-level-3: #9c9484;
+  --activity-level-4: #746c5e;
+  --activity-level-5: #4c463c;
+  --activity-level-6: #2b2823;
 
   /* Image placeholder */
-  --img-placeholder: #f0f0f0;
-  --img-placeholder-light: #e0e0e0;
+  --img-placeholder: #efeae1;
+  --img-placeholder-light: #e4ded3;
 }
 
 /* Dark mode variables */
 [data-theme="dark"] {
   --color-mode: 'dark';
 
-  --nav-bg: rgba(30, 30, 30, 0.92);
+  --nav-bg: rgba(28, 26, 23, 0.92);
 
-  /* Backgrounds - softer dark tones, not pure black */
-  --bg-primary: #1a1a1a;
-  --bg-secondary: #222222;
-  --bg-tertiary: #252525;
-  --bg-hover: rgba(255, 255, 255, 0.05);
-  --bg-hover-strong: rgba(255, 255, 255, 0.08);
+  /* Backgrounds - the same warm neutral, inverted; never pure black */
+  --bg-primary: #1c1a17;
+  --bg-secondary: #24211d;
+  --bg-tertiary: #272420;
+  --bg-hover: rgba(245, 240, 232, 0.05);
+  --bg-hover-strong: rgba(245, 240, 232, 0.08);
 
-  /* Text colors - adjusted for dark backgrounds */
-  --text-primary: #e8e8e8;
-  --text-secondary: #d0d0d0;
-  --text-tertiary: #b8b8b8;
-  --text-quaternary: #a0a0a0;
-  --text-muted: #999999;
-  --text-dimmed: #777777;
-  --text-disabled: #555555;
+  /* Text colors - warm off-white rather than clinical grey */
+  --text-primary: #ece7de;
+  --text-secondary: #d5cfc4;
+  --text-tertiary: #bdb6aa;
+  --text-quaternary: #a49d90;
+  --text-muted: #948d80;
+  --text-dimmed: #787165;
+  --text-disabled: #574f45;
 
-  /* Accent colors - slightly brighter for dark mode */
-  --accent-primary: #5c8de8;
-  --accent-light: rgba(92, 141, 232, 0.15);
-  --accent-border: rgba(92, 141, 232, 0.5);
-  --accent-success: #32d158;
+  /* Accent - the same iris violet, lifted so it reads on the dark ground */
+  --accent-primary: #a79ed6;
+  --accent-light: rgba(167, 158, 214, 0.16);
+  --accent-border: rgba(167, 158, 214, 0.5);
+  --accent-success: #7fb377;
+  --support-accent: #d98a80;
+  --support-accent-hover: #eaa79d;
 
   /* Borders and dividers - lighter for dark mode */
-  --border-light: rgba(255, 255, 255, 0.05);
-  --border-medium: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --border-heavy: rgba(255, 255, 255, 0.3);
+  --border-light: rgba(245, 240, 232, 0.05);
+  --border-medium: rgba(245, 240, 232, 0.1);
+  --border-strong: rgba(245, 240, 232, 0.2);
+  --border-heavy: rgba(245, 240, 232, 0.3);
 
-  --chip-edge-strong: rgba(255, 255, 255, 0.055);
-  --chip-edge-hover-strong: rgba(255, 255, 255, 0.11);
+  --chip-edge-strong: rgba(245, 240, 232, 0.06);
+  --chip-edge-hover-strong: rgba(245, 240, 232, 0.12);
   --chip-shade: rgba(0, 0, 0, 0.22);
   --chip-shade-hover: rgba(0, 0, 0, 0.35);
 
@@ -143,25 +150,25 @@
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6);
 
   /* Overlays */
-  --sidebar-backdrop: rgba(0, 0, 0, 0.78);
+  --sidebar-backdrop: rgba(16, 14, 12, 0.78);
 
   /* Lightbox - keep dark overlay, adjust info panel */
-  --lightbox-overlay: rgba(0, 0, 0, 0.97);
-  --lightbox-content-bg: #2a2a2a;
-  --lightbox-info-bg: rgba(40, 40, 40, 0.95);
+  --lightbox-overlay: rgba(18, 16, 14, 0.97);
+  --lightbox-content-bg: #2a2620;
+  --lightbox-info-bg: rgba(40, 36, 31, 0.95);
 
   /* Activity visualization - inverted for dark mode */
-  --activity-empty: #2a2a2a;
-  --activity-level-1: #404040;
-  --activity-level-2: #606060;
-  --activity-level-3: #808080;
-  --activity-level-4: #a0a0a0;
-  --activity-level-5: #c0c0c0;
-  --activity-level-6: #e0e0e0;
+  --activity-empty: #26231f;
+  --activity-level-1: #3d3831;
+  --activity-level-2: #5b544a;
+  --activity-level-3: #7c7466;
+  --activity-level-4: #9e9585;
+  --activity-level-5: #c2b9a8;
+  --activity-level-6: #e6dfd2;
 
   /* Image placeholder */
-  --img-placeholder: #2a2a2a;
-  --img-placeholder-light: #353535;
+  --img-placeholder: #2a2620;
+  --img-placeholder-light: #35302a;
 }
 
 /* Smooth transitions for theme changes */
@@ -211,11 +218,11 @@ h1 {
   max-width: 1200px;
   padding: 0;
   box-sizing: border-box;
-  color: #3d3d3d;
+  color: #2f2b25;
 }
 
 [data-theme="dark"] h1 {
-  color: #c0c0c0;
+  color: #cfc8bc;
 }
 
 @media (max-width: 768px) {
@@ -413,7 +420,7 @@ h3.section-title {
 
 .view-btn.active {
   background: var(--accent-light);
-  border-color: rgba(51, 102, 204, 0.4);
+  border-color: var(--accent-border);
   color: var(--accent-primary);
 }
 
@@ -992,8 +999,8 @@ body.scroll-locked {
 .lightbox-share {
   padding: 0 18px;
   height: 38px;
-  background: #fff;
-  color: #1a1a1a;
+  background: #fbf9f5;
+  color: #2b2823;
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -1517,14 +1524,16 @@ nav.main-nav .has-dropdown > a::after {
   opacity: 0.55;
 }
 
-/* Ko-fi support button in nav */
+/* Ko-fi support link in nav. Muted off Ko-fi's own #FF5E5B into a dusty
+   terracotta - the brand coral was the one saturated colour left on a page of
+   warm neutrals, and it pulled the eye away from the work. */
 .nav-support {
-  color: #FF5E5B !important;
+  color: var(--support-accent) !important;
   text-decoration: none;
   transition: color 0.2s;
 }
 .nav-support:hover {
-  color: #e04a47 !important;
+  color: var(--support-accent-hover) !important;
 }
 
 /* Theme toggle in nav bar - right edge, mirrors the Filters button's shape */
@@ -2209,7 +2218,7 @@ nav.main-nav .sub-menu a {
   right: 40px;
   width: 48px;
   height: 48px;
-  background: rgba(154, 153, 153, 0.483);
+  background: rgba(92, 86, 76, 0.42);
   color: white;
   border: none;
   border-radius: 50%;
@@ -2222,7 +2231,7 @@ nav.main-nav .sub-menu a {
 }
 
 .scroll-down:hover {
-  background: rgba(131, 131, 131, 0.584);
+  background: rgba(70, 65, 56, 0.58);
   transform: translateY(2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
@@ -2250,7 +2259,7 @@ nav.main-nav .sub-menu a {
               opacity 0.2s ease, background 0.2s ease;
   width: 48px;
   height: 48px;
-  background: rgba(154, 153, 153, 0.483);
+  background: rgba(92, 86, 76, 0.42);
   color: white;
   border: none;
   border-radius: 50%;
@@ -2273,7 +2282,7 @@ body.nav-away .back-to-top {
 }
 
 .back-to-top:hover {
-  background: rgba(131, 131, 131, 0.584);
+  background: rgba(70, 65, 56, 0.58);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
 }
