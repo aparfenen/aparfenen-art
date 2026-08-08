@@ -82,10 +82,50 @@
   /* Overlays */
   --sidebar-backdrop: rgba(30, 27, 23, 0.62);
 
-  /* Lightbox specific */
-  --lightbox-overlay: rgba(26, 23, 20, 0.95);
+  /* Lightbox. Light mode gets a greige surround and a paper caption panel -
+     the same two tones the reference uses for its outer frame and its cards.
+     A mid taupe washed with the accent iris, not a pale greige: at #e6e0d6 the
+     surround sat too close to the page's own #faf8f4 and the overlay did not
+     read as an overlay at all. This is the light-mode equivalent of dimming
+     the room, and the violet cast keeps the tone inside the palette instead of
+     reading as plain grey.
+     Fully opaque - at any alpha the gallery showed through and muddied it.
+     Everything inside the overlay reads from the --lb-* set, so the two themes
+     stay in step. */
+  --lightbox-overlay: #c2b6bd;
   --lightbox-content-bg: #f7f5f0;
-  --lightbox-info-bg: rgba(26, 23, 20, 0.85);
+
+  --lb-text: #2b2823;
+  --lb-text-body: #3a362f;
+  --lb-text-muted: #6f6a5f;
+  --lb-line: rgba(43, 40, 35, 0.1);
+  --lb-line-soft: rgba(43, 40, 35, 0.08);
+
+  --lb-control-bg: rgba(43, 40, 35, 0.05);
+  --lb-control-bg-hover: rgba(43, 40, 35, 0.13);
+  --lb-control-border: rgba(43, 40, 35, 0.13);
+  --lb-control-fg: rgba(43, 40, 35, 0.62);
+  --lb-control-fg-hover: #2b2823;
+
+  --lb-chip-bg: rgba(250, 248, 244, 0.94);
+  --lb-chip-fg: #2b2823;
+  --lb-chip-border: rgba(43, 40, 35, 0.14);
+
+  /* Share is the one solid button, so it inverts against the surround */
+  --lb-primary-bg: #2b2823;
+  --lb-primary-bg-hover: #45403a;
+  --lb-primary-fg: #faf8f4;
+
+  --lb-menu-bg: #fbf9f5;
+  --lb-menu-shadow: rgba(43, 40, 35, 0.28);
+
+  /* Mount behind the artwork - the same paper as the caption panel, so the two
+     read as one sheet, and a clear step lighter than the greige surround. Most
+     of the work is painted on cream paper and was disappearing into the
+     background without it. */
+  --lb-mat: #faf8f4;
+  --lb-mat-shadow: rgba(43, 40, 35, 0.42);
+  --lb-focus: rgba(43, 40, 35, 0.5);
 
   /* Activity visualization */
   --activity-empty: #f4f0e9;
@@ -152,10 +192,39 @@
   /* Overlays */
   --sidebar-backdrop: rgba(16, 14, 12, 0.78);
 
-  /* Lightbox - keep dark overlay, adjust info panel */
+  /* Lightbox - dark surround, and the --lb-* set inverted to match */
   --lightbox-overlay: rgba(18, 16, 14, 0.97);
   --lightbox-content-bg: #2a2620;
-  --lightbox-info-bg: rgba(40, 36, 31, 0.95);
+
+  --lb-text: rgba(255, 255, 255, 0.95);
+  --lb-text-body: rgba(255, 255, 255, 0.95);
+  --lb-text-muted: rgba(255, 255, 255, 0.6);
+  --lb-line: rgba(255, 255, 255, 0.12);
+  --lb-line-soft: rgba(255, 255, 255, 0.1);
+
+  --lb-control-bg: rgba(0, 0, 0, 0.4);
+  --lb-control-bg-hover: rgba(0, 0, 0, 0.7);
+  --lb-control-border: rgba(255, 255, 255, 0.15);
+  --lb-control-fg: rgba(255, 255, 255, 0.7);
+  --lb-control-fg-hover: #fff;
+
+  --lb-chip-bg: rgba(0, 0, 0, 0.55);
+  --lb-chip-fg: #fff;
+  --lb-chip-border: rgba(255, 255, 255, 0.16);
+
+  --lb-primary-bg: #fbf9f5;
+  --lb-primary-bg-hover: rgba(255, 255, 255, 0.86);
+  --lb-primary-fg: #2b2823;
+
+  --lb-menu-bg: rgba(28, 28, 28, 0.97);
+  --lb-menu-shadow: rgba(0, 0, 0, 0.7);
+
+  /* Lifted off #2a2620: against the near-black surround that gave only 1.26:1
+     and the card was effectively invisible, so the alignment it exists to show
+     did not read in dark mode */
+  --lb-mat: #38332b;
+  --lb-mat-shadow: rgba(0, 0, 0, 0.6);
+  --lb-focus: rgba(255, 255, 255, 0.7);
 
   /* Activity visualization - inverted for dark mode */
   --activity-empty: #26231f;
@@ -801,11 +870,13 @@ body.scroll-locked {
   max-height: 93vh;
   position: relative;
   width: 100%;
-  /* Transparent, not --bg-secondary: that is a near-white panel, and it showed
-     as a pale surround beside the artwork and as a white sheet sliding in when
-     the frame scrolls on a phone. The overlay behind is the backdrop now. */
-  background: transparent;
-  border-radius: 8px;
+  /* One card holds the picture and its caption. The mount used to sit on the
+     <img> itself, so its width tracked the artwork and changed with every
+     work, while the caption below always ran the full frame - the two edges
+     never lined up. Moving the surface here makes both the same width. */
+  background: var(--lb-mat);
+  border-radius: 10px;
+  box-shadow: 0 18px 50px -22px var(--lb-mat-shadow);
 }
 
 /* On a wide screen there is room to fit everything, so the picture gives way
@@ -821,7 +892,8 @@ body.scroll-locked {
      give way when the caption needs the room. */
   max-width: 100%;
   max-height: 82vh;
-  padding: 10px;
+  /* Breathing room inside the card; the card itself paints the mount */
+  padding: 26px 20px 20px;
   cursor: zoom-out;
   object-fit: contain;
   display: block;
@@ -844,6 +916,8 @@ body.scroll-locked {
   max-height: none;
   padding: 0;
   border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   object-fit: contain;
   z-index: 1002;
   cursor: zoom-out;
@@ -874,11 +948,11 @@ body.scroll-locked {
   position: fixed;
   top: 20px;
   left: 20px;
-  background: rgba(0, 0, 0, 0.55);
+  background: var(--lb-chip-bg);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #fff;
+  border: 1px solid var(--lb-chip-border);
+  color: var(--lb-chip-fg);
   padding: 8px 15px;
   border-radius: 999px;
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
@@ -922,8 +996,8 @@ body.scroll-locked {
 .spinner {
   width: 36px;
   height: 36px;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: rgba(255, 255, 255, 0.85);
+  border: 3px solid var(--lb-control-border);
+  border-top-color: var(--lb-control-fg-hover);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -939,9 +1013,9 @@ body.scroll-locked {
   position: fixed;
   top: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: rgba(255, 255, 255, 0.7);
+  background: var(--lb-control-bg);
+  border: 1px solid var(--lb-control-border);
+  color: var(--lb-control-fg);
   font-size: 24px;
   width: 44px;
   height: 44px;
@@ -966,20 +1040,20 @@ body.scroll-locked {
 
 .lightbox-close:hover,
 .lightbox-close:active {
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
+  background: var(--lb-control-bg-hover);
+  color: var(--lb-control-fg-hover);
   opacity: 1;
   transform: rotate(90deg) scale(1.05);
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: var(--lb-control-fg);
 }
 
 /* Info box */
 .lightbox-info {
   width: 100%;
   padding: 16px 18px 24px;
-  background: var(--lightbox-info-bg);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.95);
+  background: transparent;
+  border-top: 1px solid var(--lb-line-soft);
+  color: var(--lb-text-body);
   border-radius: 0 0 8px 8px;
   box-sizing: border-box;
   text-align: center;
@@ -999,8 +1073,8 @@ body.scroll-locked {
 .lightbox-share {
   padding: 0 18px;
   height: 38px;
-  background: #fbf9f5;
-  color: #2b2823;
+  background: var(--lb-primary-bg);
+  color: var(--lb-primary-fg);
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -1012,7 +1086,7 @@ body.scroll-locked {
 }
 
 .lightbox-share:hover {
-  background: rgba(255, 255, 255, 0.86);
+  background: var(--lb-primary-bg-hover);
 }
 
 .lightbox-share:active {
@@ -1020,7 +1094,7 @@ body.scroll-locked {
 }
 
 .lightbox-share:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline: 2px solid var(--lb-focus);
   outline-offset: 2px;
 }
 
@@ -1037,11 +1111,11 @@ body.scroll-locked {
   min-width: 168px;
   padding: 6px;
   border-radius: 12px;
-  background: rgba(28, 28, 28, 0.97);
+  background: var(--lb-menu-bg);
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--lb-control-border);
+  box-shadow: 0 10px 30px -8px var(--lb-menu-shadow);
   text-align: left;
 }
 
@@ -1059,18 +1133,18 @@ body.scroll-locked {
   cursor: pointer;
   font-family: inherit;
   font-size: 0.95em;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--lb-text-body);
   text-align: left;
   transition: background-color 0.14s ease, color 0.14s ease;
 }
 
 .lightbox-share-menu button:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: #fff;
+  background: var(--lb-control-bg-hover);
+  color: var(--lb-control-fg-hover);
 }
 
 .lightbox-share-menu button:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline: 2px solid var(--lb-focus);
   outline-offset: -2px;
 }
 
@@ -1084,11 +1158,11 @@ body.scroll-locked {
   z-index: 1006;
   padding: 9px 17px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.72);
+  background: var(--lb-chip-bg);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  color: #fff;
+  border: 1px solid var(--lb-chip-border);
+  color: var(--lb-chip-fg);
   font-size: 0.92em;
   font-weight: 500;
   white-space: nowrap;
@@ -1109,7 +1183,7 @@ body.scroll-locked {
   width: 38px;
   height: 38px;
   border-radius: 10px;
-  color: rgba(255, 255, 255, 0.45);
+  color: var(--lb-control-fg);
   text-decoration: none;
   transition: color 0.16s ease, background-color 0.16s ease;
 }
@@ -1120,12 +1194,12 @@ body.scroll-locked {
 }
 
 .lightbox-download:hover {
-  color: rgba(255, 255, 255, 0.95);
-  background: rgba(255, 255, 255, 0.1);
+  color: var(--lb-control-fg-hover);
+  background: var(--lb-control-bg-hover);
 }
 
 .lightbox-download:focus-visible {
-  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline: 2px solid var(--lb-focus);
   outline-offset: 2px;
 }
 
@@ -1140,12 +1214,12 @@ body.scroll-locked {
   font-size: 1.35em;
   font-weight: 600;
   margin: 0 0 7px 0;
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--lb-text);
 }
 
 .lightbox-date {
   font-size: 0.95em;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--lb-text-muted);
   margin: 0 0 14px 0;
   font-style: italic;
 }
@@ -1153,17 +1227,17 @@ body.scroll-locked {
 .lightbox-description {
   font-size: 1.02em;
   line-height: 1.55;
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--lb-text-body);
   margin: 0 0 14px 0;
 }
 
 .lightbox-metadata {
   font-size: 0.92em;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--lb-text-muted);
   font-style: italic;
   margin: 0;
   padding-top: 13px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 1px solid var(--lb-line);
 }
 
 
@@ -1175,7 +1249,9 @@ body.scroll-locked {
   }
   
   .lightbox img {
-    max-width: 90vw;
+    /* 100%, not 90vw: the card is 88vw, and a viewport-relative cap made the
+       picture wider than the card it sits on */
+    max-width: 100%;
     max-height: 60vh;
   }
   
@@ -1910,8 +1986,8 @@ nav.main-nav .sub-menu a {
   transform: translateY(-100%);
   /* A faint disc behind the chevron: at 45% white on nothing these were easy to
      miss against a bright painting */
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--lb-control-bg);
+  border: 1px solid var(--lb-control-border);
   border-radius: 50%;
   width: 60px;
   height: 60px;
@@ -1923,7 +1999,7 @@ nav.main-nav .sub-menu a {
   z-index: 10;
   opacity: 0;
   pointer-events: none;
-  color: rgba(255, 255, 255, 0.75);
+  color: var(--lb-control-fg);
 }
 
 .lightbox-nav svg {
@@ -1938,9 +2014,9 @@ nav.main-nav .sub-menu a {
 
 .lightbox-nav:hover,
 .lightbox-nav:active {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.18);
-  border-color: rgba(255, 255, 255, 0.28);
+  color: var(--lb-control-fg-hover);
+  background: var(--lb-control-bg-hover);
+  border-color: var(--lb-control-fg);
   transform: translateY(-100%) scale(1.08);
 }
 
@@ -2170,9 +2246,9 @@ nav.main-nav .sub-menu a {
     height: 46px;
     /* Barely there even while showing: they sit on top of the artwork, and the
        point is only to confirm the tap registered */
-    background: rgba(0, 0, 0, 0.22);
-    border-color: rgba(255, 255, 255, 0.12);
-    color: rgba(255, 255, 255, 0.65);
+    background: var(--lb-control-bg);
+    border-color: var(--lb-control-border);
+    color: var(--lb-control-fg);
   }
 
   .lightbox-nav svg {
@@ -2701,7 +2777,6 @@ footer.contact-info h2 {
 
 /* Lightbox in dark mode: remove the grey card — image floats on the black overlay */
 [data-theme="dark"] .lightbox-content {
-  background: transparent;
   box-shadow: none;
 }
 
