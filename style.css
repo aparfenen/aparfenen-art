@@ -310,7 +310,10 @@ h1 {
 h2.section-title {
   text-align: center;
   font-size: 2.35em;
-  font-weight: 700;
+  /* 600, not 700: at this size the weight was doing work the size already
+     does, and it read heavier than anything else on a page of thin rules and
+     light neutrals. The step down to the category headings is kept. */
+  font-weight: 600;
   margin-top: 36px;
   margin-bottom: 0.6em;
   color: var(--text-primary);
@@ -648,7 +651,7 @@ h3.section-title {
   /* Air between the heading and the first row of works */
   margin-bottom: 1.35em;
   font-size: 1.8em;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--text-primary);
   letter-spacing: -0.01em;
 }
