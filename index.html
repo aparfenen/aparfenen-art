@@ -16,29 +16,37 @@
   <meta name="theme-color" content="#faf8f4">
   <title>aparfenen.art</title>
 
-  <!-- SEO -->
+  <!-- SEO.
+       These absolute URLs must match where the site is actually served, which
+       is the GitHub Pages project path. They used to point at aparfenen.art -
+       a host that does not resolve and has no CNAME in this repo - so every
+       share fetched a dead domain and no preview image ever appeared, and
+       search engines were handed a canonical they could not reach.
+       If the custom domain is ever set up: add a CNAME file containing
+       aparfenen.art and swap the four URLs below back. -->
   <meta name="description" content="aparfenen.art — watercolor, colored pencil and mixed media artworks by Anna Parfenenkova. Commissions open." />
   <meta name="author" content="Anna Parfenenkova" />
-  <link rel="canonical" href="https://aparfenen.art/" />
+  <link rel="canonical" href="https://aparfenen.github.io/aparfenen-art/" />
 
   <!-- Open Graph (Facebook, Telegram, WhatsApp, iMessage…) -->
   <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://aparfenen.art/" />
+  <meta property="og:url"         content="https://aparfenen.github.io/aparfenen-art/" />
   <meta property="og:title"       content="aparfenen.art — art by Anna Parfenenkova" />
   <meta property="og:description" content="Watercolor, colored pencil and mixed media. Commissions open." />
   <!-- Points at large/ rather than thumbnails/: grid thumbnails are capped at
        600px (and this one used to be a stale 1000px file, which is where the
        old 1000x1427 came from - it no longer matched the image it described). -->
-  <meta property="og:image"       content="https://aparfenen.art/large/Between%20Waking/05-14-2026_gua1_cutted.jpg" />
+  <meta property="og:image"       content="https://aparfenen.github.io/aparfenen-art/large/Between%20Waking/05-14-2026_gua1_cutted.jpg" />
   <meta property="og:image:width"  content="2400" />
   <meta property="og:image:height" content="3530" />
+  <meta property="og:image:alt"    content="Crimson Regret and Betrayal of the Sun — gouache landscape of a crimson hillside above a green slope, under a clouded sunset sky" />
   <meta property="og:locale"      content="en_US" />
 
   <!-- Twitter / X card -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="aparfenen.art — art by Anna Parfenenkova" />
   <meta name="twitter:description" content="Watercolor, colored pencil and mixed media. Commissions open." />
-  <meta name="twitter:image"       content="https://aparfenen.art/large/Between%20Waking/05-14-2026_gua1_cutted.jpg" />
+  <meta name="twitter:image"       content="https://aparfenen.github.io/aparfenen-art/large/Between%20Waking/05-14-2026_gua1_cutted.jpg" />
 
   <script>
     // Apply theme immediately (before body renders) to prevent flash.
@@ -50,6 +58,13 @@
         var stored = localStorage.getItem('theme');
         var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', theme);
+        // theme-color too, not just the attribute: ThemeManager only repaints it
+        // when the toggle is clicked, so a dark-theme page loaded fresh used to
+        // keep the light value shipped in the markup - a cream browser bar over
+        // a near-black page on mobile. Keep these two colours in sync with the
+        // pair in theme.js applyTheme().
+        var bar = document.querySelector('meta[name="theme-color"]');
+        if (bar) bar.setAttribute('content', theme === 'dark' ? '#1c1a17' : '#faf8f4');
       } catch (e) {}
     })();
   </script>
