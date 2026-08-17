@@ -540,10 +540,37 @@ def generate_artwork_block(row, include_id=True):
     return block
 
 # ===== STEP 7: Build gallery HTML - FIXED =====
+# "Featured" is a curated overlay, not a category: on disk the works are copies
+# living in both img/Featured/ and their home folder, so in the CSV they keep
+# their real category and carry the tag instead. Everything Featured on the
+# page - its own view and the first section of the category view - is built
+# from this one list.
+FEATURED_TAG = "Featured"
+featured_rows = [row for _, row in df.iterrows()
+                 if FEATURED_TAG in [t.strip() for t in str(row.get("tags", "")).split(",")]]
+
 gallery_html = '\n  <div class="gallery-view-controls">\n'
+if featured_rows:
+    gallery_html += '    <button id="featured-view-btn" class="view-btn">Featured</button>\n'
 gallery_html += '    <button id="chronological-view-btn" class="view-btn active">Chronological</button>\n'
 gallery_html += '    <button id="thematic-view-btn" class="view-btn">By Category</button>\n'
 gallery_html += '  </div>\n\n'
+
+# Featured view - a flat grid, no year or category headings to group by. It
+# deliberately has no .theme-section wrapper: filter.js only adds the
+# collapse/preview machinery where it finds one, and a single collapsible
+# section in a one-section view would just be a "Show all" button in front of
+# the works. layoutMasonry() keys off .gallery, so the grid still lays out.
+if featured_rows:
+    gallery_html += '  <div id="featured-gallery" class="gallery-container">\n'
+    if FEATURED_TAG in category_descriptions:
+        gallery_html += f'    <p class="category-description">{escape_html(category_descriptions[FEATURED_TAG])}</p>\n'
+    gallery_html += '    <div class="gallery">\n'
+    for row in featured_rows:
+        # include_id=False: the chronological view already owns these slugs
+        gallery_html += generate_artwork_block(row, include_id=False) + '\n'
+    gallery_html += '    </div>\n'
+    gallery_html += '  </div>\n\n'
 
 # Chronological view - grouped into years, using the same .theme-section shape
 # as the thematic view below, so filter.js gives both views the same collapsing,
@@ -589,14 +616,9 @@ for _, row in df.iterrows():
     if category:
         grouped_by_category[category].append(row)
 
-# "Featured" is a curated overlay, not a category: on disk the works are copies
-# living in both img_new_sorting/Featured/ and their home folder, so in the CSV
-# they keep their real category and carry the tag instead. The section is built
-# from the tag and shown first; the same work still appears in its own category
-# further down (include_id=False everywhere here, so no duplicate DOM ids).
-FEATURED_TAG = "Featured"
-featured_rows = [row for _, row in df.iterrows()
-                 if FEATURED_TAG in [t.strip() for t in str(row.get("tags", "")).split(",")]]
+# The overlay also opens the category view (featured_rows is built in STEP 7),
+# so the same work appears both here and in its own category further down.
+# include_id=False everywhere in this view, so that costs no duplicate DOM ids.
 if featured_rows:
     grouped_by_category[FEATURED_TAG] = featured_rows
 

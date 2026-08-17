@@ -2,7 +2,11 @@
 // ПРОВЕРЕНО И ОПТИМИЗИРОВАНО: Улучшена производительность и надежность
 
 const FILTER_GROUPS = ['category', 'year', 'medium', 'tags'];
-const VIEWS = ['chronological', 'thematic'];
+// Каждый вид держится на соглашении об именах: кнопка `${view}-view-btn`,
+// контейнер `${view}-gallery`. Добавить вид = добавить сюда строку и выдать
+// эти два элемента из generate_index.py.
+const VIEWS = ['featured', 'chronological', 'thematic'];
+const DEFAULT_VIEW = 'chronological';
 const MAX_SEARCH_LENGTH = 100;
 
 class GalleryFilter {
@@ -15,7 +19,7 @@ class GalleryFilter {
       tags: []
     };
     this.searchQuery = '';
-    this.currentView = 'chronological';
+    this.currentView = DEFAULT_VIEW;
 
     // Заголовок страницы без фильтров - к нему возвращаемся при сбросе
     this.baseTitle = document.title;
@@ -107,7 +111,7 @@ class GalleryFilter {
     return {
       filters,
       q: (params.get('q') || '').toLowerCase().trim().slice(0, MAX_SEARCH_LENGTH),
-      view: VIEWS.includes(view) ? view : 'chronological'
+      view: VIEWS.includes(view) ? view : DEFAULT_VIEW
     };
   }
 
@@ -138,7 +142,7 @@ class GalleryFilter {
       params.set('q', this.searchQuery);
     }
     // Хронологический вид - значение по умолчанию, в адрес его не пишем
-    if (this.currentView !== 'chronological') {
+    if (this.currentView !== DEFAULT_VIEW) {
       params.set('view', this.currentView);
     }
 
@@ -241,35 +245,47 @@ class GalleryFilter {
     }
   }
   
+  // Контейнер активного вида. Вьюх стало три, и три одинаковых тернарника по
+  // файлу разъезжались бы при добавлении четвёртой.
+  activeGalleryElement() {
+    return document.getElementById(`${this.currentView}-gallery`);
+  }
+
   setupViewSwitcher() {
-    const chronoBtn = document.getElementById('chronological-view-btn');
-    const thematicBtn = document.getElementById('thematic-view-btn');
+    // Вид, у которого нет кнопки, просто не подключается: Featured пропадает
+    // из разметки, если ни у одной работы нет тега (generate_index.py), и
+    // остальные переключатели от этого страдать не должны.
+    const wired = VIEWS.filter(view => {
+      const btn = document.getElementById(`${view}-view-btn`);
+      if (!btn) return false;
+      btn.addEventListener('click', () => this.setView(view));
+      return true;
+    });
 
-    if (!chronoBtn || !thematicBtn) {
+    if (!wired.length) {
       console.warn('[Gallery Filter] View switcher buttons not found');
-      return;
     }
-
-    chronoBtn.addEventListener('click', () => this.setView('chronological'));
-    thematicBtn.addEventListener('click', () => this.setView('thematic'));
   }
 
   // Единая точка переключения вида: используется и кнопками, и восстановлением
   // состояния из URL (там updateURL: false, чтобы не перезаписывать адрес,
   // который мы только что прочитали)
   setView(view, { updateURL = true } = {}) {
-    this.currentView = VIEWS.includes(view) ? view : 'chronological';
+    // Вид без контейнера в разметке (Featured без отмеченных работ) не должен
+    // оставлять страницу с пустой галереей - откатываемся к виду по умолчанию.
+    const requested = VIEWS.includes(view) ? view : DEFAULT_VIEW;
+    this.currentView = document.getElementById(`${requested}-gallery`) ? requested : DEFAULT_VIEW;
 
-    const chronoBtn = document.getElementById('chronological-view-btn');
-    const thematicBtn = document.getElementById('thematic-view-btn');
-    const chronoGallery = document.getElementById('chronological-gallery');
-    const thematicGallery = document.getElementById('thematic-gallery');
-    const isChrono = this.currentView === 'chronological';
-
-    if (chronoBtn) chronoBtn.classList.toggle('active', isChrono);
-    if (thematicBtn) thematicBtn.classList.toggle('active', !isChrono);
-    if (chronoGallery) chronoGallery.classList.toggle('active', isChrono);
-    if (thematicGallery) thematicGallery.classList.toggle('active', !isChrono);
+    VIEWS.forEach(name => {
+      const isActive = name === this.currentView;
+      const btn = document.getElementById(`${name}-view-btn`);
+      const gallery = document.getElementById(`${name}-gallery`);
+      if (btn) {
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-pressed', String(isActive));
+      }
+      if (gallery) gallery.classList.toggle('active', isActive);
+    });
 
     // applyFilters() сам обновляет массив изображений для lightbox
     this.collectArtworks();
@@ -286,9 +302,7 @@ class GalleryFilter {
 
   collectArtworks() {
     this.allArtworks = [];
-    const activeGallery = this.currentView === 'chronological' 
-      ? document.getElementById('chronological-gallery')
-      : document.getElementById('thematic-gallery');
+    const activeGallery = this.activeGalleryElement();
     
     if (activeGallery) {
       activeGallery.querySelectorAll('.art-block').forEach(block => {
@@ -428,9 +442,7 @@ class GalleryFilter {
       updateGalleryImagesArray();
     } else {
       // Fallback если функция недоступна
-      const activeGallery = this.currentView === 'chronological' 
-        ? document.getElementById('chronological-gallery')
-        : document.getElementById('thematic-gallery');
+      const activeGallery = this.activeGalleryElement();
       
       if (activeGallery && window) {
         window.allGalleryImages = Array.from(activeGallery.querySelectorAll('.gallery img'))
@@ -544,9 +556,7 @@ class GalleryFilter {
   }
   
   updateNoResultsMessage(visibleCount) {
-    const activeGallery = this.currentView === 'chronological' 
-      ? document.getElementById('chronological-gallery')
-      : document.getElementById('thematic-gallery');
+    const activeGallery = this.activeGalleryElement();
     
     if (!activeGallery) return;
     
@@ -909,11 +919,24 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ===== GLOBAL VIEW SWITCHING FUNCTIONS =====
+// Клик по кнопке, а не setView(): кнопка - единственная точка, где вид
+// меняется вместе с записью в историю, и меню не должно её дублировать.
+function activateView(view) {
+  if (!galleryFilter) return;
+  const btn = document.getElementById(`${view}-view-btn`);
+  if (btn) btn.click();
+}
+
 function switchToChronological() {
-  if (galleryFilter) {
-    const chronoBtn = document.getElementById('chronological-view-btn');
-    if (chronoBtn) chronoBtn.click();
+  activateView('chronological');
+  const gallery = document.getElementById('gallery');
+  if (gallery) {
+    setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 100);
   }
+}
+
+function switchToFeatured() {
+  activateView('featured');
   const gallery = document.getElementById('gallery');
   if (gallery) {
     setTimeout(() => gallery.scrollIntoView({ behavior: 'smooth' }), 100);
@@ -921,10 +944,7 @@ function switchToChronological() {
 }
 
 function switchToThematic(targetId) {
-  if (galleryFilter) {
-    const thematicBtn = document.getElementById('thematic-view-btn');
-    if (thematicBtn) thematicBtn.click();
-  }
+  activateView('thematic');
   // Category-specific nav links pass their own section id so we scroll straight
   // there; the plain "Thematic View" link passes nothing and lands on #gallery.
   // Without this, every category link's native #anchor jump used to get

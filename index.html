@@ -270,6 +270,7 @@
         <li class="has-dropdown">
           <a href="#gallery" aria-haspopup="true" aria-expanded="false">Gallery</a>
           <ul class="sub-menu">
+            <li><a href="#" onclick="switchToFeatured(); return false;">Featured</a></li>
             <li><a href="#" onclick="switchToChronological(); return false;">Chronological View</a></li>
             <li><a href="#" onclick="switchToThematic(); return false;">Thematic View</a></li>
             <li class="dropdown-divider"></li>
@@ -327,14 +328,669 @@
   <h2 id="gallery" class="section-title">Gallery</h2>
   
   <p class="gallery-intro">
-    Explore the gallery in chronological order or organized by themes. Use filters on the left to refine your view.
+    Start with a featured selection, or explore the gallery in chronological order or organized by themes. Use filters on the left to refine your view.
   </p>
 
 <!-- START GALLERY -->
 
   <div class="gallery-view-controls">
+    <button id="featured-view-btn" class="view-btn">Featured</button>
     <button id="chronological-view-btn" class="view-btn active">Chronological</button>
     <button id="thematic-view-btn" class="view-btn">By Category</button>
+  </div>
+
+  <div id="featured-gallery" class="gallery-container">
+    <p class="category-description">A rotating selection of works that continue to resonate, reveal new meanings or define the direction of my practice.</p>
+    <div class="gallery">
+    <div class="art-block" data-hover-title="Pale and Unfinished Morning (July 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Echoes%20of%20Distance/07-30-2026_painting3.webp 300w, thumbnails/Echoes%20of%20Distance/07-30-2026_painting3.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Echoes of Distance/07-30-2026_painting3.jpg"
+           alt="Pale and Unfinished Morning"
+           loading="lazy"
+           decoding="async"
+           width="600" height="880"
+           srcset="thumbnails-300/Echoes%20of%20Distance/07-30-2026_painting3.jpg 300w, thumbnails/Echoes%20of%20Distance/07-30-2026_painting3.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Echoes of Distance/07-30-2026_painting3.jpg"
+           data-full-src-webp="large/Echoes of Distance/07-30-2026_painting3.webp"
+           data-title="Pale and Unfinished Morning"
+           data-date="July 2026"
+           data-date-created="7/26"
+           data-date-exact="July 30, 2026"
+           data-description="… the clouds quietly dream above …"
+           data-dimensions="5.8 in x 8.3 in (14.8 cm x 21 cm)"
+           data-medium="Watercolor on watercolor paper"
+           data-tags="Featured"
+           data-category="Echoes of Distance"
+           data-year="2026"
+           data-id="pale-and-unfinished-morning" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Lavender’s Private Sunrise (July 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Between%20Waking/07-29-2026-oil-pastel-9x12.webp 300w, thumbnails/Between%20Waking/07-29-2026-oil-pastel-9x12.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Between Waking/07-29-2026-oil-pastel-9x12.jpg"
+           alt="Lavender’s Private Sunrise"
+           loading="lazy"
+           decoding="async"
+           width="600" height="450"
+           srcset="thumbnails-300/Between%20Waking/07-29-2026-oil-pastel-9x12.jpg 300w, thumbnails/Between%20Waking/07-29-2026-oil-pastel-9x12.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Between Waking/07-29-2026-oil-pastel-9x12.jpg"
+           data-full-src-webp="large/Between Waking/07-29-2026-oil-pastel-9x12.webp"
+           data-title="Lavender’s Private Sunrise"
+           data-date="July 2026"
+           data-date-created="7/26"
+           data-date-exact="July 29, 2026"
+           data-description="The field made a small sun of its own and kept it close to the horizon."
+           data-dimensions="12 in x 9 in (30.5 cm x 23 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Between Waking"
+           data-year="2026"
+           data-id="lavenders-private-sunrise" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Mediator (July 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Fragile%20Systems/07-28-2026%20-%20Mediator_ed_small.webp 300w, thumbnails/Fragile%20Systems/07-28-2026%20-%20Mediator_ed_small.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Fragile Systems/07-28-2026 - Mediator_ed_small.jpg"
+           alt="Mediator"
+           loading="lazy"
+           decoding="async"
+           width="600" height="766"
+           srcset="thumbnails-300/Fragile%20Systems/07-28-2026%20-%20Mediator_ed_small.jpg 300w, thumbnails/Fragile%20Systems/07-28-2026%20-%20Mediator_ed_small.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Fragile Systems/07-28-2026 - Mediator_ed_small.jpg"
+           data-full-src-webp="large/Fragile Systems/07-28-2026 - Mediator_ed_small.webp"
+           data-title="Mediator"
+           data-date="July 2026"
+           data-date-created="7/26"
+           data-date-exact="July 28, 2026"
+           data-description="The flower occupies neither the world below, nor the space above it. It exists between systems, translating growth into form and movement into structure."
+           data-dimensions="11 in x 14 in (27.9 cm x 35.6 cm)"
+           data-medium="Colored pencils on paper"
+           data-tags="Featured"
+           data-category="Fragile Systems"
+           data-year="2026"
+           data-id="mediator" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Her Majesty Refuses to Be a Metaphor (July 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Fragile%20Systems/07-27-2026_art1v2.webp 300w, thumbnails/Fragile%20Systems/07-27-2026_art1v2.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Fragile Systems/07-27-2026_art1v2.jpg"
+           alt="Her Majesty Refuses to Be a Metaphor"
+           loading="lazy"
+           decoding="async"
+           width="600" height="826"
+           srcset="thumbnails-300/Fragile%20Systems/07-27-2026_art1v2.jpg 300w, thumbnails/Fragile%20Systems/07-27-2026_art1v2.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Fragile Systems/07-27-2026_art1v2.jpg"
+           data-full-src-webp="large/Fragile Systems/07-27-2026_art1v2.webp"
+           data-title="Her Majesty Refuses to Be a Metaphor"
+           data-date="July 2026"
+           data-date-created="7/26"
+           data-date-exact="July 27, 2026"
+           data-description="The flower arrives bearing sorrow, but rejects its assignment. It is too intelligent to symbolise just one thing, and it is far too beautiful to be explained in words."
+           data-dimensions="11 in x 14 in (27.9 cm x 35.6 cm)"
+           data-medium="Colored pencils on paper"
+           data-tags="Featured"
+           data-category="Fragile Systems"
+           data-year="2026"
+           data-id="her-majesty-refuses-to-be-a-metaphor" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Autopsy (July 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Fragile%20Systems/07-26-2026_art1v2.webp 300w, thumbnails/Fragile%20Systems/07-26-2026_art1v2.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Fragile Systems/07-26-2026_art1v2.jpg"
+           alt="Autopsy"
+           loading="lazy"
+           decoding="async"
+           width="600" height="826"
+           srcset="thumbnails-300/Fragile%20Systems/07-26-2026_art1v2.jpg 300w, thumbnails/Fragile%20Systems/07-26-2026_art1v2.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Fragile Systems/07-26-2026_art1v2.jpg"
+           data-full-src-webp="large/Fragile Systems/07-26-2026_art1v2.webp"
+           data-title="Autopsy"
+           data-date="July 2026"
+           data-date-created="7/26"
+           data-date-exact="July 26, 2026"
+           data-description="The bloom folds inwards around its dark spiral, preserving the exact point at which integration became irreversible."
+           data-dimensions="11 in x 14 in (27.9 cm x 35.6 cm)"
+           data-medium="Colored pencils on paper"
+           data-tags="Featured"
+           data-category="Fragile Systems"
+           data-year="2026"
+           data-id="autopsy" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Landscape Seen Through a Sleeping Flower (July 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Echoes%20of%20Distance/07-20-2026_evening_neon_bloom_framed_n5.webp 300w, thumbnails/Echoes%20of%20Distance/07-20-2026_evening_neon_bloom_framed_n5.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Echoes of Distance/07-20-2026_evening_neon_bloom_framed_n5.jpg"
+           alt="Landscape Seen Through a Sleeping Flower"
+           loading="lazy"
+           decoding="async"
+           width="600" height="481"
+           srcset="thumbnails-300/Echoes%20of%20Distance/07-20-2026_evening_neon_bloom_framed_n5.jpg 300w, thumbnails/Echoes%20of%20Distance/07-20-2026_evening_neon_bloom_framed_n5.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Echoes of Distance/07-20-2026_evening_neon_bloom_framed_n5.jpg"
+           data-full-src-webp="large/Echoes of Distance/07-20-2026_evening_neon_bloom_framed_n5.webp"
+           data-title="Landscape Seen Through a Sleeping Flower"
+           data-date="July 2026"
+           data-date-created="7/26"
+           data-date-exact="July 20, 2026"
+           data-description="A small country between waking and memory. The hills are real; the violet atmosphere is probably lying."
+           data-dimensions="7 in x 5 in (18 cm x 12.5 cm)"
+           data-medium="Watercolor on hot press watercolor paper"
+           data-tags="Featured"
+           data-category="Echoes of Distance"
+           data-year="2026"
+           data-id="landscape-seen-through-a-sleeping-flower" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="A Flower That Forgot It Was a Flower (June 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Fragile%20Systems/flower_for_sasha_and_yasya_june21_2026.webp 300w, thumbnails/Fragile%20Systems/flower_for_sasha_and_yasya_june21_2026.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Fragile Systems/flower_for_sasha_and_yasya_june21_2026.jpg"
+           alt="A Flower That Forgot It Was a Flower"
+           loading="lazy"
+           decoding="async"
+           width="600" height="766"
+           srcset="thumbnails-300/Fragile%20Systems/flower_for_sasha_and_yasya_june21_2026.jpg 300w, thumbnails/Fragile%20Systems/flower_for_sasha_and_yasya_june21_2026.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Fragile Systems/flower_for_sasha_and_yasya_june21_2026.jpg"
+           data-full-src-webp="large/Fragile Systems/flower_for_sasha_and_yasya_june21_2026.webp"
+           data-title="A Flower That Forgot It Was a Flower"
+           data-date="June 2026"
+           data-date-created="6/26"
+           data-date-exact="June 21, 2026"
+           data-description="This bloom seems to recall a different evolutionary history. Its petals unfold less like plant tissue and more like folded atmospheres, shells or wings, or fragments of an organism that is still deciding what it wants to become."
+           data-dimensions="11 in x 14 in (27.9 cm x 35.6 cm)"
+           data-medium="Colored pencils on beige paper"
+           data-tags="Featured"
+           data-category="Fragile Systems"
+           data-year="2026"
+           data-id="a-flower-that-forgot-it-was-a-flower" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Valley of Returning Light (June 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Echoes%20of%20Distance/06-20-2026%20-%202pm%20-%20v2.webp 300w, thumbnails/Echoes%20of%20Distance/06-20-2026%20-%202pm%20-%20v2.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Echoes of Distance/06-20-2026 - 2pm - v2.jpg"
+           alt="Valley of Returning Light"
+           loading="lazy"
+           decoding="async"
+           width="600" height="813"
+           srcset="thumbnails-300/Echoes%20of%20Distance/06-20-2026%20-%202pm%20-%20v2.jpg 300w, thumbnails/Echoes%20of%20Distance/06-20-2026%20-%202pm%20-%20v2.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Echoes of Distance/06-20-2026 - 2pm - v2.jpg"
+           data-full-src-webp="large/Echoes of Distance/06-20-2026 - 2pm - v2.webp"
+           data-title="Valley of Returning Light"
+           data-date="June 2026"
+           data-date-created="6/26"
+           data-date-exact="June 20, 2026"
+           data-description="Mist, water, and hills emerge from one another like layers of thought. The landscape suggests that clarity arrives gradually."
+           data-dimensions="5 in x 7.7 in (12.7 cm x 19.5 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Echoes of Distance"
+           data-year="2026"
+           data-id="valley-of-returning-light" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Studies of Dissolving Light #2 (May 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Watercolor%20Sketches/MyArtworks%26Sketches_n2.webp 300w, thumbnails/Watercolor%20Sketches/MyArtworks%26Sketches_n2.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Watercolor Sketches/MyArtworks&Sketches_n2.jpg"
+           alt="Studies of Dissolving Light #2"
+           loading="lazy"
+           decoding="async"
+           width="600" height="463"
+           srcset="thumbnails-300/Watercolor%20Sketches/MyArtworks%26Sketches_n2.jpg 300w, thumbnails/Watercolor%20Sketches/MyArtworks%26Sketches_n2.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Watercolor Sketches/MyArtworks&Sketches_n2.jpg"
+           data-full-src-webp="large/Watercolor Sketches/MyArtworks&Sketches_n2.webp"
+           data-title="Studies of Dissolving Light #2"
+           data-date="May 2026"
+           data-date-created="5/26"
+           data-date-exact="May 29, 2026"
+           data-description="Watercolor drafts about weather, silence, and disappearing horizons."
+           data-dimensions="6 in x 4 in (15.2 cm x 10.2 cm); 7 in x 5 in (18 cm x 12.5 cm)"
+           data-medium="Watercolor on watercolor paper"
+           data-tags="Featured"
+           data-category="Watercolor Sketches"
+           data-year="2026"
+           data-id="studies-of-dissolving-light-2" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Foggy Land (May 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Echoes%20of%20Distance/05-16-2026_neutral.webp 300w, thumbnails/Echoes%20of%20Distance/05-16-2026_neutral.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Echoes of Distance/05-16-2026_neutral.jpg"
+           alt="Foggy Land"
+           loading="lazy"
+           decoding="async"
+           width="600" height="880"
+           srcset="thumbnails-300/Echoes%20of%20Distance/05-16-2026_neutral.jpg 300w, thumbnails/Echoes%20of%20Distance/05-16-2026_neutral.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Echoes of Distance/05-16-2026_neutral.jpg"
+           data-full-src-webp="large/Echoes of Distance/05-16-2026_neutral.webp"
+           data-title="Foggy Land"
+           data-date="May 2026"
+           data-date-created="5/26"
+           data-date-exact="May 16, 2026"
+           data-description="There&#x27;s a hidden forest among the fog."
+           data-dimensions="7 in x 10 in (17.78 cm x 25.4 cm)"
+           data-medium="Watercolor on hot press watercolor paper"
+           data-tags="Featured"
+           data-category="Echoes of Distance"
+           data-year="2026"
+           data-id="foggy-land" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Fairytale (May 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Echoes%20of%20Distance/05-15-2025_aq1.webp 300w, thumbnails/Echoes%20of%20Distance/05-15-2025_aq1.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Echoes of Distance/05-15-2025_aq1.jpg"
+           alt="Fairytale"
+           loading="lazy"
+           decoding="async"
+           width="600" height="948"
+           srcset="thumbnails-300/Echoes%20of%20Distance/05-15-2025_aq1.jpg 300w, thumbnails/Echoes%20of%20Distance/05-15-2025_aq1.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Echoes of Distance/05-15-2025_aq1.jpg"
+           data-full-src-webp="large/Echoes of Distance/05-15-2025_aq1.webp"
+           data-title="Fairytale"
+           data-date="May 2026"
+           data-date-created="5/26"
+           data-date-exact="May 15, 2026"
+           data-description="Colours of cartoons from my childhood."
+           data-dimensions="6 in x 4 in (15.2 cm x 10.2 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Echoes of Distance"
+           data-year="2026"
+           data-id="fairytale" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Violet Roads (April 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Echoes%20of%20Distance/20260424-04-19-2026_7pm.webp 300w, thumbnails/Echoes%20of%20Distance/20260424-04-19-2026_7pm.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Echoes of Distance/20260424-04-19-2026_7pm.jpg"
+           alt="Violet Roads"
+           loading="lazy"
+           decoding="async"
+           width="600" height="414"
+           srcset="thumbnails-300/Echoes%20of%20Distance/20260424-04-19-2026_7pm.jpg 300w, thumbnails/Echoes%20of%20Distance/20260424-04-19-2026_7pm.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Echoes of Distance/20260424-04-19-2026_7pm.jpg"
+           data-full-src-webp="large/Echoes of Distance/20260424-04-19-2026_7pm.webp"
+           data-title="Violet Roads"
+           data-date="April 2026"
+           data-date-created="4/26"
+           data-date-exact="April 19, 2026"
+           data-description="Waves of purple motion beneath a storm-dark sky."
+           data-dimensions="6 in x 4 in (15.2 cm x 10.2 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Echoes of Distance"
+           data-year="2026"
+           data-id="violet-roads" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Landscapes (March 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Watercolor%20Sketches/20260407-03-25__03_31.webp 300w, thumbnails/Watercolor%20Sketches/20260407-03-25__03_31.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Watercolor Sketches/20260407-03-25__03_31.jpg"
+           alt="Landscapes"
+           loading="lazy"
+           decoding="async"
+           width="600" height="771"
+           srcset="thumbnails-300/Watercolor%20Sketches/20260407-03-25__03_31.jpg 300w, thumbnails/Watercolor%20Sketches/20260407-03-25__03_31.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Watercolor Sketches/20260407-03-25__03_31.jpg"
+           data-full-src-webp="large/Watercolor Sketches/20260407-03-25__03_31.webp"
+           data-title="Landscapes"
+           data-date="March 2026"
+           data-date-created="3/26"
+           data-date-exact="March 31, 2026"
+           data-description="It feels like the final lucid moment before night overtakes perception."
+           data-dimensions="6 in x 4 in (15.2 cm x 10.2 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Watercolor Sketches"
+           data-year="2026"
+           data-id="landscapes-march-2026" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="No One Is Looking and It Still Continues (March 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Echoes%20of%20Distance/20260328-IMG_3956.webp 300w, thumbnails/Echoes%20of%20Distance/20260328-IMG_3956.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Echoes of Distance/20260328-IMG_3956.jpg"
+           alt="No One Is Looking and It Still Continues"
+           loading="lazy"
+           decoding="async"
+           width="600" height="884"
+           srcset="thumbnails-300/Echoes%20of%20Distance/20260328-IMG_3956.jpg 300w, thumbnails/Echoes%20of%20Distance/20260328-IMG_3956.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Echoes of Distance/20260328-IMG_3956.jpg"
+           data-full-src-webp="large/Echoes of Distance/20260328-IMG_3956.webp"
+           data-title="No One Is Looking and It Still Continues"
+           data-date="March 2026"
+           data-date-created="3/26"
+           data-date-exact="March 26, 2026"
+           data-description="The scene persists without witness, quietly proving that attention was never required."
+           data-dimensions="5 in x 7.7 in (12.7 cm x 19.5 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Echoes of Distance"
+           data-year="2026"
+           data-id="no-one-is-looking-and-it-still-continues" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Unassigned Motion (March 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Nothing%20more%20than%20Human/20260328-IMG_3979.webp 300w, thumbnails/Nothing%20more%20than%20Human/20260328-IMG_3979.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Nothing more than Human/20260328-IMG_3979.jpg"
+           alt="Unassigned Motion"
+           loading="lazy"
+           decoding="async"
+           width="600" height="803"
+           srcset="thumbnails-300/Nothing%20more%20than%20Human/20260328-IMG_3979.jpg 300w, thumbnails/Nothing%20more%20than%20Human/20260328-IMG_3979.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Nothing more than Human/20260328-IMG_3979.jpg"
+           data-full-src-webp="large/Nothing more than Human/20260328-IMG_3979.webp"
+           data-title="Unassigned Motion"
+           data-date="March 2026"
+           data-date-created="3/26"
+           data-date-exact="March 22, 2026"
+           data-description="The body moves without belonging to itself, like a gesture borrowed and never returned."
+           data-dimensions="9 in x 12 in (23 cm x 30.5 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Nothing more than Human"
+           data-year="2026"
+           data-id="unassigned-motion" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="The Body as Waiting Room (February 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Nothing%20more%20than%20Human/seated_figure.webp 300w, thumbnails/Nothing%20more%20than%20Human/seated_figure.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Nothing more than Human/seated_figure.jpg"
+           alt="The Body as Waiting Room"
+           loading="lazy"
+           decoding="async"
+           width="600" height="875"
+           srcset="thumbnails-300/Nothing%20more%20than%20Human/seated_figure.jpg 300w, thumbnails/Nothing%20more%20than%20Human/seated_figure.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Nothing more than Human/seated_figure.jpg"
+           data-full-src-webp="large/Nothing more than Human/seated_figure.webp"
+           data-title="The Body as Waiting Room"
+           data-date="February 2026"
+           data-date-created="2/26"
+           data-date-exact="February 16, 2026"
+           data-description="She sits inside a sky that cannot decide its own weather."
+           data-dimensions="5 in x 7.7 in (12.7 cm x 19.5 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Nothing more than Human"
+           data-year="2026"
+           data-id="the-body-as-waiting-room" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Elsewhere, Practiced (February 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Imaginaerum/tulip_fields.webp 300w, thumbnails/Imaginaerum/tulip_fields.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Imaginaerum/tulip_fields.jpg"
+           alt="Elsewhere, Practiced"
+           loading="lazy"
+           decoding="async"
+           width="600" height="458"
+           srcset="thumbnails-300/Imaginaerum/tulip_fields.jpg 300w, thumbnails/Imaginaerum/tulip_fields.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Imaginaerum/tulip_fields.jpg"
+           data-full-src-webp="large/Imaginaerum/tulip_fields.webp"
+           data-title="Elsewhere, Practiced"
+           data-date="February 2026"
+           data-date-created="2/26"
+           data-date-exact="February 11, 2026"
+           data-description="She has rehearsed this departure so many times it became a landscape. The path is stone, the flowers are witness, and the direction is always away."
+           data-dimensions="12 in x 9 in (30.5 cm x 23 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Imaginaerum"
+           data-year="2026"
+           data-id="elsewhere-practiced" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Exit Strategy (February 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Nothing%20more%20than%20Human/diagonal.webp 300w, thumbnails/Nothing%20more%20than%20Human/diagonal.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Nothing more than Human/diagonal.jpg"
+           alt="Exit Strategy"
+           loading="lazy"
+           decoding="async"
+           width="600" height="801"
+           srcset="thumbnails-300/Nothing%20more%20than%20Human/diagonal.jpg 300w, thumbnails/Nothing%20more%20than%20Human/diagonal.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Nothing more than Human/diagonal.jpg"
+           data-full-src-webp="large/Nothing more than Human/diagonal.webp"
+           data-title="Exit Strategy"
+           data-date="February 2026"
+           data-date-created="2/26"
+           data-date-exact="February 11, 2026"
+           data-description="A woman assembled for departure holds the one thing she won&#x27;t leave behind."
+           data-dimensions="9 in x 12 in (23 cm x 30.5 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Nothing more than Human"
+           data-year="2026"
+           data-id="exit-strategy" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Plant Keeper (January 2026)">
+      <picture>
+        <source srcset="thumbnails-300/Nothing%20more%20than%20Human/plant_keeper_01062025.webp 300w, thumbnails/Nothing%20more%20than%20Human/plant_keeper_01062025.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Nothing more than Human/plant_keeper_01062025.jpg"
+           alt="Plant Keeper"
+           loading="lazy"
+           decoding="async"
+           width="600" height="750"
+           srcset="thumbnails-300/Nothing%20more%20than%20Human/plant_keeper_01062025.jpg 300w, thumbnails/Nothing%20more%20than%20Human/plant_keeper_01062025.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Nothing more than Human/plant_keeper_01062025.jpg"
+           data-full-src-webp="large/Nothing more than Human/plant_keeper_01062025.webp"
+           data-title="Plant Keeper"
+           data-date="January 2026"
+           data-date-created="1/26"
+           data-date-exact="January 6, 2026"
+           data-description="Care as act of faith — she nurtures what the world hasn&#x27;t promised to keep."
+           data-dimensions="11 in x 14 in (27.9 cm x 35.6 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Nothing more than Human"
+           data-year="2026"
+           data-id="plant-keeper" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Imaginary (December 2025)">
+      <picture>
+        <source srcset="thumbnails-300/Nothing%20more%20than%20Human/imaginary.webp 300w, thumbnails/Nothing%20more%20than%20Human/imaginary.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Nothing more than Human/imaginary.jpg"
+           alt="Imaginary"
+           loading="lazy"
+           decoding="async"
+           width="600" height="826"
+           srcset="thumbnails-300/Nothing%20more%20than%20Human/imaginary.jpg 300w, thumbnails/Nothing%20more%20than%20Human/imaginary.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Nothing more than Human/imaginary.jpg"
+           data-full-src-webp="large/Nothing more than Human/imaginary.webp"
+           data-title="Imaginary"
+           data-date="December 2025"
+           data-date-created="12/25"
+           data-date-exact="December 24, 2025"
+           data-description="The body stays, everything else escapes."
+           data-dimensions="11 in x 15 in (27.9 cm x 38.1 cm)"
+           data-medium="Watercolor on cold press watercolor paper"
+           data-tags="Featured"
+           data-category="Nothing more than Human"
+           data-year="2025"
+           data-id="imaginary" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Fragmented Composure (November 2025)">
+      <picture>
+        <source srcset="thumbnails-300/Nothing%20more%20than%20Human/sosurreal.webp 300w, thumbnails/Nothing%20more%20than%20Human/sosurreal.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Nothing more than Human/sosurreal.jpg"
+           alt="Fragmented Composure"
+           loading="lazy"
+           decoding="async"
+           width="600" height="451"
+           srcset="thumbnails-300/Nothing%20more%20than%20Human/sosurreal.jpg 300w, thumbnails/Nothing%20more%20than%20Human/sosurreal.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Nothing more than Human/sosurreal.jpg"
+           data-full-src-webp="large/Nothing more than Human/sosurreal.webp"
+           data-title="Fragmented Composure"
+           data-date="November 2025"
+           data-date-created="11/25"
+           data-date-exact=""
+           data-description="This is how you look when you try to hold yourself together and the edges don&#x27;t line up."
+           data-dimensions="12 in x 9 in (30.5 cm x 23 cm)"
+           data-medium="Colored pencils on Bristol paper"
+           data-tags="Featured"
+           data-category="Nothing more than Human"
+           data-year="2025"
+           data-id="fragmented-composure" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Cubism of Memory (October 2025)">
+      <picture>
+        <source srcset="thumbnails-300/Nothing%20more%20than%20Human/picasso.webp 300w, thumbnails/Nothing%20more%20than%20Human/picasso.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Nothing more than Human/picasso.jpg"
+           alt="Cubism of Memory"
+           loading="lazy"
+           decoding="async"
+           width="600" height="468"
+           srcset="thumbnails-300/Nothing%20more%20than%20Human/picasso.jpg 300w, thumbnails/Nothing%20more%20than%20Human/picasso.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Nothing more than Human/picasso.jpg"
+           data-full-src-webp="large/Nothing more than Human/picasso.webp"
+           data-title="Cubism of Memory"
+           data-date="October 2025"
+           data-date-created="10/25"
+           data-date-exact=""
+           data-description="Fragments of what I used to be, arranged to look deliberate."
+           data-dimensions="11.7 in x 8.3 in (29.7 cm x 21 cm)"
+           data-medium="Acrylic markers on beige cardstock"
+           data-tags="Featured"
+           data-category="Nothing more than Human"
+           data-year="2025"
+           data-id="cubism-of-memory" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Invasion (June 2025)">
+      <picture>
+        <source srcset="thumbnails-300/Abstract%20Forms/invasion.webp 300w, thumbnails/Abstract%20Forms/invasion.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Abstract Forms/invasion.jpg"
+           alt="Invasion"
+           loading="lazy"
+           decoding="async"
+           width="600" height="930"
+           srcset="thumbnails-300/Abstract%20Forms/invasion.jpg 300w, thumbnails/Abstract%20Forms/invasion.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Abstract Forms/invasion.jpg"
+           data-full-src-webp="large/Abstract Forms/invasion.webp"
+           data-title="Invasion"
+           data-date="June 2025"
+           data-date-created="6/25"
+           data-date-exact=""
+           data-description="Nervous system dreaming itself into color"
+           data-dimensions="5.8 in x 8.3 in (14.8 cm x 21 cm)"
+           data-medium="Water-based markers and ink liners on sketchbook paper"
+           data-tags="Featured"
+           data-category="Abstract Forms"
+           data-year="2025"
+           data-id="invasion" />
+      </picture>
+    </div>
+    <div class="art-block" data-hover-title="Snail No. 1 (July 2021)">
+      <picture>
+        <source srcset="thumbnails-300/Animalia%20Forms/snail2021.webp 300w, thumbnails/Animalia%20Forms/snail2021.webp 600w"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+                type="image/webp" />
+        <img src="thumbnails/Animalia Forms/snail2021.jpg"
+           alt="Snail No. 1"
+           loading="lazy"
+           decoding="async"
+           width="600" height="745"
+           srcset="thumbnails-300/Animalia%20Forms/snail2021.jpg 300w, thumbnails/Animalia%20Forms/snail2021.jpg 600w"
+           sizes="(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+           data-full-src="large/Animalia Forms/snail2021.jpg"
+           data-full-src-webp="large/Animalia Forms/snail2021.webp"
+           data-title="Snail No. 1"
+           data-date="July 2021"
+           data-date-created="7/21"
+           data-date-exact=""
+           data-description="The body as architecture of refusal."
+           data-dimensions="8.3 in x 11.7 in (21 cm x 29.7 cm)"
+           data-medium="Ink liners on paper"
+           data-tags="Featured"
+           data-category="Animalia Forms"
+           data-year="2021"
+           data-id="snail-no-1" />
+      </picture>
+    </div>
+    </div>
   </div>
 
   <div id="chronological-gallery" class="gallery-container active">
