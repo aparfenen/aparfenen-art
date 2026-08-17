@@ -638,7 +638,11 @@ for category in sorted_categories:
     gallery_html += f'    <h3 id="{anchor}" class="section-title">{category}</h3>\n'
     
     if category in category_descriptions:
-        gallery_html += f'    <p class="category-description">{category_descriptions[category]}</p>\n'
+        # Escaped like every other CSV-sourced field here: the descriptions are
+        # hand-edited in Numbers, so an "&" or a quote in one would otherwise
+        # emit broken markup.
+        desc = escape_html(category_descriptions[category])
+        gallery_html += f'    <p class="category-description">{desc}</p>\n'
     
     gallery_html += '    <div class="gallery">\n'
     for row in rows:
