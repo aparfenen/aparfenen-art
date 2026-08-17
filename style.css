@@ -3,6 +3,50 @@
   /* Light mode (default) */
   --color-mode: 'light';
 
+  /* ===== TYPE =====
+     Two voices, not three: the script is the logo and nothing else, and EB
+     Garamond is everything else - headings, prose, nav, buttons, filters,
+     captions, badges. The sans is gone. A single family carrying the whole
+     page is the point of the redesign: hierarchy comes from size, weight and
+     tracking inside one set of shapes rather than from a change of voice.
+
+     EB Garamond rather than Cormorant, and the difference is not cosmetic:
+     Cormorant is a display cut with a small x-height and hairline thins, so it
+     needed a ~1.2x size bump and weight 500 for running text before it held
+     together on a backlit screen. EB Garamond is a text face - larger
+     x-height, sturdier stems - so prose sits at its true size in a real 400,
+     and the weights below are used as an actual scale.
+
+     Three allowances remain, and they are what the tokens below are for:
+       - Regular (400) for running text, Medium (500) for headings and UI,
+         SemiBold (600) only where something must stop the eye. 700 exists in
+         the file but is deliberately unused.
+       - Small UI text (nav, buttons, labels) wants positive tracking; a serif
+         set at 13-15px closes up otherwise. Uppercase wants roughly double
+         that again, hence --tracking-caps.
+       - Large headings want the opposite: EB Garamond's display fit is loose,
+         so the biggest sizes take a touch of negative tracking. */
+  --font-script: 'Meie Script', cursive;
+  --font-serif: 'EB Garamond', Garamond, Georgia, 'Times New Roman', serif;
+  /* Both aliases survive from the two-family era and now point at the same
+     face, so every existing rule keeps working and nothing has to be renamed
+     to know which voice it wanted. */
+  --font-display: var(--font-serif);
+  --font-body: var(--font-serif);
+
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  /* Negative only at display sizes - see the note above */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+  --tracking-wider: 0.04em;
+  /* Uppercase only. Caps have no ascenders or descenders to separate them, so
+     the tracking that looks generous in lowercase looks cramped here. */
+  --tracking-caps: 0.08em;
+
   /* Height of the fixed nav bar. This is only a first-paint fallback: header.js
      measures the bar and overwrites it, because the bar grows a second row of
      links on narrow screens. Everything that must clear the bar reads it as
@@ -111,9 +155,13 @@
   --lb-chip-fg: #2b2823;
   --lb-chip-border: rgba(43, 40, 35, 0.14);
 
-  /* Share is the one solid button, so it inverts against the surround */
-  --lb-primary-bg: #2b2823;
-  --lb-primary-bg-hover: #45403a;
+  /* Share inverts against the surround, but at 68% rather than solid ink: at
+     full strength it was the darkest thing in the overlay and pulled the eye
+     down off the painting. Translucent it still reads as the one filled
+     control without becoming the loudest. Not lower than 0.68 - that is where
+     the pale label stops clearing 4.5:1 on the caption panel. */
+  --lb-primary-bg: rgba(43, 40, 35, 0.68);
+  --lb-primary-bg-hover: rgba(43, 40, 35, 0.88);
   --lb-primary-fg: #faf8f4;
 
   --lb-menu-bg: #fbf9f5;
@@ -212,8 +260,8 @@
   --lb-chip-fg: #fff;
   --lb-chip-border: rgba(255, 255, 255, 0.16);
 
-  --lb-primary-bg: #fbf9f5;
-  --lb-primary-bg-hover: rgba(255, 255, 255, 0.86);
+  --lb-primary-bg: rgba(251, 249, 245, 0.72);
+  --lb-primary-bg-hover: rgba(255, 255, 255, 0.92);
   --lb-primary-fg: #2b2823;
 
   --lb-menu-bg: rgba(28, 28, 28, 0.97);
@@ -264,9 +312,27 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
+  font-weight: var(--fw-regular);
+  /* Figures, decided once for the whole page instead of fought element by
+     element. Lining is the default because most numbers on this site are data
+     - years, counts, badges, the lightbox counter - and old-style figures set
+     "2026" with a small 0 and 2 against a full-height 6, which bounces in a
+     nine-pixel pill and reads as a typo in a filter list. The prose blocks
+     opt back into old-style below, where the numbers are part of a sentence
+     and the bouncing line is the whole charm. */
+  font-variant-numeric: lining-nums;
   background-color: var(--bg-primary);
 }
+
+/* Type utilities. Small on purpose - they exist so a one-off in the markup can
+   reach the same scale the stylesheet uses, not as a system to build in. */
+.italic { font-style: italic; }
+.medium { font-weight: var(--fw-medium); }
+.semibold { font-weight: var(--fw-semibold); }
+
+.tracking-wide { letter-spacing: var(--tracking-wide); }
+.tracking-wider { letter-spacing: var(--tracking-wider); }
 
 /* Site header wrapper — centers h1 vertically in its whitespace area */
 .site-header {
@@ -279,7 +345,7 @@ body {
 /* Headings */
 h1 {
   text-align: center;
-  font-family: 'Meie Script', cursive;
+  font-family: var(--font-script);
   font-weight: 400;
   font-size: 6em;
   letter-spacing: 0.01em;
@@ -292,6 +358,28 @@ h1 {
 
 [data-theme="dark"] h1 {
   color: #cfc8bc;
+}
+
+/* Light text on a dark ground always reads a step lighter than the same text
+   dark-on-light - the ground eats into the stems. EB Garamond needs less of
+   this correction than Cormorant did, being a text face rather than a
+   high-contrast display cut, but it still needs it. One step of weight on the
+   headings and the prose; the variable font supplies it at no extra
+   download. */
+[data-theme="dark"] h2.section-title,
+[data-theme="dark"] h3.section-title {
+  font-weight: var(--fw-semibold);
+}
+
+[data-theme="dark"] .theme-section.is-collapsible .section-title {
+  font-weight: var(--fw-medium);
+}
+
+[data-theme="dark"] .statement,
+[data-theme="dark"] .commissions,
+[data-theme="dark"] .gallery-intro,
+[data-theme="dark"] .category-description {
+  font-weight: var(--fw-medium);
 }
 
 @media (max-width: 768px) {
@@ -309,11 +397,20 @@ h1 {
    smaller than the categories nested under it. */
 h2.section-title {
   text-align: center;
-  font-size: 2.35em;
-  /* 600, not 700: at this size the weight was doing work the size already
-     does, and it read heavier than anything else on a page of thin rules and
-     light neutrals. The step down to the category headings is kept. */
-  font-weight: 600;
+  font-family: var(--font-display);
+  /* 2.6em = 42px, the bottom of the 42-64px band these headings are drawn
+     from. Down from the 2.7em Cormorant needed: EB Garamond's larger x-height
+     holds the same optical size at a smaller nominal one. */
+  font-size: 2.6em;
+  /* Medium, not SemiBold: at 42px the size is already doing the work, and on a
+     page of thin rules and light neutrals a heavier heading was the loudest
+     thing on it. The step down to the category headings is kept. */
+  font-weight: var(--fw-medium);
+  /* Negative, where the small UI text below takes positive: EB Garamond's fit
+     opens up at display sizes, so the biggest words on the page need closing
+     rather than spacing. */
+  letter-spacing: var(--tracking-tight);
+  line-height: 1.2;
   margin-top: 36px;
   margin-bottom: 0.6em;
   color: var(--text-primary);
@@ -350,8 +447,14 @@ h2#statement.section-title {
 h3.section-title {
   margin-top: 20px;
   margin-bottom: 0.4em;
-  font-size: 1.5em;
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-size: 1.75em;
+  font-weight: var(--fw-medium);
+  /* Year headings are short strings of figures; they take more tracking than
+     the word-shaped headings before they stop looking cramped. Figures come
+     out lining from the body rule, which is what these want - they are
+     navigation markers and have to sit on one line. */
+  letter-spacing: var(--tracking-wider);
   text-align: center;
   color: var(--text-tertiary);
   scroll-margin-top: calc(var(--nav-h) + 16px);
@@ -364,13 +467,20 @@ h3.section-title {
   margin-bottom: 0.4em;
 }
 
-/* Category description */
+/* Category description - short poetic blurbs, so italic, which is the reason
+   EB Garamond is here at all: its italic is a genuinely separate design rather
+   than a slanted roman. Regular weight, not the 300 Cormorant was set at (the
+   family starts at 400 anyway); these sit directly under a heading in the same
+   face and are held back by colour and size instead of by weight. */
 .category-description {
   max-width: 800px;
   margin: 0 auto 1.9em auto;
   text-align: center;
-  font-size: 1.05em;
+  font-family: var(--font-display);
+  font-size: 1.3em;
+  font-weight: var(--fw-regular);
   line-height: 1.6;
+  letter-spacing: var(--tracking-normal);
   color: var(--text-quaternary);
   font-style: italic;
   padding: 0 20px;
@@ -380,11 +490,19 @@ h3.section-title {
    edge-to-edge rhythm; the larger size and leading are what carry readability
    at that measure. */
 .statement {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-display);
   font-style: normal;
-  font-weight: 400;
-  font-size: 1.12em;
-  line-height: 1.75;
+  /* A true 400. Cormorant needed 500 for running text; EB Garamond does not,
+     and forcing it would cost the page its lightest voice. */
+  font-weight: var(--fw-regular);
+  /* 1.2em = 19px, down from the 1.35em Cormorant's small x-height demanded.
+     Nominally above the 17-18px the scale calls for, because this block still
+     runs the full width of the gallery - see the note on the measure below. */
+  font-size: 1.2em;
+  line-height: 1.7;
+  /* The one place old-style figures belong: dates and sizes inside a sentence,
+     where the varying heights are the texture of the face rather than noise. */
+  font-variant-numeric: oldstyle-nums;
   color: var(--text-primary);
   max-width: var(--prose-max);
   margin: 12px auto;
@@ -406,21 +524,23 @@ h3.section-title {
   margin-bottom: 0;
 }
 
-@media (max-width: 768px) {
-  .statement,
-  .commissions {
-    font-size: 1.05em;
-    padding: 18px 16px;
-  }
+/* The opening paragraph is the thesis of the whole page rather than part of
+   the essay under it, so it is set one size up. Same family, same weight and
+   same colour as the rest of the block - the size is the only difference.
+   1.25em of a 1.2em parent lands it at 24px. */
+.statement p:first-of-type {
+  font-size: 1.25em;
+  line-height: 1.5;
 }
 
 /* COMMISSIONS - same measure and rhythm as the statement above it */
 .commissions {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: var(--font-display);
   font-style: normal;
-  font-weight: 400;
-  font-size: 1.12em;
-  line-height: 1.75;
+  font-weight: var(--fw-regular);
+  font-size: 1.2em;
+  line-height: 1.7;
+  font-variant-numeric: oldstyle-nums;
   color: var(--text-primary);
   max-width: var(--prose-max);
   margin: 12px auto;
@@ -431,9 +551,15 @@ h3.section-title {
   background-color: transparent;
 }
 
-.commissions a {
+.commissions a,
+.statement a {
   color: var(--accent-primary);
   text-decoration: none;
+  /* The prose blocks turn old-style figures on, which is wrong for a string
+     someone has to copy: the old-style zero sits at x-height, so
+     ann.parfenen2018@ came out looking like ann.parfenen2o18@. Links step back
+     out to lining. */
+  font-variant-numeric: lining-nums;
 }
 
 .commissions a:hover {
@@ -448,13 +574,47 @@ h3.section-title {
   margin-bottom: 0;
 }
 
-/* Gallery intro */
+/* Must come after BOTH .statement and .commissions, not between them. It used
+   to sit above the .commissions rule, and at equal specificity the later plain
+   rule won - so on a phone the statement shrank and its padding tightened
+   while commissions kept the full desktop size, which is why the two blocks
+   never quite matched below 768px. */
+@media (max-width: 768px) {
+  .statement,
+  .commissions {
+    /* 18px. The measure is a phone's width here rather than the gallery's, so
+       this is the one place the prose sits at its true scale size. */
+    font-size: 1.12em;
+    padding: 18px 16px;
+  }
+
+  .statement p:first-of-type {
+    font-size: 1.22em;
+  }
+}
+
+/* Gallery intro - the tagline under the Gallery heading. Italic, and now that
+   the whole page is one family that is the only thing marking it as a spoken
+   line rather than instructions. It is enough: EB Garamond's italic is a
+   different alphabet, not a slant. */
 .gallery-intro {
   max-width: 1200px;
   margin: 6px auto 8px auto;
   text-align: center;
-  font-size: 1.15em;
+  font-family: var(--font-display);
+  /* A step above the prose, the way a pull quote sits above body copy */
+  font-size: 1.45em;
+  font-weight: var(--fw-regular);
+  font-style: italic;
+  line-height: 1.5;
+  letter-spacing: var(--tracking-normal);
   color: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+  .gallery-intro {
+    font-size: 1.3em;
+  }
 }
 
 /* Gallery view controls */
@@ -478,8 +638,19 @@ h3.section-title {
   border: 2px solid var(--border-medium);
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1em;
-  font-weight: 600;
+  /* A <button> does not inherit the page font - without this these two were
+     the only controls on the site set in the UA default (Arial/Helvetica). */
+  font-family: inherit;
+  /* The UI voice: small, uppercase, Medium, widely tracked. Caps are what let
+     a serif work at 14px in a control - the shapes stop competing with the
+     prose and read as a label instead. */
+  font-size: 0.875em;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  /* Two words, and "BY CATEGORY" broke across two lines inside its own pill as
+     soon as the label grew by the width caps and tracking cost it. */
+  white-space: nowrap;
   color: var(--text-tertiary);
   transition: all 0.2s ease;
 }
@@ -552,8 +723,10 @@ h3.section-title {
   color: white;
   padding: 8px 12px;
   border-radius: 8px;
-  font-size: 0.85em;
-  font-weight: 500;
+  /* A step up from the 0.85em the sans sat at: white serif on a near-black
+     chip is the thinnest text on the page and the first thing to disappear. */
+  font-size: 0.95em;
+  font-weight: var(--fw-medium);
   line-height: 1.3;
   text-align: center;
   opacity: 0;
@@ -650,10 +823,16 @@ h3.section-title {
   margin-top: 14px;
   /* Air between the heading and the first row of works */
   margin-bottom: 1.35em;
-  font-size: 1.8em;
-  font-weight: 500;
+  font-size: 2em;
+  /* Regular, where the year headings in the other view are Medium at a smaller
+     size. Not an inconsistency: those are four figures and need the weight to
+     register, these are long word-strings and at 32px they carry on size
+     alone. At Medium they out-weighed the 42px section heading above them. */
+  font-weight: var(--fw-regular);
   color: var(--text-primary);
-  letter-spacing: -0.01em;
+  /* Clearly below the section headings above them, which take the tight
+     tracking; at 32px these are still large enough to want no help. */
+  letter-spacing: var(--tracking-normal);
 }
 
 /* Just a rule under the category name - no card, no rounding, no shadow. */
@@ -722,8 +901,15 @@ h3.section-title {
 
 .category-count {
   flex-shrink: 0;
-  font-size: 0.62em;
-  font-weight: 600;
+  font-family: var(--font-body);
+  /* Held to ~18px against a 32px heading */
+  font-size: 0.56em;
+  font-weight: var(--fw-medium);
+  /* Lining is already the page default, but a badge is exactly the case that
+     breaks without it, so it is stated where it matters. Tabular on top, so a
+     count going 99 -> 100 does not resize its own pill. */
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: var(--tracking-normal);
   line-height: 1;
   padding: 4px 9px;
   border-radius: 10px;
@@ -796,8 +982,10 @@ h3.section-title {
   border-radius: 20px;
   cursor: pointer;
   font-family: inherit;
-  font-size: 0.9em;
-  font-weight: 500;
+  font-size: 0.82em;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
   color: var(--text-muted);
   transition: background-color 0.16s ease, color 0.16s ease, border-color 0.16s ease;
 }
@@ -943,30 +1131,35 @@ body.scroll-locked {
   opacity: 0.7;
 }
 
-/* Counter - FIXED: now in top left corner above image */
-/* Was 0.8em at weight 100 over a 16%-opaque grey - effectively invisible on a
-   light painting. Now a solid pill with tabular figures, so "7 / 73" keeps a
-   fixed width instead of twitching as the digits change. */
+/* Counter. It used to be a fixed pill floating over the top-left of the
+   painting, which meant a chip sitting on the artwork at all times. It now
+   lives in the actions row at the foot of the caption, holding the left end of
+   the line that ends in Download and Share.
+
+   Same pill as Share - same height, radius and type - but lighter: the quiet
+   control fill rather than the filled one, and muted text. Share is the thing
+   you press; this is the thing you read.
+
+   Figures are the reason for the tabular setting: "7 / 73" keeps a fixed width
+   instead of twitching as the digits change, which matters more now that the
+   pill anchors the left edge of a row. */
 .lightbox-counter {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  background: var(--lb-chip-bg);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--lb-chip-border);
-  color: var(--lb-chip-fg);
-  padding: 8px 15px;
-  border-radius: 999px;
-  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  font-size: 1.05em;
-  font-weight: 600;
-  z-index: 15;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 8px rgba(155, 154, 154, 0.174);
-  margin-bottom: 2%;
+  display: inline-flex;
+  align-items: center;
+  /* Holds the left end while download and Share stay grouped at the right, on
+     the row's own gap - space-between would have pushed those two apart too. */
+  margin-right: auto;
+  height: 34px;
+  padding: 0 15px;
+  box-sizing: border-box;
+  background: var(--lb-control-bg);
+  color: var(--lb-text-muted);
+  border-radius: 9px;
+  font-family: inherit;
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: var(--tracking-wider);
+  font-size: 0.76em;
+  font-weight: var(--fw-medium);
 }
 
 
@@ -1074,17 +1267,18 @@ body.scroll-locked {
 }
 
 .lightbox-share {
-  padding: 0 18px;
-  height: 38px;
+  padding: 0 15px;
+  height: 34px;
   background: var(--lb-primary-bg);
   color: var(--lb-primary-fg);
   border: none;
-  border-radius: 10px;
+  border-radius: 9px;
   cursor: pointer;
   font-family: inherit;
-  font-size: 0.92em;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-size: 0.76em;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
   transition: background-color 0.16s ease, transform 0.12s ease;
 }
 
@@ -1167,7 +1361,7 @@ body.scroll-locked {
   border: 1px solid var(--lb-chip-border);
   color: var(--lb-chip-fg);
   font-size: 0.92em;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   white-space: nowrap;
   opacity: 0;
   pointer-events: none;
@@ -1179,13 +1373,15 @@ body.scroll-locked {
   transform: translate(-50%, 0);
 }
 
+/* Matched to Share's new height - the two sit shoulder to shoulder, and a 4px
+   step between adjacent controls reads as a mistake rather than a hierarchy. */
 .lightbox-download {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
   color: var(--lb-control-fg);
   text-decoration: none;
   transition: color 0.16s ease, background-color 0.16s ease;
@@ -1213,9 +1409,15 @@ body.scroll-locked {
 
 /* One rhythm down the caption instead of the old 4px/2px/0 mixture with
    stray right margins */
+/* The caption is now a single family top to bottom, so the hierarchy inside it
+   is carried by size, weight and style alone: the title Medium and large, the
+   date and the medium line italic, the description Regular. */
 .lightbox-title {
+  font-family: var(--font-display);
   font-size: 1.35em;
-  font-weight: 600;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1.25;
   margin: 0 0 7px 0;
   color: var(--lb-text);
 }
@@ -1264,13 +1466,7 @@ body.scroll-locked {
     margin-top: 16px;
   }
   
-  /* Reduce counter size on mobile, keep close button visible */
-  .lightbox-counter {
-    top: 15px;
-    left: 15px;
-    padding: 6px 12px;
-    font-size: 0.85em;
-  }
+  /* Keep close button visible */
 
   .lightbox-close {
     top: 15px;
@@ -1283,15 +1479,14 @@ body.scroll-locked {
 
 @media (max-width: 768px) {
 
+  /* The counter used to need its own dark chip here, because it floated over
+     the painting and a pale pill vanished on a bright one. Inside the caption
+     row it sits on a known surface and reads from the same tokens as every
+     other control, in both themes. */
   .lightbox-counter {
-    top: 12px;
-    left: 12px;
-    padding: 6px 12px;
-    font-size: 0.8em;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    color: white;
+    height: 26px;
+    padding: 0 10px;
+    font-size: 0.72em;
   }
 
   .lightbox-close {
@@ -1354,15 +1549,15 @@ body.scroll-locked {
   }
 
   .lightbox-share {
-    height: 28px;
-    padding: 0 11px;
-    font-size: 0.78em;
+    height: 26px;
+    padding: 0 10px;
+    font-size: 0.72em;
     border-radius: 7px;
   }
 
   .lightbox-download {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 7px;
   }
 
@@ -1409,16 +1604,18 @@ body.scroll-locked {
   
   
   .lightbox-counter {
-    font-size: 0.85em;
-    padding: 0;
+    height: 26px;
+    padding: 0 10px;
+    font-size: 0.72em;
   }
 }
 
 
 @media (max-width: 768px) {
   .view-btn {
-    padding: 10px 20px;
-    font-size: 0.9em;
+    padding: 10px 14px;
+    font-size: 0.78em;
+    letter-spacing: var(--tracking-wider);
   }
 }
 
@@ -1437,16 +1634,18 @@ footer.contact-info {
   max-width: var(--prose-max);
   margin: 36px auto;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   font-size: 1.1em;
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
 
 footer.contact-info h2 {
-  font-size: 1.5em;
+  font-family: var(--font-display);
+  font-size: 1.75em;
   margin-bottom: 20px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-normal);
 }
 
 /* CONTACT INFO */
@@ -1468,7 +1667,8 @@ footer.contact-info h2 {
   gap: 8px;
   text-decoration: none;
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-wide);
   transition: color 0.2s ease;
 }
 
@@ -1570,15 +1770,20 @@ nav.main-nav li {
   position: relative;
 }
 
+/* The bar is the clearest statement of the UI voice: 14px, Medium, uppercase,
+   widely tracked. Lowercase serif at this size in a translucent bar over
+   artwork turns to mush; caps hold their shape, and the tracking is what makes
+   them read as quiet rather than shouted. */
 nav.main-nav a {
   display: inline-block;
   text-decoration: none;
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   padding: 7px 10px;
   border-radius: 8px;
-  font-size: 0.98em;
-  letter-spacing: 0.01em;
+  font-size: 0.875em;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
   white-space: nowrap;
   transition: color 0.18s ease, background-color 0.18s ease;
 }
@@ -1716,8 +1921,11 @@ nav.main-nav .has-dropdown > a::after {
   box-sizing: border-box;
   box-shadow: 0 0 0 2px var(--nav-bg);
   font-family: inherit;
-  font-size: 10px;
-  font-weight: 700;
+  /* 11px where the sans managed 10px, and lining figures: an old-style 3 in an
+     18px disc drops below the circle's centre and reads as a smudge. */
+  font-size: 11px;
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: lining-nums tabular-nums;
   line-height: 1;
   pointer-events: none;
 }
@@ -1785,12 +1993,18 @@ nav.main-nav .sub-menu .dropdown-divider {
   background: var(--border-medium);
 }
 
+/* Back to sentence case inside the menu. The bar holds five short words and
+   can carry caps; this list holds every category name on the site, and
+   "ECHOES OF DISTANCE" set in tracked caps is a headline, not a menu item. */
 nav.main-nav .sub-menu a {
   display: block;
   padding: 10px 18px;
   color: var(--text-primary);
   white-space: nowrap;
-  font-size: 0.95em;
+  font-size: 1em;
+  font-weight: var(--fw-regular);
+  text-transform: none;
+  letter-spacing: var(--tracking-normal);
   transition: background-color 0.2s ease;
 }
 
@@ -1813,7 +2027,7 @@ nav.main-nav .sub-menu a {
   justify-content: center;
   gap: 6px;
   margin-bottom: 30px;
-  font-size: 0.85em;
+  font-size: 0.95em;
   color: var(--text-muted);
 }
 
@@ -1849,16 +2063,19 @@ nav.main-nav .sub-menu a {
 
 .stat-number {
   font-size: 2.5em;
-  font-weight: 700;
+  font-weight: var(--fw-regular);
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--text-secondary);
   line-height: 1.2;
 }
 
 .stat-label {
-  font-size: 0.95em;
+  font-size: 0.85em;
   color: var(--text-muted);
   margin-top: 8px;
-  font-weight: 500;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
 }
 
 #activity-chart {
@@ -1893,9 +2110,9 @@ nav.main-nav .sub-menu a {
   align-items: center;
   justify-content: flex-end;
   padding-right: 8px;
-  font-size: 0.85em;
+  font-size: 0.9em;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
   line-height: 1;
 }
 
@@ -1957,9 +2174,10 @@ nav.main-nav .sub-menu a {
 .year-label-item {
   width: 18px;
   text-align: center;
-  font-size: 0.8em;
+  font-size: 0.85em;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
+  font-variant-numeric: lining-nums tabular-nums;
   transform: rotate(-45deg);
   transform-origin: center;
   white-space: nowrap;
@@ -1972,7 +2190,7 @@ nav.main-nav .sub-menu a {
   color: white;
   padding: 10px 14px;
   border-radius: 6px;
-  font-size: 0.85em;
+  font-size: 0.95em;
   pointer-events: none;
   z-index: 1000;
   display: none;
@@ -2063,13 +2281,22 @@ nav.main-nav .sub-menu a {
     padding: var(--nav-pad-top) 8px var(--nav-pad-bottom);
   }
 
+  /* This scales the links as a group and .nav-links a takes its own 0.875em on
+     top of it, so the two multiply: 0.86 lands the caps at 12px.
+
+     Uppercase and tracking cost width - together about a quarter more than the
+     same words in tracked lowercase - and five links plus a caret do not have
+     a quarter to spare on a 390px screen: at the desktop settings the bar grew
+     a third row. So the phone keeps the caps and pays for them here, in size,
+     tracking and the gaps between the links. */
   nav.main-nav ul.nav-links {
     font-size: 0.86em;
-    gap: 0 clamp(4px, 1.5vw, 14px);
+    gap: 0 clamp(3px, 1.2vw, 10px);
   }
 
   nav.main-nav a {
-    padding: 5px 6px;
+    padding: 5px 4px;
+    letter-spacing: var(--tracking-wider);
   }
 
   .nav-filter-btn,
@@ -2103,11 +2330,11 @@ nav.main-nav .sub-menu a {
   /* The enlarged headings have to come back down on a phone, or a two-word
      category name eats three lines. The step between the two is kept. */
   h2.section-title {
-    font-size: 1.7em;
+    font-size: 1.95em;
   }
 
   .theme-section.is-collapsible .section-title {
-    font-size: 1.4em;
+    font-size: 1.6em;
   }
 
   .theme-section + .theme-section {
@@ -2181,15 +2408,15 @@ nav.main-nav .sub-menu a {
   }
 
   .lightbox-share {
-    height: 28px;
-    padding: 0 11px;
-    font-size: 0.78em;
+    height: 26px;
+    padding: 0 10px;
+    font-size: 0.72em;
     border-radius: 7px;
   }
 
   .lightbox-download {
-    width: 28px;
-    height: 28px;
+    width: 26px;
+    height: 26px;
     border-radius: 7px;
   }
 
@@ -2282,8 +2509,9 @@ nav.main-nav .sub-menu a {
   }
 
   .lightbox-counter {
-    font-size: 0.9em;
-    padding: 6px 12px;
+    height: 26px;
+    padding: 0 10px;
+    font-size: 0.72em;
   }
 }
 
@@ -2408,16 +2636,18 @@ footer.contact-info {
   max-width: var(--prose-max);
   margin: 36px auto;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-body);
   font-size: 1.1em;
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
 
 footer.contact-info h2 {
-  font-size: 1.5em;
+  font-family: var(--font-display);
+  font-size: 1.75em;
   margin-bottom: 20px;
   font-style: normal;
-  font-weight: 600;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-normal);
 }
 
 /* CONTACT INFO */
@@ -2439,7 +2669,8 @@ footer.contact-info h2 {
   gap: 8px;
   text-decoration: none;
   color: var(--text-primary);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-wide);
   transition: color 0.2s ease;
 }
 
@@ -2472,9 +2703,11 @@ footer.contact-info h2 {
 .activity-container h3 {
   text-align: center;
   margin-bottom: 24px;
-  font-size: 1.3em;
+  font-family: var(--font-display);
+  font-size: 1.5em;
   color: var(--text-tertiary);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-normal);
 }
 
 /* Legend */
@@ -2484,7 +2717,7 @@ footer.contact-info h2 {
   justify-content: center;
   gap: 4px;
   margin-bottom: 32px;
-  font-size: 0.85em;
+  font-size: 0.95em;
   color: var(--text-muted);
 }
 
@@ -2546,18 +2779,25 @@ footer.contact-info h2 {
   background: var(--bg-hover-strong);
 }
 
+/* A big figure in a Garamond does not need weight to carry - it is already the
+   largest thing in its card, and Bold in this face reads as a different tone
+   of voice rather than as emphasis. Regular, with lining tabular figures so
+   the three cards line up with each other. */
 .stat-number {
   font-size: 2em;
-  font-weight: 700;
+  font-weight: var(--fw-regular);
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--text-secondary);
   margin-bottom: 8px;
   line-height: 1;
 }
 
 .stat-label {
-  font-size: 0.9em;
+  font-size: 0.8em;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
 }
 
 /* Activity timeline - compact year-based visualization */
@@ -2584,7 +2824,8 @@ footer.contact-info h2 {
 }
 
 .year-label {
-  font-weight: 600;
+  font-weight: var(--fw-medium);
+  font-variant-numeric: lining-nums tabular-nums;
   font-size: 0.95em;
   color: var(--text-tertiary);
   min-width: 50px;
@@ -2620,14 +2861,19 @@ footer.contact-info h2 {
   z-index: 10;
 }
 
+/* Three characters and two digits inside a 36px square, so this is the one
+   place on the page that still needs weight rather than size to stay legible -
+   but SemiBold, not Bold; Bold in this face fills the square. */
 .month-abbr {
-  font-weight: 600;
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--tracking-wide);
   color: var(--text-muted);
   line-height: 1;
 }
 
 .month-count {
-  font-weight: 700;
+  font-weight: var(--fw-semibold);
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--text-secondary);
   font-size: 0.9em;
   line-height: 1;
@@ -2695,8 +2941,8 @@ footer.contact-info h2 {
   color: white;
   padding: 8px 12px;
   border-radius: 6px;
-  font-size: 0.85em;
-  font-weight: 500;
+  font-size: 0.95em;
+  font-weight: var(--fw-medium);
   pointer-events: none;
   z-index: 1000;
   white-space: nowrap;
@@ -2717,8 +2963,10 @@ footer.contact-info h2 {
   gap: 8px;
   transition: all 0.2s ease;
   margin-bottom: 20px;
-  font-size: 0.9em;
-  font-weight: 500;
+  font-size: 0.85em;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
   color: var(--text-secondary);
 }
 
@@ -2743,8 +2991,8 @@ footer.contact-info h2 {
 }
 
 .toggle-text {
-  font-size: 0.9em;
-  font-weight: 500;
+  font-size: 1em;
+  font-weight: var(--fw-medium);
 }
 
 /* В светлом режиме показываем луну (клик переключит на темный) */
@@ -2875,7 +3123,7 @@ footer.contact-info h2 {
   }
   
   .activity-container h3 {
-    font-size: 1.2em;
+    font-size: 1.35em;
     margin-bottom: 20px;
   }
   

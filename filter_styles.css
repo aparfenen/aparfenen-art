@@ -43,7 +43,8 @@
 
 .filter-header h2 {
   font-size: 1.4em;
-  font-weight: 600;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-normal);
   margin: 0;
   color: var(--text-primary);
 }
@@ -84,7 +85,8 @@
 #artwork-counter {
   font-size: 0.9em;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: var(--fw-medium);
+  font-variant-numeric: lining-nums tabular-nums;
   background: var(--accent-light);
   padding: 4px 12px;
   border-radius: 12px;
@@ -100,7 +102,11 @@
   padding: 10px 14px;
   border: 1px solid var(--border-strong);
   border-radius: 6px;
-  font-size: 0.95em;
+  /* Form controls do not inherit the page font. Without this the search field
+     and the two buttons below were the only sidebar text set in the UA default
+     (Arial/Helvetica) while everything around them was the serif. */
+  font-family: inherit;
+  font-size: 1em;
   box-sizing: border-box;
   transition: all 0.2s ease;
 }
@@ -122,8 +128,11 @@
   border-radius: 6px;
   padding: 8px 16px;
   cursor: pointer;
-  font-size: 0.9em;
-  font-weight: 500;
+  font-family: inherit;
+  font-size: 0.82em;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
   color: var(--text-secondary);
   transition: all 0.2s ease;
   margin-bottom: 20px;
@@ -152,9 +161,14 @@
   margin-bottom: 24px;
 }
 
+/* Category / Year / Tags. Section labels rather than headings, so they take the
+   UI voice - small caps-and-tracking - and let the checkbox list under them be
+   the readable part of the sidebar. */
 .filter-section-header {
-  font-size: 1.05em;
-  font-weight: 600;
+  font-size: 0.85em;
+  font-weight: var(--fw-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
   margin-bottom: 12px;
   color: var(--text-secondary);
   cursor: pointer;
@@ -237,10 +251,10 @@
 }
 
 .filter-label {
-  font-size: 0.95em;
+  font-size: 1.02em;
   color: var(--text-tertiary);
   cursor: pointer;
-  line-height: 1.3;
+  line-height: 1.35;
 }
 
 .filter-option:hover .filter-label {
@@ -328,7 +342,8 @@
   text-align: center;
   padding: 60px 20px;
   color: var(--text-dimmed);
-  font-size: 1.1em;
+  font-size: 1.25em;
+  font-style: italic;
   grid-column: 1 / -1;
 }
 

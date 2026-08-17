@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Meie+Script&display=swap" rel="stylesheet">
+  <!-- Two families in one request, so the head still costs a single round trip.
+       Meie Script is the logo and nothing else; EB Garamond is the whole rest
+       of the site - headings, prose, nav, buttons, captions.
+
+       The weight is asked for as a RANGE (400..700), not as a list of static
+       cuts: Google serves EB Garamond as a variable font, so a range is two
+       files per subset (roman + italic) covering every weight in between,
+       where four separate static weights would have been four files. That is
+       what makes 400/500/600 affordable as a real hierarchy instead of a
+       compromise. -->
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Meie+Script&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="filter_styles.css" />
   <link rel="icon" href="favicon.ico" sizes="any">
@@ -19246,7 +19256,11 @@ She is not here, she fades into shadow. Yet I stay, holding her place."
 <h2 id="activity" class="section-title">Activity</h2>
 
 <div class="activity-container">
-  <h3 style="text-align: center; margin-bottom: 24px; font-size: 1.3em; color: #444;">Creative Activity</h3>
+  <!-- font-size dropped from the inline rule so .activity-container h3 can set
+       it for the serif; the rest is left exactly as it was. NOTE: the inline
+       color is a hardcoded #444 that overrides the stylesheet's themed value,
+       so this heading stays dark grey in dark mode. Pre-existing, untouched. -->
+  <h3 style="text-align: center; margin-bottom: 24px; color: #444;">Creative Activity</h3>
   
   <!-- Легенда -->
   <div class="activity-legend">
@@ -19307,9 +19321,6 @@ She is not here, she fades into shadow. Yet I stay, holding her place."
     <!-- Close button -->
     <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">×</button>
     
-    <!-- Counter - moved above image -->
-    <div class="lightbox-counter"></div>
-
     <!-- Confirmation for the Share button; role=status so it is announced -->
     <div class="lightbox-toast" role="status" aria-live="polite"></div>
 
@@ -19328,9 +19339,11 @@ She is not here, she fades into shadow. Yet I stay, holding her place."
       <p class="lightbox-description"></p>
       <p class="lightbox-metadata"></p>
 
-      <!-- Sits past the caption's closing rule, quiet and to the right. href and
-           the filename are filled in per artwork by updateLightboxMetadata(). -->
+      <!-- Sits past the caption's closing rule. The counter holds the left end
+           of the row, download and Share the right. href and the filename are
+           filled in per artwork by updateLightboxMetadata(). -->
       <div class="lightbox-actions">
+        <div class="lightbox-counter"></div>
         <a class="lightbox-download" href="#" download
            title="Download image" aria-label="Download image">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
