@@ -25,6 +25,13 @@ from pathlib import Path
 
 IMG_DIR = "img"
 
+# "Featured" is a curated overlay, not a category: its files are copies of works
+# that also live in their home category folder, and the CSV keeps the home
+# category plus a "Featured" tag. generate_index.py therefore derives every
+# thumbnail path from the home category, so anything emitted under a Featured/
+# subdirectory here would never be referenced - dead weight in the repo.
+SKIP_DIRS = {"Featured"}
+
 # (output_dir, max_width, jpeg_quality, also_emit_webp)
 OUTPUTS = [
     ("thumbnails-300", 300, 82, True),  # grid thumbnails, 1x displays
@@ -128,6 +135,9 @@ for category_dir in Path(IMG_DIR).iterdir():
 
     category_name = category_dir.name
     if category_name.startswith('.'):
+        continue
+    if category_name in SKIP_DIRS:
+        print(f"⏭  Skipping: {category_name} (overlay, served from home categories)")
         continue
 
     print(f"📁 Processing: {category_name}")

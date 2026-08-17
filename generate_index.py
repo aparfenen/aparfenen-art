@@ -589,19 +589,40 @@ for _, row in df.iterrows():
     if category:
         grouped_by_category[category].append(row)
 
+# "Featured" is a curated overlay, not a category: on disk the works are copies
+# living in both img_new_sorting/Featured/ and their home folder, so in the CSV
+# they keep their real category and carry the tag instead. The section is built
+# from the tag and shown first; the same work still appears in its own category
+# further down (include_id=False everywhere here, so no duplicate DOM ids).
+FEATURED_TAG = "Featured"
+featured_rows = [row for _, row in df.iterrows()
+                 if FEATURED_TAG in [t.strip() for t in str(row.get("tags", "")).split(",")]]
+if featured_rows:
+    grouped_by_category[FEATURED_TAG] = featured_rows
+
 # Sort categories by custom order
 CATEGORY_ORDER = [
+    "Featured",
     "Nothing more than Human",
-    "Animalia Forms", 
+    "Animalia Forms",
     "Echoes of Distance",
+    "Watercolor Sketches",
     "Between Waking",
+    "Abstract Forms",
+    "Imaginaerum",
     "Daydwellers",
     "Subconscious",
     "Underwater",
     "Fragile Systems",
     "Sketches",
+    "Drawings",
+    "Monochrome",
+    "Journal Pages",
     "Boston",
-    "Postcards"
+    "Postcards",
+    "Messages to Nowhere",
+    "And this is Still Life",
+    "Handmade",
 ]
 sorted_categories = [c for c in CATEGORY_ORDER if c in grouped_by_category]
 # Add any missing categories
