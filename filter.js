@@ -310,6 +310,11 @@ class GalleryFilter {
         if (img) {
           this.allArtworks.push({
             element: block,
+            // Слаг работы, одинаковый у всех её копий на странице. В виде
+            // "By Category" отмеченные работы стоят и в секции Featured, и в
+            // своей категории, поэтому пересчёт идёт по этому полю, а не по
+            // числу блоков.
+            id: img.dataset.id || '',
             category: img.dataset.category || '',
             year: img.dataset.year || '',
             medium: img.dataset.medium || '',
@@ -517,9 +522,20 @@ class GalleryFilter {
   }
   
   updateCounter() {
-    const visibleCount = this.allArtworks.filter(artwork =>
-      artwork.element.style.display !== 'none'
-    ).length;
+    // Считаем работы, а не блоки: одна работа может стоять в виде дважды
+    // (секция Featured + её собственная категория), и счётчик показывал 371
+    // при 347 работах. Блок без data-id считается сам по себе - лучше
+    // посчитать лишнее, чем схлопнуть всё в одну запись.
+    const seen = new Set();
+    let visibleCount = 0;
+    this.allArtworks.forEach(artwork => {
+      if (artwork.element.style.display === 'none') return;
+      if (artwork.id) {
+        if (seen.has(artwork.id)) return;
+        seen.add(artwork.id);
+      }
+      visibleCount += 1;
+    });
 
     const counterElement = document.getElementById('artwork-counter');
     if (counterElement) {

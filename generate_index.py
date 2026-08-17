@@ -31,6 +31,23 @@ START_MARKER = "<!-- START GALLERY -->"
 END_MARKER = "<!-- END GALLERY -->"
 FILTER_START_MARKER = "<!-- START FILTERS -->"
 FILTER_END_MARKER = "<!-- END FILTERS -->"
+NAV_START_MARKER = "<!-- START NAV CATEGORIES -->"
+NAV_END_MARKER = "<!-- END NAV CATEGORIES -->"
+
+
+def replace_marked_region(content, start_marker, end_marker, payload):
+    """Swap whatever sits between two markers for payload. Returns (content, found)."""
+    if start_marker not in content or end_marker not in content:
+        return content, False
+    before = content.split(start_marker)[0]
+    after = content.split(end_marker)[1]
+    return f"{before}{start_marker}\n{payload}{end_marker}{after}", True
+
+
+def category_anchor(category):
+    """Anchor id for a category section. The nav dropdown links to these, so
+    both ends have to derive them the same way."""
+    return category.lower().replace(" ", "-").replace("&", "and")
 
 print("🎨 Starting gallery generation...\n")
 
@@ -654,8 +671,8 @@ for c in grouped_by_category:
 
 for category in sorted_categories:
     rows = grouped_by_category[category]
-    anchor = category.lower().replace(" ", "-").replace("&", "and")
-    
+    anchor = category_anchor(category)
+
     gallery_html += f'  <div class="theme-section">\n'
     gallery_html += f'    <h3 id="{anchor}" class="section-title">{category}</h3>\n'
     
@@ -673,6 +690,23 @@ for category in sorted_categories:
     gallery_html += '  </div>\n\n'
 
 gallery_html += '  </div>\n'
+
+# ===== STEP 7a: Category list for the Gallery nav dropdown =====
+# Hand-maintained until now, which is why it still offered twelve categories
+# that predated the re-sort and linked to two that no longer existed. Same
+# order and the same anchors as the category view above, so the two cannot
+# drift apart again. "Featured" is left out on purpose: it is an overlay, and
+# the dropdown already has its own entry for that view above the divider.
+nav_categories_html = ''
+for category in sorted_categories:
+    if category == FEATURED_TAG:
+        continue
+    anchor = category_anchor(category)
+    label = escape_html(category)
+    nav_categories_html += (
+        f'            <li><a href="#{anchor}" '
+        f'onclick="switchToThematic(\'{anchor}\'); return false;">{label}</a></li>\n'
+    )
 
 # ===== STEP 7b: Compute Activity stats (mirrors activity.js's own math) =====
 # activity.js recomputes these from the CSV client-side and overwrites the
@@ -711,22 +745,20 @@ print(f"✓ Activity stats: {total_works_stat} total, peak {most_productive_stat
 with open(INDEX_PATH, "r", encoding="utf-8") as f:
     content = f.read()
 
-if START_MARKER not in content or END_MARKER not in content:
+new_content, found = replace_marked_region(content, START_MARKER, END_MARKER,
+                                           f"{gallery_html}\n")
+if not found:
     raise ValueError("Gallery markers not found in index.html")
 
-before_gallery = content.split(START_MARKER)[0]
-after_gallery = content.split(END_MARKER)[1]
+new_content, found = replace_marked_region(new_content, FILTER_START_MARKER, FILTER_END_MARKER,
+                                           generate_filter_sidebar())
+if not found:
+    print("⚠ Filter markers not found - sidebar left as it was")
 
-filter_sidebar_html = generate_filter_sidebar()
-if FILTER_START_MARKER in before_gallery and FILTER_END_MARKER in before_gallery:
-    before_filter_section = before_gallery.split(FILTER_START_MARKER)[0]
-    after_filter_section = before_gallery.split(FILTER_END_MARKER)[1]
-    
-    new_content = (f"{before_filter_section}{FILTER_START_MARKER}\n{filter_sidebar_html}"
-                   f"{FILTER_END_MARKER}{after_filter_section}{START_MARKER}\n{gallery_html}\n{END_MARKER}{after_gallery}")
-else:
-    new_content = f"{before_gallery}{START_MARKER}\n{gallery_html}\n{END_MARKER}{after_gallery}"
-    print("⚠ Filter markers not found - only gallery updated")
+new_content, found = replace_marked_region(new_content, NAV_START_MARKER, NAV_END_MARKER,
+                                           nav_categories_html)
+if not found:
+    print("⚠ Nav category markers not found - dropdown left as it was")
 
 for _stat_id, _stat_value in (("total-works", total_works_stat),
                               ("most-productive-month", escape_html(most_productive_stat)),
