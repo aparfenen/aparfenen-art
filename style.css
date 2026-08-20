@@ -423,7 +423,11 @@ h2.section-title {
    rule under it hands over to the gallery. Statement takes the big break -
    it comes after 300-odd works. */
 h2#commissions.section-title {
-  margin-top: 64px;
+  margin-top: 40px;
+  /* Tighter than the 0.6em the other section titles take: the box under this
+     one is a thin band, and the full gap left the heading floating away from
+     the thing it labels. */
+  margin-bottom: 0.35em;
 }
 
 h2#gallery.section-title {
@@ -436,7 +440,7 @@ h2#statement.section-title {
 
 @media (max-width: 768px) {
   h2#commissions.section-title {
-    margin-top: 40px;
+    margin-top: 28px;
   }
 
   h2#statement.section-title {
@@ -533,18 +537,26 @@ h3.section-title {
   line-height: 1.5;
 }
 
-/* COMMISSIONS - same measure and rhythm as the statement above it */
+/* COMMISSIONS - same width and horizontal padding as the statement, so both
+   blocks still sit on the gallery's edges, but set tighter. This one is two
+   lines of housekeeping at the very top of the page, not an essay, and at the
+   statement's size and leading it read as a banner the work had to get past.
+   Smaller type and shorter leading keep it to the same two lines while the
+   band itself loses roughly a third of its height. */
 .commissions {
   font-family: var(--font-display);
   font-style: normal;
   font-weight: var(--fw-regular);
-  font-size: 1.2em;
-  line-height: 1.7;
+  /* 17.6px against the statement's 19.2px. The two blocks are never on screen
+     together - the statement comes after 300-odd works - so the step down
+     costs nothing and buys back a line's worth of height. */
+  font-size: 1.1em;
+  line-height: 1.55;
   font-variant-numeric: oldstyle-nums;
   color: var(--text-primary);
   max-width: var(--prose-max);
-  margin: 12px auto;
-  padding: 22px clamp(20px, 5%, 72px);
+  margin: 8px auto;
+  padding: 14px clamp(20px, 5%, 72px);
   box-sizing: border-box;
   border: 1px solid var(--chip-edge-strong);
   border-radius: 10px;
@@ -590,6 +602,15 @@ h3.section-title {
 
   .statement p:first-of-type {
     font-size: 1.22em;
+  }
+
+  /* Undo the shared reset above for commissions only - it is the same two
+     lines of housekeeping on a phone, and at 1.12em/1.7 it ate most of the
+     first screen before a single work appeared. */
+  .commissions {
+    font-size: 1.04em;
+    line-height: 1.5;
+    padding: 12px 16px;
   }
 }
 
