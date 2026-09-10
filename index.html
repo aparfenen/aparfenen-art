@@ -3,24 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <!-- Two families in one request, so the head still costs a single round trip.
-       Meie Script is the logo and nothing else; EB Garamond is the whole rest
-       of the site - headings, prose, nav, buttons, captions.
-
-       The weight is asked for as a RANGE (400..700), not as a list of static
-       cuts: Google serves EB Garamond as a variable font, so a range is two
-       files per subset (roman + italic) covering every weight in between,
-       where four separate static weights would have been four files. That is
-       what makes 400/500/600 affordable as a real hierarchy instead of a
-       compromise. -->
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=Meie+Script&display=swap" rel="stylesheet">
+  <!-- No webfont request, deliberately. The site used to pull EB Garamond and
+       Meie Script from Google Fonts, and when that request did not land - a
+       blocked CDN, a cold offline load, a slow connection past the swap
+       timeout - the whole page silently redrew itself in whatever the system
+       happened to offer, at sizes and tracking chosen for faces that were not
+       there. What is designed now is what is installed: Georgia for the
+       headings, titles and prose, Arial for the labels. See the TYPE block at
+       the top of style.css. -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="filter_styles.css" />
+  <!-- Icon filenames are the -16/-32 set, not the old -16x16/-32x32 one, and
+       every href stays RELATIVE: the site is served from the GitHub Pages
+       project path /aparfenen-art/, so a root-absolute "/favicon.ico" would
+       resolve against aparfenen.github.io and 404. -->
   <link rel="icon" href="favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
   <meta name="theme-color" content="#faf8f4">
@@ -315,9 +314,45 @@
   </nav>
 
 
-<!--***** SITE NAME *****-->
+<!--***** SITE HEADLINE *****-->
+  <!-- The page opens on a statement rather than on the wordmark. The name is
+       still carried by <title>, the canonical link and the OG tags, so nothing
+       is lost to a search engine or a share preview - but the first thing a
+       reader meets is what the archive is, not what it is called. -->
   <header class="site-header">
-    <h1>aparfenen.art</h1>
+    <!-- The mark returns, but as a masthead in the corner rather than as the
+         thing the page opens on: name, then what the site is, both held at the
+         left edge the prose and the gallery below already sit on. -->
+    <div class="site-mark">
+      <span class="site-mark-name">aparfenen.art</span>
+      <span class="site-mark-line">An archive of works</span>
+    </div>
+
+    <div class="site-header-body">
+      <div class="site-header-lead">
+        <h1>An archive of works exploring systems, perception and the unseen</h1>
+        <p class="site-subtitle">Drawings, paintings and studies that trace the patterns beneath experience &mdash; scientific, botanical, emotional and symbolic.</p>
+      </div>
+
+      <!-- The drawing that sits between the headline and the epigraph. Its own
+           file rather than one of the gallery's: the scan's paper has been cut
+           away to real transparency, so the plant sits on the page instead of
+           in a white rectangle, and the same file works on cream and on the
+           dark theme with no blend-mode trickery either side.
+
+           Made by utils/make_hero_cutout.py from large/Fragile Systems/,
+           which is where to go to remake it. WebP only - a cut-out has to carry an
+           alpha channel, and the PNG that could do the same job costs four
+           times as much. The full-resolution work is one click away in the
+           gallery. -->
+      <figure class="site-header-art">
+        <img src="assets/hero-ipomea.webp"
+             alt="Swirling Bloom - a morning glory drawn in coloured pencil, its stem curling into a spiral"
+             width="756" height="1088" decoding="async">
+      </figure>
+
+      <p class="site-epigraph">&ldquo;The real work is not what is seen, but what the seeing transforms.&rdquo;</p>
+    </div>
   </header>
 
 
@@ -20864,6 +20899,16 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
       <img src="icons/email.svg" alt="Email">
       ann.parfenen2018@gmail.com
     </a>
+    <!-- The art account, so it sits directly after the mail address and ahead
+         of the professional and code links. Href is the plain profile URL: the
+         one this was added from carried ?stkn=... and utm_source=qr, which are
+         a personal share token and a QR campaign tag from Instagram's own
+         share sheet - neither belongs in a link a stranger clicks, and the
+         token can stop working. -->
+    <a href="https://www.instagram.com/aparfenen.art" target="_blank" rel="noopener">
+      <img src="icons/instagram.svg" alt="Instagram">
+      Instagram
+    </a>
     <a href="https://www.linkedin.com/in/anna-p-157963168/" target="_blank" rel="noopener">
       <img src="icons/linkedin.svg" alt="LinkedIn">
       LinkedIn
@@ -20885,11 +20930,13 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
 <h2 id="activity" class="section-title">Activity</h2>
 
 <div class="activity-container">
-  <!-- font-size dropped from the inline rule so .activity-container h3 can set
-       it for the serif; the rest is left exactly as it was. NOTE: the inline
-       color is a hardcoded #444 that overrides the stylesheet's themed value,
-       so this heading stays dark grey in dark mode. Pre-existing, untouched. -->
-  <h3 style="text-align: center; margin-bottom: 24px; color: #444;">Creative Activity</h3>
+  <!-- The inline rule is gone entirely: .activity-container h3 sets the
+       alignment, the spacing and the type, and the colour now comes from the
+       themed --text-tertiary. The hardcoded #444 that used to sit here
+       overrode the theme, so on a dark ground this heading was dark grey on
+       near-black - readable enough while it was a 24px serif, and not at all
+       once it became a 13px tracked cap. -->
+  <h3>Creative Activity</h3>
   
   <!-- Легенда -->
   <div class="activity-legend">
