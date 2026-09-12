@@ -22,10 +22,12 @@ THUMB_SMALL_DIR = "thumbnails-300"  # 300px - 1x displays and phones
 # right srcset candidate instead of always taking the largest:
 #   <=768px   grid is repeat(auto-fill, minmax(150px, 1fr)) with a 10px gap over
 #             the full viewport - 2 columns on a 375px phone, ~48vw each
-#   <=1200px  minmax(300px, 1fr) with a 16px gap, 3 columns, ~33vw each
-#   wider     the grid is capped at --gallery-max (1520px): 4 columns of
-#             (1520 - 3*16)/4 = 368px
-GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+#   <=1200px  minmax(230px, 1fr) with a 16px gap, 3-4 columns, 234-335px, so
+#             28vw at the wide end and 42vw at the narrow one - 34vw splits it
+#   wider     the grid is capped at --gallery-max (1380px): 5 columns of
+#             (1380 - 4*16)/5 = 263px at 1920 and up, 4 of 277px around 1350,
+#             which is the widest a column gets in this branch - hence 280px
+GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 280px"
 
 START_MARKER = "<!-- START GALLERY -->"
 END_MARKER = "<!-- END GALLERY -->"

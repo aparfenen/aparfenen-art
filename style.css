@@ -91,9 +91,32 @@
      calc(var(--nav-h) + …). */
   --nav-h: 60px;
 
+  /* A nav link's own horizontal padding. Named because .nav-links cancels it
+     with a negative margin to put the words - not their boxes - on the page's
+     left edge; the two have to read the same number. */
+  --nav-link-pad-x: 10px;
+
+  /* The right-hand rail: the two scroll arrows hang off the page edge here,
+     and the theme toggle centres on the same line so the three read as one
+     stack rather than as three controls that happen to be near each other.
+     The toggle is the odd size of the three, so it is named too - centring it
+     on the rail is arithmetic between these numbers. */
+  --rail-right: 40px;
+  --rail-size: 48px;
+  --nav-btn-size: 42px;
+
   /* How wide the gallery grid is allowed to run. The category rule and the
-     view switch above it read the same value so the three stay aligned. */
-  --gallery-max: 1520px;
+     view switch above it read the same value so the three stay aligned, and
+     --prose-max follows it, so this one number sets the measure of every block
+     on the page.
+
+     1520 / 1.1. The column was set by how much grid would fit; at 1520 the
+     prose that shares it ran past ninety characters a line, which is a long
+     way past what is comfortable to read. A fifth off that was a measure too
+     far the other way - it took a column out of the grid and left the works
+     small - so this sits between the two, and the surplus stays open paper on
+     the right, which is the margin this page is built around. */
+  --gallery-max: 1380px;
 
   /* Prose blocks, their rule and the contact row all span the gallery, so every
      edge on the page lines up. The reading measure is held inside them instead
@@ -911,7 +934,9 @@ h3.section-title {
   font-variant-numeric: lining-nums;
   color: var(--text-violet);
   max-width: var(--prose-max);
-  margin: 18px 0 0;
+  /* auto, not 0, so this block is set exactly as .commissions is and picks up
+     any future change to the column the same way. */
+  margin: 18px auto 0;
   padding: 0;
   box-sizing: border-box;
   columns: 21em 2;
@@ -1154,7 +1179,13 @@ h3.section-title {
    what is on screen. layoutMasonry() in filter.js sets the spans. */
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  /* The track minimum is what sets works-per-row, since auto-fill packs
+     floor((width + gap) / (min + gap)) columns into the --gallery-max column.
+     At 300px that was four across from 1680px up and three below it; 230px
+     puts the whole desktop range on five, at 263px a work from 1680 up and
+     234px at 1440, which is what the grid is for at this width. Below 768px
+     the phone rule takes over with its own 150px minimum. */
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   --masonry-unit: 4px;
   --masonry-gap: 16px;
   column-gap: var(--masonry-gap);
@@ -2251,14 +2282,25 @@ nav.main-nav.nav-hidden {
      buttons drop by the same amount and their top edges meet the words. */
   align-items: flex-start;
   gap: 12px;
-  padding: var(--nav-pad-top) var(--page-gutter) var(--nav-pad-bottom)
+  /* The right pad is normally the page gutter, but the toggle is out of the
+     flow on the rail now, so on the widths where the gutter is narrower than
+     the rail the links would grow underneath it. Take whichever is wider. */
+  padding: var(--nav-pad-top)
+           max(var(--page-gutter), calc(var(--rail-right) + var(--rail-size) + 8px))
+           var(--nav-pad-bottom)
            calc(var(--page-rule-inset) + var(--page-rule-clear));
-  min-height: 42px;
+  min-height: var(--nav-btn-size);
 }
 
 nav.main-nav ul.nav-links {
   list-style: none;
-  margin: 0;
+  /* The bar's padding puts this box on the column, but a link is a box with
+     10px of its own padding inside it, so the words started 10px right of the
+     masthead and the works. Pull the list back by exactly that padding and the
+     first character lands on the column; the hover pill keeps its breathing
+     room and simply overhangs into the margin, which is what a padded hit area
+     is supposed to do. */
+  margin: 0 0 0 calc(-1 * var(--nav-link-pad-x));
   padding: 0;
   flex: 1 1 auto;
   min-width: 0;
@@ -2285,7 +2327,7 @@ nav.main-nav a {
   /* Bold at 10.5px, not because the bar should shout but because 0.22em of
      tracking takes the weight back out of it again */
   font-weight: var(--fw-semibold);
-  padding: 7px 10px;
+  padding: 7px var(--nav-link-pad-x);
   border-radius: 8px;
   font-size: 10.5px;
   text-transform: uppercase;
@@ -2328,13 +2370,21 @@ nav.main-nav .has-dropdown > a::after {
 
 /* Theme toggle in nav bar - right edge, mirrors the Filters button's shape */
 .nav-theme-toggle {
+  /* Out of the flow and onto the right-hand rail - the mirror of what
+     .nav-filter-btn does on the left. It stacks under the two scroll arrows,
+     so it centres on their line rather than aligning to an edge: they are
+     --rail-size across and this is --nav-btn-size, and half the difference is
+     what keeps the three on one axis. */
+  position: absolute;
+  top: var(--nav-pad-top);
+  right: calc(var(--rail-right) + (var(--rail-size) - var(--nav-btn-size)) / 2);
   margin-top: var(--nav-btn-lift);
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: var(--nav-btn-size);
+  height: var(--nav-btn-size);
   background: none;
   border: 1px solid var(--border-medium);
   border-radius: 11px;
@@ -2378,8 +2428,8 @@ nav.main-nav .has-dropdown > a::after {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: var(--nav-btn-size);
+  height: var(--nav-btn-size);
   padding: 0;
   background: var(--bg-hover);
   border: 1px solid var(--border-medium);
@@ -2812,6 +2862,15 @@ nav.main-nav .sub-menu a {
     top: auto;
   }
 
+  /* Same for the toggle on the other side: the rail is 20px from the edge at
+     this width and the bar is 16px, so an absolute toggle would sit on top of
+     the back-to-top button instead of under it. */
+  .nav-theme-toggle {
+    position: relative;
+    right: auto;
+    top: auto;
+  }
+
   nav.main-nav ul.nav-links {
     justify-content: center;
   }
@@ -3052,9 +3111,9 @@ nav.main-nav .sub-menu a {
 .scroll-down {
   position: fixed;
   bottom: 80px;
-  right: 40px;
-  width: 48px;
-  height: 48px;
+  right: var(--rail-right);
+  width: var(--rail-size);
+  height: var(--rail-size);
   background: rgba(92, 86, 76, 0.42);
   color: white;
   border: none;
@@ -3091,11 +3150,11 @@ nav.main-nav .sub-menu a {
      the top of the screen whenever the header has retracted, which on a phone
      is most of the time you can see this button at all */
   top: calc(var(--nav-h) + 20px);
-  right: 40px;
+  right: var(--rail-right);
   transition: top 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
               opacity 0.2s ease, background 0.2s ease;
-  width: 48px;
-  height: 48px;
+  width: var(--rail-size);
+  height: var(--rail-size);
   background: rgba(92, 86, 76, 0.42);
   color: white;
   border: none;

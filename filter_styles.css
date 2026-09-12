@@ -298,6 +298,16 @@
    whole document rather than the first screen. */
 .content-with-sidebar {
   margin-left: 280px;
+  /* The column is the cap, and everything to the right of it is open paper.
+     Without this the box ran the full width of the page, and since every block
+     inside it is capped at --gallery-max and centred, they all picked up half
+     the leftover - about 68px at 1920 - and drifted off the clearance this
+     padding exists to set. Capping the box to exactly padding + cap + padding
+     leaves the auto margins nothing to centre in, so the first character lands
+     on --page-rule-clear from the hairline at every width, which is the number
+     the comment above is about. This box is content-box, so the cap is the
+     column itself and the padding either side sits outside it. */
+  max-width: var(--gallery-max);
   /* The nav is fixed, so it no longer reserves flow space of its own. Only a
      small gap beyond it - the site title sits right below the bar. */
   padding: calc(var(--nav-h) + 8px) var(--page-gutter) 20px
