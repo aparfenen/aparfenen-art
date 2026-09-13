@@ -6,7 +6,14 @@ const FILTER_GROUPS = ['category', 'year', 'medium', 'tags'];
 // контейнер `${view}-gallery`. Добавить вид = добавить сюда строку и выдать
 // эти два элемента из generate_index.py.
 const VIEWS = ['featured', 'chronological', 'thematic'];
-const DEFAULT_VIEW = 'chronological';
+// Вид при первом заходе: подборка, а не вся хронология - первый экран должен
+// показывать отобранные работы, а не всё подряд.
+const DEFAULT_VIEW = 'featured';
+// Куда откатываться, если запрошенного вида нет в разметке. Это не то же, что
+// DEFAULT_VIEW: featured выдаётся генератором только когда есть отмеченные
+// работы, а хронология есть всегда - иначе откат от несуществующего featured
+// вёл бы обратно в featured и страница осталась бы пустой.
+const FALLBACK_VIEW = 'chronological';
 const MAX_SEARCH_LENGTH = 100;
 
 class GalleryFilter {
@@ -274,7 +281,7 @@ class GalleryFilter {
     // Вид без контейнера в разметке (Featured без отмеченных работ) не должен
     // оставлять страницу с пустой галереей - откатываемся к виду по умолчанию.
     const requested = VIEWS.includes(view) ? view : DEFAULT_VIEW;
-    this.currentView = document.getElementById(`${requested}-gallery`) ? requested : DEFAULT_VIEW;
+    this.currentView = document.getElementById(`${requested}-gallery`) ? requested : FALLBACK_VIEW;
 
     VIEWS.forEach(name => {
       const isActive = name === this.currentView;

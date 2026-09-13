@@ -550,8 +550,11 @@ def generate_artwork_block(row, include_id=True):
     # in its category section of the thematic view. Emitting id="{unique_id}"
     # both times produced 313 duplicate DOM ids (invalid HTML) and made
     # #hash deep-links resolve to whichever copy happened to come first in
-    # the markup. Only the chronological copy (the default active view)
-    # keeps the id; the thematic copy is still identifiable via data-id.
+    # the markup. Only the chronological copy keeps the id - it is the one
+    # view holding every work, so the slugs are canonical there whichever
+    # view happens to open the page; the other copies are still identifiable
+    # via data-id, which is what findImageById() in lightbox.js looks up
+    # inside the active container first.
     id_attr = f' id="{unique_id}"' if include_id else ''
     block = f'''    <div class="art-block"{id_attr} data-hover-title="{title_escaped} ({show_date_escaped})">
       {img_tag}
@@ -568,10 +571,19 @@ FEATURED_TAG = "Featured"
 featured_rows = [row for _, row in df.iterrows()
                  if FEATURED_TAG in [t.strip() for t in str(row.get("tags", "")).split(",")]]
 
+# Featured opens the page when there is anything in it (see DEFAULT_VIEW in
+# filter.js); with no featured works the button and container are not emitted
+# at all and chronological opens instead. The class has to be right in the
+# markup, not just in the JS, or the first paint shows the wrong view and
+# swaps it once the script runs.
+featured_is_default = bool(featured_rows)
+_featured_cls = ' active' if featured_is_default else ''
+_chrono_cls = '' if featured_is_default else ' active'
+
 gallery_html = '\n  <div class="gallery-view-controls">\n'
 if featured_rows:
-    gallery_html += '    <button id="featured-view-btn" class="view-btn">Featured</button>\n'
-gallery_html += '    <button id="chronological-view-btn" class="view-btn active">Chronological</button>\n'
+    gallery_html += f'    <button id="featured-view-btn" class="view-btn{_featured_cls}">Featured</button>\n'
+gallery_html += f'    <button id="chronological-view-btn" class="view-btn{_chrono_cls}">Chronological</button>\n'
 gallery_html += '    <button id="thematic-view-btn" class="view-btn">By Category</button>\n'
 gallery_html += '  </div>\n\n'
 
@@ -581,7 +593,7 @@ gallery_html += '  </div>\n\n'
 # section in a one-section view would just be a "Show all" button in front of
 # the works. layoutMasonry() keys off .gallery, so the grid still lays out.
 if featured_rows:
-    gallery_html += '  <div id="featured-gallery" class="gallery-container">\n'
+    gallery_html += f'  <div id="featured-gallery" class="gallery-container{_featured_cls}">\n'
     if FEATURED_TAG in category_descriptions:
         gallery_html += f'    <p class="category-description">{escape_html(category_descriptions[FEATURED_TAG])}</p>\n'
     gallery_html += '    <div class="gallery">\n'
@@ -594,7 +606,7 @@ if featured_rows:
 # Chronological view - grouped into years, using the same .theme-section shape
 # as the thematic view below, so filter.js gives both views the same collapsing,
 # preview and counter behaviour without knowing which one it is looking at.
-gallery_html += '  <div id="chronological-gallery" class="gallery-container active">\n'
+gallery_html += f'  <div id="chronological-gallery" class="gallery-container{_chrono_cls}">\n'
 
 grouped_by_year = defaultdict(list)
 for _, row in df.iterrows():

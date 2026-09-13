@@ -526,13 +526,29 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 56px;
+  /* Was a flat 56px. With the side columns now equal the middle is what is
+     left over, so on a laptop the gutters were being paid for out of the
+     drawing: at 1440 it had lost 40px of its 376. They hold their full width
+     where there is room for it and give some back where there is not. */
+  gap: clamp(28px, 3.6vw, 56px);
 }
 
 /* Holds its own width rather than absorbing the row: the free space in the
    middle belongs to the drawing now. */
+/* The two side columns are equal so that the drawing between them lands on the
+   page's spine. Sized from the header rather than the viewport because the
+   header is capped at --gallery-max: a vw would keep widening the sides after
+   the column had stopped, and the flower would drift off centre again above
+   1680px. 32% leaves the middle just wide enough for the drawing's own 376px
+   cap, so the picture is never shrunk to buy the symmetry.
+
+   Left to itself the row centred the flower on the slack it happened to have,
+   which is not where the eye puts the middle: h1 is capped at 17ch but its
+   longest line falls 91px short of that, so the lead column carries a band of
+   ragged white that the reader does not see as part of the text. Centred on
+   the box gap the flower sat 46px right of the gap the eye actually reads. */
 .site-header-lead {
-  flex: 0 1 auto;
+  flex: 0 0 32%;
   min-width: 0;
 }
 
@@ -593,9 +609,17 @@ body {
      the text row and onto the masthead's own line, so the flower starts where
      the section starts rather than where the headline does. Nothing overlaps -
      the drawing is its own column - and the row loses the full height of the
-     lift, which is the point. */
+     lift, which is the point.
+
+     The foot used to reclaim 44px the same way. That was safe while a whole
+     section stood between the header and its rule; with the commissions note
+     moved up into the header the hairline follows the drawing directly, and
+     44px of reclaim put it nine pixels inside the lowest leaf. The drawing's
+     alpha runs to the very bottom of its own frame - the fade at the foot is
+     the mask's doing, not empty sheet - so there is nothing here to take back
+     without cutting into the picture. The lift at the top is untouched. */
   margin-top: -88px;
-  margin-bottom: -44px;
+  margin-bottom: 0;
   /* 15% transparent overall - "total" as against the gradient below, which is
      what thins the plant unevenly. This is the flat coat on top of it. */
   opacity: 0.85;
@@ -631,35 +655,58 @@ body {
    quoted speech. Ragged right, not right-aligned - it is a block of text set
    to the right, which is not the same thing. */
 .site-epigraph {
-  flex: 0 0 auto;
-  max-width: 26ch;
-  /* Pulled in off the right edge. space-between hands all the slack to the
-     column between the headline and the quote, which parked the quote against
-     the page's own margin and left it talking to nothing; the free space now
-     sits to its right instead and the line stands beside the flower it is
-     about. This is the one thing on the page deliberately off the spine - it
-     is a marginal note, and a marginal note that lines up with the body is
-     just another column. */
-  margin: 0 clamp(0px, 5vw, 96px) 0 0;
+  /* No longer a column of the header row on its own: it sits under the
+     commissions note inside .site-header-aside, so it takes that column's
+     width and needs no measure, no pull off the right edge and no lift to sit
+     level with anything. It was a marginal note beside the drawing; it is the
+     quiet end of the right-hand column now, which is why the tone stays the
+     same while all the positioning went. */
+  margin: 26px 0 0;
   font-family: var(--font-display);
-  /* Centred on the row, then dropped. Centred alone it landed beside the
-     flower's stem, which is the thinnest part of the drawing and the emptiest
-     part of the page; the shift takes it down level with the spiral - the mass
-     of the picture - and, on a desktop, onto the same band as the description
-     across on the left. The three then read as one line across the page rather
-     than as three things at three heights.
-
-     A transform rather than a margin, because a margin would hand the row the
-     extra height back and there is no need for it: the drawing is taller than
-     this block either way. Reset below 900px, where the column is stacked and
-     there is nothing left to be level with. */
-  align-self: center;
-  transform: translateY(clamp(28px, 4.5vw, 70px));
   font-size: 14px;
   font-style: italic;
   line-height: 1.6;
   letter-spacing: 0.005em;
   color: var(--text-violet-faint);
+}
+
+/* ===== HEADER ASIDE =====
+   The right-hand column of the header: the commissions note, with the epigraph
+   under it. Commissions used to be a full-width band between the header and
+   the gallery - a note about buying the work, standing between the reader and
+   the work - and at the page's full column it ran to about 186 characters a
+   line. Across the row from the headline it gets a column and a measure, and
+   the page now goes from the masthead to the works with nothing in between. */
+.site-header-aside {
+  /* The lead column's twin - see there for why they match. */
+  flex: 0 0 32%;
+  min-width: 0;
+}
+
+/* "Commissions" is a marker in here, not one of the page's display headings:
+   at clamp(23px, 2.1vw, 34px) it was wider than the column it now heads and
+   louder than the headline it sits opposite. Dropped to the label voice the
+   masthead's second line and the category markers already speak in - which is
+   also what makes it read as a note attached to the header rather than as a
+   chapter of its own. */
+.site-header-aside .section-title {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: var(--fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  line-height: 1.3;
+  color: var(--text-muted);
+  max-width: none;
+  margin: 0 0 12px;
+}
+
+/* Fills the column it lives in now rather than the page's, and starts at the
+   top of it - the 10px that used to separate it from a 34px heading above is
+   already in the marker's own bottom margin. */
+.site-header-aside .commissions {
+  max-width: none;
+  margin: 0;
 }
 
 /* Below the gallery's two-column width there is no "opposite" left, so the
@@ -689,10 +736,17 @@ body {
     margin-bottom: -28px;
   }
 
+  /* Stacked, the aside is a row of the page rather than a column beside the
+     drawing, so its text keeps a measure of its own rather than running the
+     full width of the screen. */
+  .site-header-aside .commissions {
+    max-width: 52ch;
+  }
+
+  /* Same reason: a measure of its own rather than the width of the screen. */
   .site-epigraph {
     max-width: 44ch;
     margin-top: 22px;
-    transform: none;
   }
 }
 
@@ -770,8 +824,8 @@ h2.section-title {
   font-family: var(--font-display);
   /* The one display size on the page, and deliberately a narrow clamp: 40px on
      a phone up to 60px on a wide desktop, against the 42px flat size it used
-     to hold. There are four of these headings on the page (Commissions,
-     Gallery, Statement, Activity) and they are the only large type besides the
+     to hold. There are three of these headings on the page (Gallery,
+     Statement, Activity) and they are the only large type besides the
      headline - letting them run to the 90-100px a landing page would take
      would have turned a catalogue into a poster. Taken down a further step
      from there twice: a section heading in a catalogue is a marker, not an
@@ -1101,13 +1155,6 @@ h3.section-title {
   line-height: 1.65;
   letter-spacing: 0.05em;
   color: var(--text-muted);
-}
-
-/* The clamp above carries the phone size; only the measure needs help here. */
-@media (max-width: 768px) {
-  .gallery-intro {
-    padding: 0 16px;
-  }
 }
 
 /* Gallery view controls */
