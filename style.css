@@ -277,7 +277,7 @@ body {
   flex: 1 1 auto;
   display: flex;
   justify-content: center;
-  min-width: 0;
+  min-width: 220px;
   margin: 0;
 }
 
@@ -310,13 +310,17 @@ body {
   color: var(--text-violet);
 }
 
-.site-epigraph {
-  flex: 0 0 auto;
-  max-width: 26ch;
-  margin: 0 clamp(0px, 5vw, 96px) 0 0;
-  font-family: var(--font-display);
+.site-header-aside {
+  flex: 0 1 380px;
+  min-width: 240px;
   align-self: center;
-  transform: translateY(clamp(28px, 4.5vw, 70px));
+  margin: 0 clamp(0px, 4vw, 80px) 0 0;
+}
+
+.site-epigraph {
+  max-width: 34ch;
+  margin: 22px 0 0;
+  font-family: var(--font-display);
   font-size: 14px;
   font-style: italic;
   line-height: 1.6;
@@ -344,10 +348,13 @@ body {
     margin-bottom: -28px;
   }
 
+  .site-header-aside {
+    min-width: 0;
+    margin: 40px 0 0;
+  }
+
   .site-epigraph {
     max-width: 44ch;
-    margin-top: 22px;
-    transform: none;
   }
 }
 
@@ -401,7 +408,7 @@ h2.section-title {
 }
 
 h2#commissions.section-title {
-  margin-top: 17px;
+  margin-top: 0;
   margin-bottom: 0.4em;
 }
 
@@ -414,10 +421,6 @@ h2#statement.section-title {
 }
 
 @media (max-width: 768px) {
-  h2#commissions.section-title {
-    margin-top: 18px;
-  }
-
   h2#statement.section-title {
     margin-top: 44px;
   }
@@ -463,7 +466,7 @@ h3.section-title {
   font-variant-numeric: lining-nums;
   color: var(--text-violet);
   max-width: var(--prose-max);
-  margin: 18px 0 0;
+  margin: 18px auto 0;
   padding: 0;
   box-sizing: border-box;
   columns: 21em 2;
@@ -788,7 +791,7 @@ h3.section-title {
 
 .category-show-all {
   display: block;
-  margin: 26px auto 0 0;
+  margin: 26px 0 0 max(0px, calc((100% - var(--gallery-max)) / 2));
   padding: 9px 20px;
   background: none;
   border: 1px solid var(--border-medium);
