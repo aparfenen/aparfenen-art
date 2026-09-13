@@ -1313,11 +1313,9 @@ h3.section-title {
   /* Runs the width of the artwork grid so the rule lines up with it */
   width: 100%;
   max-width: var(--gallery-max);
-  min-height: 56px;
   margin: 0 auto;
   box-sizing: border-box;
-  /* The generous bottom padding is the gap between the name and its rule */
-  padding: 8px 4px 22px;
+  padding: 8px 4px 12px;
   line-height: 1.2;
   background: none;
   border: 0;
