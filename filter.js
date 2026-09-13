@@ -492,7 +492,7 @@ class GalleryFilter {
         noResultsDiv.innerHTML = `
           <div class="no-results-icon">🔍</div>
           <p>No artworks found matching your filters or search</p>
-          <button onclick="galleryFilter.clearAllFilters()" style="margin-top: 16px; padding: 10px 20px; background: #3366cc; color: white; border: none; border-radius: 6px; cursor: pointer;">Clear All Filters</button>
+          <button type="button" class="no-results-clear" onclick="galleryFilter.clearAllFilters()">Clear All Filters</button>
         `;
         activeGallery.insertBefore(noResultsDiv, activeGallery.firstChild);
       }
@@ -740,6 +740,7 @@ function closeFilterSidebar() {
 document.addEventListener('click', (e) => {
   const sidebar = document.querySelector('.filter-sidebar');
   if (!sidebar || !filtersAreOpen()) return;
+  if (sidebarIsDocked()) return;
 
   const lightboxEl = document.getElementById('lightbox');
   if (lightboxEl && lightboxEl.classList.contains('active')) return;

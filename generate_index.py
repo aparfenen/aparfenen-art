@@ -44,25 +44,40 @@ print("🎨 Starting gallery generation...\n")
 
 # ===== STEP 1: Auto-extract dates from filenames =====
 def extract_date_from_filename(filename):
-    """Extract date from filename patterns like: name2025.jpg, name_2025.jpg, 2025_name.jpg"""
-    # Pattern 1: year at end (name2025.jpg)
-    match = re.search(r'(\d{4})(?:\.\w+)?$', filename)
+    def valid_year(y):
+        return 1900 < y < 2100
+
+    def result(year, month=1, day=1):
+        try:
+            datetime(year, month, day)
+        except ValueError:
+            return None
+        return f"{month}/{year % 100:02d}", str(year)
+
+    # YYYY-MM-DD or YYYYMMDD
+    match = re.search(r'(?<!\d)(\d{4})[-_]?(\d{2})[-_]?(\d{2})(?!\d)', filename)
     if match:
-        year = match.group(1)
-        return f"1/1/{year}", year
-    
-    # Pattern 2: year in middle (name_2025_v2.jpg)
-    match = re.search(r'[_-](\d{4})[_-]', filename)
+        year, month, day = (int(g) for g in match.groups())
+        if valid_year(year):
+            parsed = result(year, month, day)
+            if parsed:
+                return parsed
+
+    # MM-DD-YYYY
+    match = re.search(r'(?<!\d)(\d{2})[-_](\d{2})[-_](\d{4})(?!\d)', filename)
     if match:
-        year = match.group(1)
-        return f"1/1/{year}", year
-    
-    # Pattern 3: full date (2025-03-15_name.jpg or 20250315_name.jpg)
-    match = re.search(r'(\d{4})[-_]?(\d{2})[-_]?(\d{2})', filename)
-    if match:
-        year, month, day = match.groups()
-        return f"{int(month)}/{int(day)}/{year}", year
-    
+        month, day, year = (int(g) for g in match.groups())
+        if valid_year(year):
+            parsed = result(year, month, day)
+            if parsed:
+                return parsed
+
+    # year in middle (name_2025_v2.jpg) or at end (name2025.jpg)
+    for pattern in (r'[_-](\d{4})[_-]', r'(\d{4})(?:\.\w+)?$'):
+        match = re.search(pattern, filename)
+        if match and valid_year(int(match.group(1))):
+            return result(int(match.group(1)))
+
     return None, None
 
 def get_month_name(month_num):
