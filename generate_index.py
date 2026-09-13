@@ -1,8 +1,6 @@
 import pandas as pd
 from collections import defaultdict
 import re
-# aliased: generate_filter_sidebar() uses a local variable named `html` as its
-# string accumulator, which would shadow a plain `import html`.
 from html import escape as escape_html
 from datetime import datetime
 from pathlib import Path
@@ -18,13 +16,6 @@ IMG_DIR = "img"
 THUMB_DIR = "thumbnails"          # 600px - 2x displays
 THUMB_SMALL_DIR = "thumbnails-300"  # 300px - 1x displays and phones
 
-# What the grid actually reserves for one thumbnail, so the browser can pick the
-# right srcset candidate instead of always taking the largest:
-#   <=768px   grid is repeat(auto-fill, minmax(150px, 1fr)) with a 10px gap over
-#             the full viewport - 2 columns on a 375px phone, ~48vw each
-#   <=1200px  minmax(300px, 1fr) with a 16px gap, 3 columns, ~33vw each
-#   wider     the grid is capped at --gallery-max (1520px): 4 columns of
-#             (1520 - 3*16)/4 = 368px
 GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
 
 START_MARKER = "<!-- START GALLERY -->"
@@ -98,16 +89,11 @@ except Exception as e:
 
 # Load CSV
 df = pd.read_csv(CSV_PATH, sep=',')
-# Numbers leaves fully blank rows behind, and pandas reads their cells as NaN
-# floats - which used to blow up 40 lines later inside extract_date_from_filename
-# with a bare "expected string or bytes-like object, got 'float'" and no hint of
-# which row was at fault. Normalise to strings here and name the offenders.
 df['category'] = df['category'].fillna('').astype(str).str.strip()
 df['filename'] = df['filename'].fillna('').astype(str).str.strip()
 
 _no_filename = df.index[df['filename'] == '']
 if len(_no_filename) > 0:
-    # +2: CSV line numbers count the header and are 1-based, spreadsheet-style.
     print(f"⚠ {len(_no_filename)} CSV row(s) have no filename and cannot be rendered:")
     for _i in _no_filename:
         _title = str(df.at[_i, 'title']) if pd.notna(df.at[_i, 'title']) else '(untitled)'
@@ -116,15 +102,12 @@ if len(_no_filename) > 0:
 
 print(f"✓ Loaded {len(df)} artworks from CSV\n")
 
-# ===== STEP 2: Auto-fill year from show_date if missing =====
 auto_filled_years = 0
 for idx, row in df.iterrows():
     year_val = row.get('year')
     show_date = str(row.get('show_date', '')).strip()
     
-    # If year is missing but show_date exists
     if (pd.isna(year_val) or str(year_val).strip() == '') and show_date:
-        # Extract year from show_date (format: "Month YYYY")
         parts = show_date.split()
         if len(parts) >= 2:
             try:
@@ -343,7 +326,6 @@ def generate_filter_sidebar():
     
     html += '    <button id="clear-filters">Clear All</button>\n\n'
     
-    # FIXED: Categories filter
     if unique_categories:
         html += '    <div class="filter-section">\n'
         html += '      <div class="filter-section-header">Category</div>\n'
@@ -369,19 +351,6 @@ def generate_filter_sidebar():
             html += f'        </label>\n'
         html += '      </div>\n'
         html += '    </div>\n\n'
-    
-    # Medium filter removed - too large to display
-    # if unique_mediums:
-    #     html += '    <div class="filter-section collapsed">\n'
-    #     html += '      <div class="filter-section-header">Medium</div>\n'
-    #     html += '      <div class="filter-options">\n'
-    #     for medium in unique_mediums:
-    #         html += f'        <label class="filter-option">\n'
-    #         html += f'          <input type="checkbox" class="filter-checkbox" data-filter-group="medium" value="{medium}">\n'
-    #         html += f'          <span class="filter-label">{medium}</span>\n'
-    #         html += f'        </label>\n'
-    #     html += '      </div>\n'
-    #     html += '    </div>\n\n'
 
     if unique_tags:
         html += '    <div class="filter-section collapsed">\n'  # FIXED: collapsed by default
@@ -398,9 +367,6 @@ def generate_filter_sidebar():
     
     return html
 
-# ===== Image dimensions / srcset helpers =====
-# Every work is emitted twice (chronological + thematic view), so cache the
-# header reads instead of opening ~650 files twice.
 _dimension_cache = {}
 
 def image_dimensions(path):
@@ -440,12 +406,7 @@ def srcset_candidates(*paths):
         candidates.append(f"{url_quote(path)} {dims[0]}w")
     return candidates
 
-
-# ===== STEP 6: Generate artwork block - FIXED =====
 def generate_artwork_block(row, include_id=True):
-    # escape_html() (not just a bare .replace('"', '&quot;')) so a stray & < > "
-    # in any field can't produce malformed attributes - title/show_date used to
-    # go in completely unescaped, and everything else only had quotes handled.
     title_escaped = escape_html(str(row["title"]))
     show_date_escaped = escape_html(str(row["show_date"]))
     desc_escaped = escape_html(str(row["description"]))
@@ -474,11 +435,8 @@ def generate_artwork_block(row, include_id=True):
 
     date_created = str(row.get("date_created", "")).strip() if "date_created" in row else ""
     date_created_escaped = escape_html(date_created)
-    # Day-level date when the CSV has one; the lightbox prefers it over the
-    # month-only data-date and falls back to that when it's empty.
     date_exact_escaped = escape_html(format_exact_date(row))
     
-    # Generate thumbnail filename (always .jpg regardless of original extension)
     filename_base = os.path.splitext(row["filename"])[0]
     thumbnail_path = f"{THUMB_DIR}/{row['category']}/{filename_base}.jpg"
     thumbnail_webp_path = f"{THUMB_DIR}/{row['category']}/{filename_base}.webp"
@@ -492,24 +450,12 @@ def generate_artwork_block(row, include_id=True):
         full_image_path = large_path
         full_image_webp_path = large_webp_path if os.path.exists(large_webp_path) else ""
     else:
-        # img/ is gitignored (local-only) - a data-full-src pointing there would
-        # load fine in a local preview and then 404 once deployed, since GitHub
-        # Pages never sees that folder. This bit the site before (see commit
-        # d7e613b: "51 missing full-size images"): the previous fallback checked
-        # img/ on disk and silently used it whenever it happened to exist locally,
-        # so the break stayed invisible until deploy. Always fall back to the
-        # thumbnail (which *is* deployed) instead, and warn so large/ gets
-        # regenerated before pushing.
         full_image_path = thumbnail_path
         full_image_webp_path = ""
         _missing_fullsize.append(f"{row['category']}/{row['filename']} ({row['title']})")
 
     webp_attr = f'\n           data-full-src-webp="{full_image_webp_path}"' if full_image_webp_path else ""
 
-    # width/height keep the grid slot reserved before the bytes arrive. The CSS
-    # already pins every cell to aspect-ratio 3/4 with object-fit: cover, so
-    # these are the intrinsic size of the file, not the rendered box - they only
-    # matter for the moment before style.css applies.
     thumbnail_dims = image_dimensions(thumbnail_path)
     size_attrs = (f'\n           width="{thumbnail_dims[0]}" height="{thumbnail_dims[1]}"'
                   if thumbnail_dims else "")
@@ -544,24 +490,12 @@ def generate_artwork_block(row, include_id=True):
         {img_tag}
       </picture>'''
 
-    # Every artwork is rendered twice - once in the chronological view, once
-    # in its category section of the thematic view. Emitting id="{unique_id}"
-    # both times produced 313 duplicate DOM ids (invalid HTML) and made
-    # #hash deep-links resolve to whichever copy happened to come first in
-    # the markup. Only the chronological copy (the default active view)
-    # keeps the id; the thematic copy is still identifiable via data-id.
     id_attr = f' id="{unique_id}"' if include_id else ''
     block = f'''    <div class="art-block"{id_attr} data-hover-title="{title_escaped} ({show_date_escaped})">
       {img_tag}
     </div>'''
     return block
 
-# ===== STEP 7: Build gallery HTML - FIXED =====
-# "Featured" is a curated overlay, not a category: on disk the works are copies
-# living in both img/Featured/ and their home folder, so in the CSV they keep
-# their real category and carry the tag instead. Everything Featured on the
-# page - its own view and the first section of the category view - is built
-# from this one list.
 FEATURED_TAG = "Featured"
 featured_rows = [row for _, row in df.iterrows()
                  if FEATURED_TAG in [t.strip() for t in str(row.get("tags", "")).split(",")]]
@@ -573,11 +507,6 @@ gallery_html += '    <button id="chronological-view-btn" class="view-btn active"
 gallery_html += '    <button id="thematic-view-btn" class="view-btn">By Category</button>\n'
 gallery_html += '  </div>\n\n'
 
-# Featured view - a flat grid, no year or category headings to group by. It
-# deliberately has no .theme-section wrapper: filter.js only adds the
-# collapse/preview machinery where it finds one, and a single collapsible
-# section in a one-section view would just be a "Show all" button in front of
-# the works. layoutMasonry() keys off .gallery, so the grid still lays out.
 if featured_rows:
     gallery_html += '  <div id="featured-gallery" class="gallery-container">\n'
     if FEATURED_TAG in category_descriptions:
@@ -589,9 +518,6 @@ if featured_rows:
     gallery_html += '    </div>\n'
     gallery_html += '  </div>\n\n'
 
-# Chronological view - grouped into years, using the same .theme-section shape
-# as the thematic view below, so filter.js gives both views the same collapsing,
-# preview and counter behaviour without knowing which one it is looking at.
 gallery_html += '  <div id="chronological-gallery" class="gallery-container active">\n'
 
 grouped_by_year = defaultdict(list)
@@ -603,15 +529,11 @@ for _, row in df.iterrows():
         year_label = str(year_raw).strip()
     grouped_by_year[year_label or 'Undated'].append(row)
 
-# df is already newest-first; keep the groups in that order too, with anything
-# that has no usable year last rather than sorted in among the numbers
 def year_sort_key(label):
     return (0, -int(label)) if label.isdigit() else (1, label)
 
 for year_label in sorted(grouped_by_year, key=year_sort_key):
     rows = grouped_by_year[year_label]
-    # "year-" prefix keeps these out of the way of the artwork slugs and the
-    # category anchors, which share the same id namespace
     anchor = f"year-{slugify(year_label)}"
 
     gallery_html += '  <div class="theme-section">\n'
@@ -633,13 +555,9 @@ for _, row in df.iterrows():
     if category:
         grouped_by_category[category].append(row)
 
-# The overlay also opens the category view (featured_rows is built in STEP 7),
-# so the same work appears both here and in its own category further down.
-# include_id=False everywhere in this view, so that costs no duplicate DOM ids.
 if featured_rows:
     grouped_by_category[FEATURED_TAG] = featured_rows
 
-# Sort categories by custom order
 CATEGORY_ORDER = [
     "Featured",
     "Nothing more than Human",
@@ -677,9 +595,6 @@ for category in sorted_categories:
     gallery_html += f'    <h3 id="{anchor}" class="section-title">{category}</h3>\n'
     
     if category in category_descriptions:
-        # Escaped like every other CSV-sourced field here: the descriptions are
-        # hand-edited in Numbers, so an "&" or a quote in one would otherwise
-        # emit broken markup.
         desc = escape_html(category_descriptions[category])
         gallery_html += f'    <p class="category-description">{desc}</p>\n'
     
@@ -691,12 +606,6 @@ for category in sorted_categories:
 
 gallery_html += '  </div>\n'
 
-# ===== STEP 7a: Category list for the Gallery nav dropdown =====
-# Hand-maintained until now, which is why it still offered twelve categories
-# that predated the re-sort and linked to two that no longer existed. Same
-# order and the same anchors as the category view above, so the two cannot
-# drift apart again. "Featured" is left out on purpose: it is an overlay, and
-# the dropdown already has its own entry for that view above the divider.
 nav_categories_html = ''
 for category in sorted_categories:
     if category == FEATURED_TAG:
@@ -708,11 +617,6 @@ for category in sorted_categories:
         f'onclick="switchToThematic(\'{anchor}\'); return false;">{label}</a></li>\n'
     )
 
-# ===== STEP 7b: Compute Activity stats (mirrors activity.js's own math) =====
-# activity.js recomputes these from the CSV client-side and overwrites the
-# static numbers on load - but the static numbers are what ships in the HTML
-# (and what anyone/anything without JS sees), so they need to be regenerated
-# here too instead of being hand-typed once and left to rot.
 _MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July',
                 'August', 'September', 'October', 'November', 'December']
 _activity_counts = defaultdict(int)
@@ -729,8 +633,6 @@ for _, row in df.iterrows():
 total_works_stat = len(df)
 
 if _activity_counts:
-    # Tie-break on the later month, same rule as activity.js - otherwise a tie would
-    # resolve by row order and the static number could disagree with the JS one.
     (_peak_year, _peak_month), _peak_count = max(_activity_counts.items(), key=lambda kv: (kv[1], kv[0]))
     most_productive_stat = f"{_MONTH_NAMES[_peak_month - 1][:3]} {_peak_year} ({_peak_count})"
 else:
@@ -741,7 +643,6 @@ current_year_stat = sum(c for (y, m), c in _activity_counts.items() if y == _cur
 
 print(f"✓ Activity stats: {total_works_stat} total, peak {most_productive_stat}, {current_year_stat} this year\n")
 
-# ===== STEP 8: Read and update index.html =====
 with open(INDEX_PATH, "r", encoding="utf-8") as f:
     content = f.read()
 
@@ -766,7 +667,6 @@ for _stat_id, _stat_value in (("total-works", total_works_stat),
     new_content, _n = re.subn(rf'(id="{_stat_id}">)[^<]*(</div>)',
                               lambda m: f'{m.group(1)}{_stat_value}{m.group(2)}', new_content, count=1)
     if _n != 1:
-        # A silent no-op here is exactly how the block drifted to stale numbers before.
         raise ValueError(f'Activity stat placeholder id="{_stat_id}" not found in index.html')
 
 with open(OUTPUT_PATH, "w", encoding="utf-8") as f:

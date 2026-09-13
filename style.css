@@ -1,129 +1,40 @@
-/* ===== DARK MODE CSS VARIABLES ===== */
 :root {
-  /* Light mode (default) */
   --color-mode: 'light';
-
-  /* ===== TYPE =====
-     No webfonts. Every family below is already on the machine, so the page has
-     no font request to lose: the old EB Garamond / Meie Script pair was fetched
-     from Google and, when that fetch did not land, the whole site silently fell
-     back to system faces it had never been designed against. What is drawn now
-     is what was designed.
-
-     Two voices, and the contrast between them is the whole idea:
-
-       - Georgia for everything with a voice - the wordmark, headings, work
-         titles, quotes, prose, italics. A screen serif with a large x-height
-         and sturdy stems, so it holds at prose sizes without the size bump a
-         display face like Garamond needs, and its italic is a real cursive
-         rather than a slant.
-       - Arial for everything that labels rather than speaks - nav, filters,
-         buttons, dates, counts, captions. Small, uppercase and widely tracked.
-
-     The catalogue feeling comes from the gap between them: ordinary Georgia at
-     reading size against very small, very spaced Arial. Neither face is doing
-     anything clever on its own.
-
-     Weights: both families ship Regular and Bold and nothing between, so a 500
-     is simply rounded back to 400 by the browser. --fw-medium is therefore 400
-     and honest about it; the one real step is --fw-semibold, which lands on
-     Bold and is spent only on the tracked caps, where the tracking has thinned
-     the line and it needs the weight back. */
   --font-serif: Georgia, 'Times New Roman', Times, serif;
   --font-sans: Arial, Helvetica, 'Helvetica Neue', sans-serif;
-  /* --font-script survives from the era when the wordmark was a script face;
-     it now points at the serif so any rule still asking for it gets Georgia. */
   --font-script: var(--font-serif);
   --font-display: var(--font-serif);
   --font-body: var(--font-serif);
   --font-ui: var(--font-sans);
 
   --fw-regular: 400;
-  /* No 500 exists in Georgia or Arial - stated as 400 rather than left as a
-     500 the browser quietly rounds down */
   --fw-medium: 400;
   --fw-semibold: 600;
-
-  /* Display sizes. Georgia's default fit is generous, so the wordmark and the
-     section headings are closed up; work titles take a smaller dose. */
   --tracking-display: -0.045em;
   --tracking-tight: -0.035em;
   --tracking-normal: 0;
   --tracking-wide: 0.02em;
   --tracking-wider: 0.04em;
-  /* The other end of the scale, and the reason the small labels read as
-     expensive rather than merely small: Arial caps at 10-13px need this much
-     air before the words separate. Caps have no ascenders or descenders to do
-     it for them. */
   --tracking-caps: 0.22em;
-  /* For the shortest labels of all - a count, a year - where even 0.22em still
-     reads as a word rather than a marker. */
   --tracking-caps-wide: 0.26em;
 
-  /* The two margins of the page, and they are deliberately not equal. The
-     right one is open paper and nothing else - it is the wide one, the way the
-     outer margin of a printed page is. The left one is narrow and carries the
-     hairline, which is where the reference puts it: a rule between the page
-     and its own edge, not a fence at the far side of the reading. Both live
-     here rather than in filter_styles.css because the padding that clears the
-     rule and the position that paints it have to read the same number, and one
-     of them is in the other file.
-
-     The left inset is doubled from where it started: at half this the band
-     outside the rule was a sliver, and a sliver reads as a misaligned edge
-     rather than as a margin. A margin has to be wide enough that the eye
-     rests in it.
-
-     The clearance is the gap on the INSIDE of the rule, and it is its own
-     value rather than a flat 20px because it has to grow with the inset. A
-     hairline with a wide band on one side and a hard 20px on the other is not
-     a margin, it is a text block pushed up against a line: the eye reads the
-     line as the start of the reading instead of as the edge of the page. Set
-     from the reference, which gives its rule about 3.5% of the viewport before
-     the first character - roughly 50px at this width. */
   --page-gutter: clamp(28px, 6.5vw, 128px);
   --page-rule-inset: clamp(28px, 4.4vw, 80px);
   --page-rule-clear: clamp(22px, 3.4vw, 60px);
-
-  /* Height of the fixed nav bar. This is only a first-paint fallback: header.js
-     measures the bar and overwrites it, because the bar grows a second row of
-     links on narrow screens. Everything that must clear the bar reads it as
-     calc(var(--nav-h) + …). */
   --nav-h: 60px;
-
-  /* How wide the gallery grid is allowed to run. The category rule and the
-     view switch above it read the same value so the three stay aligned. */
   --gallery-max: 1520px;
-
-  /* Prose blocks, their rule and the contact row all span the gallery, so every
-     edge on the page lines up. The reading measure is held inside them instead
-     (see .statement p / .commissions p). */
   --prose-max: var(--gallery-max);
 
-  /* Breathing room above the bar's contents, deliberately larger than the
-     space below them so the row sits low in the bar rather than hugging the
-     top edge of the screen. Pulled out as a variable because it is the value
-     most likely to want nudging; everything else follows automatically, since
-     header.js measures the resulting bar into --nav-h. */
   --nav-pad-top: 15px;
   --nav-pad-bottom: 11px;
-  /* measured against the link text in the browser; see .nav-inner */
   --nav-btn-lift: 11px;
-
-  /* Slightly translucent so artwork scrolling underneath stays hinted at, but
-     opaque enough that the links keep their contrast over an arbitrary painting */
   --nav-bg: rgba(250, 248, 244, 0.92);
-
-  /* Backgrounds - warm paper rather than the old cool cream */
   --bg-primary: #faf8f4;
   --bg-secondary: #f2eee6;
   --bg-tertiary: #faf8f4;
-  /* Hover tints are mixed from the ink colour rather than pure black, so they
-     warm the surface instead of greying it */
   --bg-hover: rgba(43, 40, 35, 0.05);
   --bg-hover-strong: rgba(43, 40, 35, 0.08);
 
-  /* Text colors - a warm charcoal ramp */
   --text-primary: #2b2823;
   --text-secondary: #3a362f;
   --text-tertiary: #4a453d;
@@ -132,15 +43,9 @@
   --text-dimmed: #9a9488;
   --text-disabled: #bdb7ab;
 
-  /* The header's two quiet voices. The same iris as the accent below, pulled
-     most of the way to grey and then held back with alpha, so the subtitle and
-     the epigraph recede from the headline without turning into a second colour
-     on the page. The epigraph is the fainter of the two. */
   --text-violet: rgba(88, 82, 112, 0.8);
   --text-violet-faint: rgba(88, 82, 112, 0.58);
 
-  /* Accent - the dusty iris violet from the palette, darkened until body links
-     clear 4.5:1 against the paper (the swatch itself sits near 3.5:1) */
   --accent-primary: #6b6394;
   --accent-light: rgba(107, 99, 148, 0.14);
   --accent-border: rgba(107, 99, 148, 0.42);
@@ -148,39 +53,23 @@
   --support-accent: #b0564f;
   --support-accent-hover: #8f4340;
 
-  /* Borders and dividers - tinted with the ink, not neutral black */
   --border-light: rgba(43, 40, 35, 0.05);
   --border-medium: rgba(43, 40, 35, 0.1);
   --border-strong: rgba(43, 40, 35, 0.2);
   --border-heavy: rgba(43, 40, 35, 0.3);
 
-  /* Rule under the category name, and the shade it casts. Kept faint on
-     purpose: it is a boundary, not a divider competing with the artwork. */
   --chip-edge-strong: rgba(43, 40, 35, 0.05);
   --chip-edge-hover-strong: rgba(43, 40, 35, 0.1);
   --chip-shade: rgba(43, 40, 35, 0.04);
   --chip-shade-hover: rgba(43, 40, 35, 0.08);
 
-
-  /* Shadows */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.15);
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.2);
 
-  /* Overlays */
   --sidebar-backdrop: rgba(30, 27, 23, 0.62);
 
-  /* Lightbox. Light mode gets a greige surround and a paper caption panel -
-     the same two tones the reference uses for its outer frame and its cards.
-     A mid taupe washed with the accent iris, not a pale greige: at #e6e0d6 the
-     surround sat too close to the page's own #faf8f4 and the overlay did not
-     read as an overlay at all. This is the light-mode equivalent of dimming
-     the room, and the violet cast keeps the tone inside the palette instead of
-     reading as plain grey.
-     Fully opaque - at any alpha the gallery showed through and muddied it.
-     Everything inside the overlay reads from the --lb-* set, so the two themes
-     stay in step. */
   --lightbox-overlay: #c2b6bd;
   --lightbox-content-bg: #f7f5f0;
 
@@ -200,11 +89,6 @@
   --lb-chip-fg: #2b2823;
   --lb-chip-border: rgba(43, 40, 35, 0.14);
 
-  /* Share inverts against the surround, but at 68% rather than solid ink: at
-     full strength it was the darkest thing in the overlay and pulled the eye
-     down off the painting. Translucent it still reads as the one filled
-     control without becoming the loudest. Not lower than 0.68 - that is where
-     the pale label stops clearing 4.5:1 on the caption panel. */
   --lb-primary-bg: rgba(43, 40, 35, 0.68);
   --lb-primary-bg-hover: rgba(43, 40, 35, 0.88);
   --lb-primary-fg: #faf8f4;
@@ -212,15 +96,10 @@
   --lb-menu-bg: #fbf9f5;
   --lb-menu-shadow: rgba(43, 40, 35, 0.28);
 
-  /* Mount behind the artwork - the same paper as the caption panel, so the two
-     read as one sheet, and a clear step lighter than the greige surround. Most
-     of the work is painted on cream paper and was disappearing into the
-     background without it. */
   --lb-mat: #faf8f4;
   --lb-mat-shadow: rgba(43, 40, 35, 0.42);
   --lb-focus: rgba(43, 40, 35, 0.5);
 
-  /* Activity visualization */
   --activity-empty: #f4f0e9;
   --activity-level-1: #e2dcd0;
   --activity-level-2: #c2bbab;
@@ -229,25 +108,21 @@
   --activity-level-5: #4c463c;
   --activity-level-6: #2b2823;
 
-  /* Image placeholder */
   --img-placeholder: #efeae1;
   --img-placeholder-light: #e4ded3;
 }
 
-/* Dark mode variables */
 [data-theme="dark"] {
   --color-mode: 'dark';
 
   --nav-bg: rgba(28, 26, 23, 0.92);
 
-  /* Backgrounds - the same warm neutral, inverted; never pure black */
   --bg-primary: #1c1a17;
   --bg-secondary: #24211d;
   --bg-tertiary: #272420;
   --bg-hover: rgba(245, 240, 232, 0.05);
   --bg-hover-strong: rgba(245, 240, 232, 0.08);
 
-  /* Text colors - warm off-white rather than clinical grey */
   --text-primary: #ece7de;
   --text-secondary: #d5cfc4;
   --text-tertiary: #bdb6aa;
@@ -256,12 +131,9 @@
   --text-dimmed: #787165;
   --text-disabled: #574f45;
 
-  /* Lifted the same way the accent is, and kept a touch more opaque: alpha
-     that reads as "quiet" on paper reads as "missing" on a dark ground. */
   --text-violet: rgba(178, 171, 200, 0.78);
   --text-violet-faint: rgba(178, 171, 200, 0.58);
 
-  /* Accent - the same iris violet, lifted so it reads on the dark ground */
   --accent-primary: #a79ed6;
   --accent-light: rgba(167, 158, 214, 0.16);
   --accent-border: rgba(167, 158, 214, 0.5);
@@ -269,7 +141,6 @@
   --support-accent: #d98a80;
   --support-accent-hover: #eaa79d;
 
-  /* Borders and dividers - lighter for dark mode */
   --border-light: rgba(245, 240, 232, 0.05);
   --border-medium: rgba(245, 240, 232, 0.1);
   --border-strong: rgba(245, 240, 232, 0.2);
@@ -280,17 +151,13 @@
   --chip-shade: rgba(0, 0, 0, 0.22);
   --chip-shade-hover: rgba(0, 0, 0, 0.35);
 
-
-  /* Shadows - darker and more subtle */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 6px 16px rgba(0, 0, 0, 0.5);
   --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.6);
 
-  /* Overlays */
   --sidebar-backdrop: rgba(16, 14, 12, 0.78);
 
-  /* Lightbox - dark surround, and the --lb-* set inverted to match */
   --lightbox-overlay: rgba(18, 16, 14, 0.97);
   --lightbox-content-bg: #2a2620;
 
@@ -317,14 +184,10 @@
   --lb-menu-bg: rgba(28, 28, 28, 0.97);
   --lb-menu-shadow: rgba(0, 0, 0, 0.7);
 
-  /* Lifted off #2a2620: against the near-black surround that gave only 1.26:1
-     and the card was effectively invisible, so the alignment it exists to show
-     did not read in dark mode */
   --lb-mat: #38332b;
   --lb-mat-shadow: rgba(0, 0, 0, 0.6);
   --lb-focus: rgba(255, 255, 255, 0.7);
 
-  /* Activity visualization - inverted for dark mode */
   --activity-empty: #26231f;
   --activity-level-1: #3d3831;
   --activity-level-2: #5b544a;
@@ -333,19 +196,16 @@
   --activity-level-5: #c2b9a8;
   --activity-level-6: #e6dfd2;
 
-  /* Image placeholder */
   --img-placeholder: #2a2620;
   --img-placeholder-light: #35302a;
 }
 
-/* Smooth transitions for theme changes */
 *,
 *::before,
 *::after {
   transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Preserve image and specific element transitions */
 img,
 .gallery img,
 .lightbox img,
@@ -355,42 +215,10 @@ img,
   transition: transform 0.2s ease, opacity 0.4s ease !important;
 }
 
-/* ===== SMOOTH SCROLL ===== */
 html {
   scroll-behavior: smooth;
 }
 
-/* Paper grain. A fixed, non-interactive layer of fractal noise behind
-   everything - the body's own background colour still paints on the canvas
-   underneath it, which is what a negative z-index on a body pseudo-element
-   gets you. Generated rather than downloaded: the whole texture is the
-   feTurbulence below, a few hundred bytes of stylesheet and no request at all.
-
-   Position fixed, not absolute: the grain belongs to the sheet of paper the
-   page is printed on, so it must not scroll with the ink.
-
-   The three numbers are the whole problem, and they were measured rather than
-   guessed - rendered, then sampled off a blank patch of the page:
-
-     - The feColorMatrix throws the noise's colour away and keeps only its RED
-       channel, as ALPHA. So the layer is pure black at a varying opacity: fine
-       dark specks, not a grey wash. A grey wash is what the first attempt was,
-       and grey noise averages to mid-grey, so it turned #faf8f4 flat and cold
-       at any strength strong enough to see.
-     - gamma 5 on that alpha is what buys texture without a colour cast. It
-       pushes most of the distribution towards transparent and keeps the tail,
-       so the specks stay sparse and distinct while the AVERAGE darkening stays
-       near nothing. Without it the same visible grain cost three times the
-       shift in the paper colour.
-     - 0.09 then lands it at a measured mean of 249/247/243 against the paper's
-       250/248/244 - about one level darker, which no eye will read as a colour
-       change - with a standard deviation of 1.4 levels, which is exactly the
-       fine tooth of a laid sheet.
-
-   (mix-blend-mode: overlay is the usual trick here and does not work on this
-   palette: overlay's effect collapses towards nothing as the ground approaches
-   white, and #faf8f4 is close enough that the grain measured a standard
-   deviation of 0.45 - three distinct values across the whole patch.) */
 body::before {
   content: '';
   position: fixed;
@@ -401,15 +229,6 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='gamma' exponent='5'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='1'/%3E%3C/svg%3E");
 }
 
-/* Inverted on the dark ground, and weaker. Black specks on #1c1a17 are simply
-   invisible - there is no room below it to darken into - so the layer flips to
-   white ones, which is also the right physical analogy: light paper takes ink,
-   dark paper takes tooth.
-
-   A shade weaker than the light side once measured the same way: it
-   lands on a standard deviation of 1.3 against the light theme's 1.4, because
-   the same speckle that reads as a laid sheet on warm off-white starts to read
-   as sensor noise on near-black. */
 [data-theme="dark"] body::before {
   filter: invert(1);
   opacity: 0.1;
@@ -419,19 +238,10 @@ body {
   margin: 0;
   font-family: var(--font-body);
   font-weight: var(--fw-regular);
-  /* Figures, decided once for the whole page instead of fought element by
-     element. Lining is the default because most numbers on this site are data
-     - years, counts, badges, the lightbox counter - and old-style figures set
-     "2026" with a small 0 and 2 against a full-height 6, which bounces in a
-     nine-pixel pill and reads as a typo in a filter list. The prose blocks
-     opt back into old-style below, where the numbers are part of a sentence
-     and the bouncing line is the whole charm. */
   font-variant-numeric: lining-nums;
   background-color: var(--bg-primary);
 }
 
-/* Type utilities. Small on purpose - they exist so a one-off in the markup can
-   reach the same scale the stylesheet uses, not as a system to build in. */
 .italic { font-style: italic; }
 .medium { font-weight: var(--fw-medium); }
 .semibold { font-weight: var(--fw-semibold); }
@@ -439,11 +249,6 @@ body {
 .tracking-wide { letter-spacing: var(--tracking-wide); }
 .tracking-wider { letter-spacing: var(--tracking-wider); }
 
-/* Site header. Nothing in it is centred: the mark sits in the corner, the
-   headline and its description read from the left, and the epigraph answers
-   them from the right - all four on the same left edge the prose blocks and
-   the gallery grid below already use, so the page has one margin rather than a
-   centred top and an aligned body. */
 .site-header {
   box-sizing: border-box;
   width: 100%;
@@ -452,11 +257,6 @@ body {
   padding: 22px 0 16px;
 }
 
-/* The masthead. Small, in the corner, and doing the job a wordmark does -
-   saying what this is called - rather than opening the page. The gap under it
-   was set when the header opened on nothing but type; with the drawing hanging
-   from the same line it only has to separate, not to carry the whole top of
-   the page. */
 .site-mark {
   display: block;
   margin-bottom: 38px;
@@ -466,9 +266,6 @@ body {
   display: block;
   font-family: var(--font-display);
   font-size: clamp(23.2px, 2vw, 32px);
-  /* A single word asked to be an image of itself, which is exactly the case
-     the hard negative tracking exists for - and exactly what the headline
-     below, being a sentence, is not. */
   letter-spacing: -0.04em;
   line-height: 1;
   color: var(--text-primary);
@@ -481,24 +278,10 @@ body {
   font-size: 8.5px;
   font-weight: var(--fw-semibold);
   text-transform: uppercase;
-  /* The widest tracking on the site. At 8.5px the letters have to be pushed
-     this far apart before the line reads as a rule under the name rather than
-     as a word. */
   letter-spacing: 0.31em;
   color: var(--text-muted);
 }
 
-/* Headline and description on the left, drawing in the middle, epigraph on the
-   right. The row hangs from the top rather than centring its columns against
-   each other: the drawing is more than twice the height of the text beside it,
-   so centring pushed the headline down into the middle of a very tall row and
-   opened a band of empty paper above everything. Hung from the top, the mark,
-   the headline and the flower all start on one line and the header closes up
-   by about a hundred and fifty pixels.
-
-   The epigraph is the one exception and takes align-self: centre, so it still
-   lands beside the middle of the drawing the way the reference has it, rather
-   than up at the top corner. */
 .site-header-body {
   display: flex;
   align-items: flex-start;
@@ -506,17 +289,11 @@ body {
   gap: 56px;
 }
 
-/* Holds its own width rather than absorbing the row: the free space in the
-   middle belongs to the drawing now. */
 .site-header-lead {
   flex: 0 1 auto;
   min-width: 0;
 }
 
-/* The drawing, in the empty middle of the header - the position the reference
-   gives its diagram. Takes whatever the headline and the epigraph leave and
-   centres the image inside it, so the artwork sits on the page's optical
-   centre rather than at a measured offset that would drift with the text. */
 .site-header-art {
   flex: 1 1 auto;
   display: flex;
@@ -525,56 +302,13 @@ body {
   margin: 0;
 }
 
-/* The paper is gone from the file itself - assets/hero-ipomea.webp carries a
-   real alpha channel - so there is nothing here to blend away and no theme to
-   special-case. That is the whole reason for cutting it: a blend mode only
-   ever hides a background against one particular ground, and this page has
-   two. The earlier version multiplied the white into the cream, which worked
-   until the dark theme, where multiply has no room below #1c1a17 and crushed
-   the drawing to a smudge; the fix for that was an invert/hue-rotate pair that
-   gave back the hues but not the lightness. All of it went away with the
-   background.
-
-   What is left is the part that was always the point:
-
-     - The mask dissolves the plant unevenly. Its centre sits at 32% of the
-       height, which is the bloom - so the flower stays whole and everything
-       measured outward from it thins: the stem goes half-there, the lower
-       leaves further still, the tips of the foliage away altogether. One
-       off-centre gradient rather than two composited layers, because a single
-       radial is supported everywhere and, placed on the flower instead of on
-       the middle of the box, it already fades in the direction that matters.
-       The plant is not fading at its edges so much as fading downward, out of
-       the page, which is what makes it read as dissolving rather than as
-       vignetted.
-     - Held back in saturation and opacity, because at full strength the one
-       saturated object on a page of warm neutrals pulls the eye off the
-       headline it is supposed to sit beside, not in front of.
-
-   pointer-events: none because it is not a link - the same work is one click
-   away in the gallery, where it has its title and its metadata. */
 .site-header-art img {
   display: block;
   width: 100%;
   max-width: 376px;
   height: auto;
-  /* Almost nothing left to reclaim. The file used to carry 135px of empty
-     sheet above the bloom and 112px below the leaves - an alpha bounding box
-     is decided by the outermost surviving speck of grain, not by the drawing -
-     and those two bands of nothing were setting the height of the whole
-     header. utils/make_hero_cutout.py now crops from where the ink actually
-     is, so the plant fills its own frame and only the gradient's own fade at
-     the foot is still worth taking back.
-
-     The top margin is not a reclaim but a lift: it raises the drawing out of
-     the text row and onto the masthead's own line, so the flower starts where
-     the section starts rather than where the headline does. Nothing overlaps -
-     the drawing is its own column - and the row loses the full height of the
-     lift, which is the point. */
   margin-top: -88px;
   margin-bottom: -44px;
-  /* 15% transparent overall - "total" as against the gradient below, which is
-     what thins the plant unevenly. This is the flat coat on top of it. */
   opacity: 0.85;
   filter: saturate(0.8);
   -webkit-mask-image: radial-gradient(ellipse 88% 78% at 50% 30%, #000 0%, rgba(0, 0, 0, 0.97) 36%, rgba(0, 0, 0, 0.72) 62%, rgba(0, 0, 0, 0.32) 84%, transparent 100%);
@@ -582,15 +316,10 @@ body {
   pointer-events: none;
 }
 
-/* A shade further back on the dark ground, where a light drawing on near-black
-   carries more contrast than the same drawing on cream. */
 [data-theme="dark"] .site-header-art img {
   opacity: 0.8;
 }
 
-/* What the archive holds. The label voice, because this is a caption under a
-   headline rather than a paragraph - but sentence case and untracked, since it
-   is a whole sentence and tracked caps at this length are a wall. */
 .site-subtitle {
   max-width: 44ch;
   margin: 28px 0 0;
@@ -602,34 +331,11 @@ body {
   color: var(--text-violet);
 }
 
-/* The epigraph answers the description from the other end of the row, and is
-   held one step further back in every dimension at once: smaller, italic,
-   fainter. Georgia italic, because this is the one line on the page that is
-   quoted speech. Ragged right, not right-aligned - it is a block of text set
-   to the right, which is not the same thing. */
 .site-epigraph {
   flex: 0 0 auto;
   max-width: 26ch;
-  /* Pulled in off the right edge. space-between hands all the slack to the
-     column between the headline and the quote, which parked the quote against
-     the page's own margin and left it talking to nothing; the free space now
-     sits to its right instead and the line stands beside the flower it is
-     about. This is the one thing on the page deliberately off the spine - it
-     is a marginal note, and a marginal note that lines up with the body is
-     just another column. */
   margin: 0 clamp(0px, 5vw, 96px) 0 0;
   font-family: var(--font-display);
-  /* Centred on the row, then dropped. Centred alone it landed beside the
-     flower's stem, which is the thinnest part of the drawing and the emptiest
-     part of the page; the shift takes it down level with the spiral - the mass
-     of the picture - and, on a desktop, onto the same band as the description
-     across on the left. The three then read as one line across the page rather
-     than as three things at three heights.
-
-     A transform rather than a margin, because a margin would hand the row the
-     extra height back and there is no need for it: the drawing is taller than
-     this block either way. Reset below 900px, where the column is stacked and
-     there is nothing left to be level with. */
   align-self: center;
   transform: translateY(clamp(28px, 4.5vw, 70px));
   font-size: 14px;
@@ -639,8 +345,6 @@ body {
   color: var(--text-violet-faint);
 }
 
-/* Below the gallery's two-column width there is no "opposite" left, so the
-   epigraph falls under the description. Everything stays on the left edge. */
 @media (max-width: 900px) {
   .site-mark {
     margin-bottom: 34px;
@@ -650,16 +354,11 @@ body {
     display: block;
   }
 
-  /* Stacked, the drawing falls between the description and the epigraph, which
-     is the same reading order it has across the row on a desktop. Smaller,
-     because here it shares the column rather than filling a gap in it. */
   .site-header-art {
     display: block;
     margin: 26px 0 0;
   }
 
-  /* Stacked here, so there is no row to lift out of - only the gap under the
-     description to close a little. */
   .site-header-art img {
     max-width: 262px;
     margin-top: -18px;
@@ -673,14 +372,6 @@ body {
   }
 }
 
-/* Headings */
-/* The headline. It is a sentence rather than a wordmark now, so the tracking
-   comes most of the way back: -0.045em is what turns a single word into a
-   mark, and the same value applied to sixty characters just makes them hard to
-   read. Left-aligned and ragged, on a deliberately narrow measure: a short
-   column of large type beside a lot of empty paper is the whole shape of the
-   header, and a headline run to the full width would fill the space the layout
-   is spending on purpose. */
 h1 {
   text-align: left;
   font-family: var(--font-display);
@@ -699,18 +390,7 @@ h1 {
   color: #cfc8bc;
 }
 
-/* Light text on a dark ground always reads a step lighter than the same text
-   dark-on-light - the ground eats into the stems - and this used to be paid
-   for with a step of weight, which a variable EB Garamond could supply for
-   free. Georgia cannot: it has Regular and Bold and nothing in between, so
-   the same rule would have jumped a 60px heading straight to bold and set the
-   whole statement in it.
 
-   Two things make the correction unnecessary anyway. Georgia is a sturdier
-   face than EB Garamond to begin with, and the dark palette's text colours
-   are already lifted rather than pure white, which is the other half of what
-   thinning does. What is left is a touch of extra tracking on the prose,
-   which opens the counters back up without touching the weight. */
 [data-theme="dark"] .statement,
 [data-theme="dark"] .commissions,
 [data-theme="dark"] .gallery-intro,
@@ -718,13 +398,8 @@ h1 {
   letter-spacing: 0.005em;
 }
 
-/* The clamp above already carries the phone size; this only opens the tracking
-   back up, which a fixed em value cannot do for itself. */
 @media (max-width: 768px) {
   h1 { letter-spacing: -0.015em; }
-  /* The header now spans the prose measure and gets its side padding from
-     .content-with-sidebar like every other block, so only the vertical space
-     is worth trimming here. */
   .site-header { padding: 10px 0 22px; }
 }
 
@@ -732,65 +407,23 @@ h1 {
   h1 { letter-spacing: -0.01em; }
 }
 
-/* Top-level section headings (Statement, Commissions, Gallery, Activity).
-   Deliberately a clear step above the category headings inside the gallery -
-   those grew to stand out on their own, and without this "Gallery" ended up
-   smaller than the categories nested under it. */
 h2.section-title {
-  /* Left, like everything else on the page. A centred heading needs the block
-     under it to be centred too, and nothing here is: the prose, the grid, the
-     header and the category markers all read from one edge. */
   text-align: left;
   max-width: var(--prose-max);
   margin-left: auto;
   margin-right: auto;
   font-family: var(--font-display);
-  /* The one display size on the page, and deliberately a narrow clamp: 40px on
-     a phone up to 60px on a wide desktop, against the 42px flat size it used
-     to hold. There are four of these headings on the page (Commissions,
-     Gallery, Statement, Activity) and they are the only large type besides the
-     headline - letting them run to the 90-100px a landing page would take
-     would have turned a catalogue into a poster. Taken down a further step
-     from there twice: a section heading in a catalogue is a marker, not an
-     announcement, and at 40px these still read as one. 30px on a desktop keeps
-     the step down from the headline while letting the works be the largest
-     thing on the page, which they should have been all along. */
   font-size: clamp(23px, 2.1vw, 34px);
-  /* Regular. At this size the size is the hierarchy, and Georgia's bold is
-     heavy enough to shout on a page of thin rules and warm neutrals. */
   font-weight: var(--fw-regular);
-  /* Negative, where the small sans labels below take a great deal of positive:
-     that opposition is the type system in one line. */
   letter-spacing: var(--tracking-display);
   line-height: 1.05;
-  /* Every gap between one chapter and the next is half what it was. The page
-     had been spacing sections the way it spaced them when the type was large;
-     once the headings came down to 30px and the notes under them to 13, the
-     old distances stopped reading as breathing room and started reading as
-     the page having been cut into pieces. The space inside a section - heading
-     to its own text - is untouched. */
   margin-top: 18px;
   margin-bottom: 0.6em;
-  color: var(--text-primary);
-  /* Keeps the heading clear of the fixed nav on anchor jumps. Tied to the
-     measured bar height instead of the old 90px/130px breakpoint pair. */
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
 
-/* Commissions opens the page, under the site title and above the work; the
-   rule under it hands over to the gallery. Statement takes the big break -
-   it comes after 300-odd works.
-
-   It takes the same size as the other three - it is a section heading and it
-   should look like one. (It was set smaller for a while, on the argument that
-   it names two lines of housekeeping rather than a body of work; that reads as
-   a mistake in the scale rather than as a hierarchy, and the note under it is
-   already doing the work of standing back.) */
 h2#commissions.section-title {
   margin-top: 17px;
-  /* Tighter than the 0.6em the other section titles take: what sits under this
-     one is a single line, and the full gap left the heading floating away from
-     the thing it labels. */
   margin-bottom: 0.4em;
 }
 
@@ -798,9 +431,6 @@ h2#gallery.section-title {
   margin-top: 22px;
 }
 
-/* Still the largest break on the page - it comes after three hundred works and
-   has to register as leaving the gallery behind - but 150px was most of a
-   screen of nothing on a laptop. */
 h2#statement.section-title {
   margin-top: 60px;
 }
@@ -815,19 +445,12 @@ h2#statement.section-title {
   }
 }
 
-/* Years and category names are the two things the spec files under "dates and
-   categories", and they move to the sans voice: not headings that speak, but
-   markers that divide. A tracked 13px Arial cap over a hairline rule is the
-   section marker of a printed catalogue, and it costs the page four fewer
-   pieces of large type. */
 h3.section-title {
   margin-top: 20px;
   margin-bottom: 0.4em;
   font-family: var(--font-ui);
   font-size: 13px;
   text-transform: uppercase;
-  /* Bold, because 0.26em of tracking thins a line badly at 13px and the weight
-     is what puts it back */
   font-weight: var(--fw-semibold);
   letter-spacing: var(--tracking-caps-wide);
   text-align: left;
@@ -835,26 +458,10 @@ h3.section-title {
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
 
-/* A blurb belongs to the name above it, so it sits closer than the works do.
-   The margin above still has to clear the works when there is no blurb, hence
-   :has() rather than simply shrinking it for everyone. */
 .theme-section.is-collapsible .section-title:has(+ .category-description) {
   margin-bottom: 0.4em;
 }
 
-/* Category description - short poetic blurbs, so italic, and Georgia's italic
-   is a genuine cursive rather than a slanted roman. It now follows a small
-   tracked cap rather than a 32px serif heading, which is the pairing the whole
-   page is built on: the marker names the room, the italic speaks in it.
-   17px, not the 20.8px this held in EB Garamond - Georgia's x-height is far
-   larger, so the same optical size arrives at a smaller nominal one. */
-/* Set as .gallery-intro is, and standing in the same relation to what is above
-   it: a single line under a heading, naming the room the works are hung in.
-   The two were the last pair on the page still saying the same kind of thing
-   in two different voices - this one at 17px Georgia was also the largest text
-   left anywhere in the gallery, over a 14px marker. Left and on the gallery's
-   own edge, so it starts where the marker above it starts and where the first
-   column of works below it does. */
 .category-description {
   max-width: var(--prose-max);
   margin: 0 auto 1.9em auto;
@@ -868,40 +475,7 @@ h3.section-title {
   font-style: italic;
 }
 
-/* Artist statement. It spans the gallery, like every other block on the page,
-   and it is set in columns - which is the only way to have both. A single
-   column across 1520px is around 200 characters a line: the letters are large
-   enough, but the eye loses its place on the way back to the start of the next
-   one. Capping the block at a readable measure instead was the other thing
-   tried, and it left a narrow strip of text under a full-width heading with
-   the gallery's edge nowhere in sight - correct to read, wrong on the page.
-
-   Two columns, and the shorthand carries both halves of that: a count, which
-   is the ceiling, and a width, which is the floor. Two across anything wide
-   enough to give each column its 21em, one below that - so a phone gets a
-   single readable column rather than two three-word ones, without a media
-   query saying so. (Left to width alone it went to three on a desktop, which
-   is a page of a newspaper; two is a statement.)
-
-   Georgia stays. It is the one thing on this site meant to be read at length
-   rather than scanned, and the sans is the labelling voice - the sizes come
-   down to the page's register instead, which is where this block was actually
-   out of step: at 17px over a 21px lede it was the largest running text
-   anywhere, in a page that had quietly moved to 13. */
 .statement {
-  /* Set as .commissions is: the sans, italic, on its tracking, in its
-     violet-grey. The two blocks are the two things on this page written in the
-     first person, and they now say so in the same voice.
-
-     The one number that differs is the size - 14px against the note's 13. A
-     note is one line and can sit at the bottom of the page's scale; this is
-     four paragraphs across two columns, and at 13px each of those columns runs
-     to about ninety-five characters, which is past what Arial holds. 14px with
-     the leading opened to 1.75 brings it back. Say the word and it goes to 13
-     with the rest.
-
-     Old-style figures went with Georgia: Arial has one set of numerals, and
-     the page default (lining) is the right one. */
   font-family: var(--font-ui);
   font-style: italic;
   font-weight: var(--fw-regular);
@@ -919,11 +493,6 @@ h3.section-title {
 }
 
 .statement p {
-  /* Zeroed rather than left to the browser's 1em. Inside a multicol Chrome
-     truncates the top margin of the box that starts the second column but
-     keeps it on the one that starts the first, so the two columns began
-     sixteen pixels out of step with each other. With no top margin to
-     truncate, they start on the same line. */
   margin-top: 0;
   margin-bottom: 1.25em;
 }
@@ -932,25 +501,6 @@ h3.section-title {
   margin-bottom: 0;
 }
 
-/* The two ends of the statement stand outside the columns, and between them
-   the columns come out even. That is not a coincidence arranged after the
-   fact - it is the shape of the text. The first paragraph is the thesis of the
-   whole page and the last one is its conclusion; the two in the middle are the
-   working-out, and those are what a column is for.
-
-   So the opener runs the full width above the columns as a standfirst - which
-   is also what earns it its size - the closer runs the full width beneath
-   them, and the two paragraphs left flow into one column each. Neither spanner
-   takes a measure of its own: they are one sentence and two, not passages, and
-   held to a column's width they stopped reading as full-width blocks and
-   started reading as a third column that had wandered off.
-
-   break-inside: avoid is what keeps the split honest. Without it the browser
-   balances by height alone and cuts the second paragraph in half mid-sentence,
-   which is where the columns were breaking before: "...behave like cellular
-   processes;" at the foot of one column and "others dissolve into
-   abstraction..." at the head of the next. With it, a paragraph is atomic and
-   the only places a column can end are the places the writing already ends. */
 .statement p {
   break-inside: avoid;
 }
@@ -964,24 +514,9 @@ h3.section-title {
 
 .statement p:last-of-type {
   column-span: all;
-  /* Small, because the space above it is not just this margin: a spanner
-     starts below the TALLER column, so the shorter one already leaves a band
-     of empty paper here. 1.5em on top of that read as two blank rows. */
   margin-top: 0.4em;
 }
 
-/* COMMISSIONS - same width and horizontal padding as the statement, so both
-   blocks still sit on the gallery's edges, but set tighter. This one is two
-   lines of housekeeping at the very top of the page, not an essay, and at the
-   statement's size and leading it read as a banner the work had to get past.
-   Smaller type and shorter leading keep it to the same two lines while the
-   band itself loses roughly a third of its height. */
-/* Set exactly as .gallery-intro is, and for the same reason: both are a single
-   note sitting under a section heading, telling you how to do something rather
-   than saying something. They are the same kind of line, so they are the same
-   line - Arial italic at 13px on the same tracking. The only difference left
-   is colour, and that is deliberate: the gallery's note is grey because it is
-   pure instruction, this one holds an address and keeps the violet. */
 .commissions {
   font-family: var(--font-ui);
   font-style: italic;
@@ -989,22 +524,9 @@ h3.section-title {
   font-size: 13px;
   line-height: 1.65;
   letter-spacing: 0.05em;
-  /* Old-style figures were a Georgia argument and there is no Georgia here any
-     more - Arial has one set of numerals, and the page default (lining) is the
-     right one for an address someone has to read back. */
   font-variant-numeric: lining-nums;
-  /* The same quiet violet-grey the header's subtitle takes, and for the same
-     reason: this is a note about the work rather than the work, and holding it
-     back in colour is what lets it be read without being announced. The links
-     inside step back up to the accent - a note can be quiet, an address that
-     has to be clicked cannot. */
   color: var(--text-violet);
   max-width: var(--prose-max);
-  /* No frame. The box was the last thing on the page still drawn as a panel,
-     and once the type inside it came down to 14.5px the border was the loudest
-     part of its own block. With it gone the horizontal padding goes too, so
-     the text starts on the same left edge as the heading above it and as
-     everything else down the page. */
   margin: 10px auto 0;
   padding: 0;
   box-sizing: border-box;
@@ -1014,10 +536,6 @@ h3.section-title {
 .statement a {
   color: var(--accent-primary);
   text-decoration: none;
-  /* .statement turns old-style figures on, which is wrong for a string someone
-     has to copy: the old-style zero sits at x-height, so ann.parfenen2018@ came
-     out looking like ann.parfenen2o18@. Links step back out to lining.
-     (.commissions is no longer a serif and sets lining itself.) */
   font-variant-numeric: lining-nums;
 }
 
@@ -1033,16 +551,7 @@ h3.section-title {
   margin-bottom: 0;
 }
 
-/* Must come after BOTH .statement and .commissions, not between them. It used
-   to sit above the .commissions rule, and at equal specificity the later plain
-   rule won - so on a phone the statement shrank and its padding tightened
-   while commissions kept the full desktop size, which is why the two blocks
-   never quite matched below 768px. */
 @media (max-width: 768px) {
-  /* One column at a phone's width is about fifty characters at 14px, which is
-     already a proper measure - there is nothing here for a size bump to buy,
-     and the 16px this used to take made the statement larger on a phone than
-     on a desktop. */
   .statement {
     font-size: 14px;
   }
@@ -1050,21 +559,12 @@ h3.section-title {
   .statement p:first-of-type {
     font-size: 1.2em;
   }
-
-  /* The gallery's note keeps 13px on a phone, so this one does too - the two
-     are set alike everywhere else. */
   .commissions {
     font-size: 13px;
     padding: 0;
   }
 }
 
-/* Gallery intro. This is the one line on the page that tells you how to use
-   the thing - "use filters on the left" - so it belongs to the label voice
-   rather than to the reading one, and it drops right down out of the way of
-   the work. The italic stays: it is what keeps the line spoken rather than
-   barked, and it is the only thing separating an instruction from a caption at
-   this size. */
 .gallery-intro {
   max-width: var(--prose-max);
   margin: 10px auto 16px auto;
@@ -1078,14 +578,12 @@ h3.section-title {
   color: var(--text-muted);
 }
 
-/* The clamp above carries the phone size; only the measure needs help here. */
 @media (max-width: 768px) {
   .gallery-intro {
     padding: 0 16px;
   }
 }
 
-/* Gallery view controls */
 .gallery-view-controls {
   display: flex;
   justify-content: flex-start;
@@ -1094,8 +592,6 @@ h3.section-title {
   max-width: var(--gallery-max);
 }
 
-/* Padding, not margin: a top margin here just collapses into the one above it
-   and changes nothing. Applies in both views - years and categories alike. */
 .gallery-container > .theme-section:first-child {
   padding-top: 0;
 }
@@ -1106,16 +602,11 @@ h3.section-title {
   border: 2px solid var(--border-medium);
   border-radius: 8px;
   cursor: pointer;
-  /* The UI voice, stated rather than inherited: Arial, very small, bold,
-     uppercase, widely tracked. A control is a label, not a sentence, and at
-     10.5px the tracking is what keeps it readable. */
   font-family: var(--font-ui);
   font-size: 10.5px;
   font-weight: var(--fw-semibold);
   text-transform: uppercase;
   letter-spacing: var(--tracking-caps);
-  /* Two words, and "BY CATEGORY" broke across two lines inside its own pill as
-     soon as the label grew by the width caps and tracking cost it. */
   white-space: nowrap;
   color: var(--text-tertiary);
   transition: all 0.2s ease;
@@ -1133,7 +624,6 @@ h3.section-title {
   color: var(--accent-primary);
 }
 
-/* Gallery containers */
 .gallery-container {
   display: none;
 }
@@ -1142,43 +632,29 @@ h3.section-title {
   display: block;
 }
 
-/* ===== GALLERY GRID (masonry) =====
-   Columns stay a plain auto-fill grid, but rows are a fine-grained ruler:
-   every work spans however many --masonry-unit rows its own height needs, so
-   works of different proportions stack without leaving the ragged gaps a
-   normal grid row would (a row is as tall as its tallest cell).
-
-   Deliberately grid rather than CSS multi-column: columns fill top-to-bottom,
-   which would scatter a date-ordered gallery down one column before starting
-   the next, and would put the lightbox's DOM-order arrow keys out of step with
-   what is on screen. layoutMasonry() in filter.js sets the spans. */
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   --masonry-unit: 4px;
   --masonry-gap: 16px;
   column-gap: var(--masonry-gap);
-  row-gap: 0; /* vertical spacing is baked into each item's span instead */
+  row-gap: 0;
   grid-auto-rows: var(--masonry-unit);
   max-width: var(--gallery-max);
   width: 100%;
   margin: 0 auto;
-  align-items: start; /* IMPORTANT: prevents stretching */
+  align-items: start;
   box-sizing: border-box;
 }
 
-/* Art block wrapper */
 .art-block {
   display: block;
   width: 100%;
   position: relative;
   margin-bottom: var(--masonry-gap);
-  /* Replaced from JS with the measured span; this is only what shows in the
-     frame before layoutMasonry() runs (and if it never does). */
   grid-row-end: span 80;
 }
 
-/* ===== HOVER OVERLAY WITH TITLE ===== */
 .art-block::after {
   content: attr(data-hover-title);
   position: absolute;
@@ -1189,8 +665,6 @@ h3.section-title {
   color: white;
   padding: 8px 12px;
   border-radius: 8px;
-  /* A work's title, so the serif voice - and Georgia holds up as white text on
-     a near-black chip where a lighter face would disappear. */
   font-family: var(--font-display);
   font-size: 14px;
   font-weight: var(--fw-regular);
@@ -1201,11 +675,6 @@ h3.section-title {
   transform: translateY(4px);
   transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
-  /* Only needs to sit above the <img> inside its own .art-block. It used to be
-     10 - the same value the nav bar had - and because the gallery comes later
-     in the document the tie broke in the caption's favour, so titles slid over
-     the header while scrolling (permanently so on touch devices, where the
-     rule below keeps every caption visible). */
   z-index: 1;
   backdrop-filter: blur(4px);
 }
@@ -1215,25 +684,11 @@ h3.section-title {
   transform: translateY(0);
 }
 
-/* Touch devices used to pin every caption open, on the reasoning that there is
-   no hover to reveal them. That put a dark label over the bottom of all 338
-   paintings at once, which is the opposite of what a gallery wants - the title
-   is still one tap away in the lightbox. */
-
-/* <picture> defaults to display:inline, same inline-spacing issue img had below - neutralize the wrapper box entirely */
 .gallery picture,
 .art-block picture {
   display: contents;
 }
 
-/* ===== IMAGES KEEP THEIR OWN PROPORTIONS =====
-   These used to be forced into aspect-ratio: 3/4 with object-fit: cover, which
-   cropped every work to the same portrait card - across the gallery the real
-   ratios run from 0.52 to 1.67, so a bit over half the collection was being
-   cut off at the edges. Now the box follows the file: the width/height
-   attributes that generate_index.py writes give the browser the ratio before
-   the bytes arrive, so nothing jumps while loading. Uneven heights are taken
-   up by the masonry row spans below. */
 .gallery img {
   width: 100%;
   height: auto;
@@ -1241,11 +696,10 @@ h3.section-title {
   cursor: zoom-in;
   transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.4s ease;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  background: var(--img-placeholder); /* Placeholder color while loading */
-  display: block; /* Remove inline spacing */
+  background: var(--img-placeholder);
+  display: block;
 }
 
-/* Lazy loading states - FIXED */
 .gallery img.lazy-loading {
   opacity: 0.3;
   background: linear-gradient(90deg, var(--img-placeholder) 25%, var(--img-placeholder-light) 50%, var(--img-placeholder) 75%);
@@ -1267,33 +721,18 @@ h3.section-title {
   box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
-/* Theme sections (for thematic view) */
 .theme-section {
   margin-bottom: 40px;
 }
 
-/* Categories are separated by space alone - the heading cards already read as
-   the start of a new block, so a rule between them was one line too many. */
 .theme-section + .theme-section {
   margin-top: 56px;
   padding-top: 48px;
 }
 
-/* ===== COLLAPSIBLE CATEGORIES (thematic view) =====
-   Every category starts closed, showing its title, its count and one row of
-   thumbnails as a preview; the rest arrives on click. The <button> is injected
-   inside the existing <h3> rather than replacing it, so the category anchor
-   (#boston et al, used by the nav dropdown) and its scroll-margin survive. */
-/* A category heading is the main thing to scan in this view, so it is larger,
-   heavier and darker than the plain h3 it started from, and carries a rule
-   under the name itself. */
 .theme-section.is-collapsible .section-title {
   margin-top: 14px;
-  /* Air between the heading and the first row of works */
   margin-bottom: 1.35em;
-  /* A shade larger than the year markers - a category name is a longer string
-     carrying more meaning - but the same voice, so switching views does not
-     switch typefaces */
   font-size: 14px;
   text-transform: uppercase;
   font-weight: var(--fw-semibold);
@@ -1301,16 +740,11 @@ h3.section-title {
   letter-spacing: var(--tracking-caps);
 }
 
-/* Just a rule under the category name - no card, no rounding, no shadow. */
 .category-toggle {
   display: flex;
-  /* Both views now start their marker at the left edge of the first column of
-     works. The chronological view already did this through an override below,
-     which is no longer needed but is harmless and left where it is. */
   justify-content: flex-start;
   align-items: center;
   position: relative;
-  /* Runs the width of the artwork grid so the rule lines up with it */
   width: 100%;
   max-width: var(--gallery-max);
   margin: 0 auto;
@@ -1321,16 +755,11 @@ h3.section-title {
   border: 0;
   border-bottom: 1px solid var(--chip-edge-strong);
   border-radius: 0;
-  /* No box-shadow: even a downward one bleeds past the left, right and top
-     edges of the box. The shade under the rule is drawn by ::after instead. */
   box-shadow: none;
   font: inherit;
   color: inherit;
 }
 
-/* Small shade under the rule. A gradient strip rather than a box-shadow,
-   because a shadow is cast by the whole box and would show at its sides and
-   top too; this only ever paints downward, and only under the line. */
 .category-toggle::after {
   content: '';
   position: absolute;
@@ -1343,16 +772,10 @@ h3.section-title {
   transition: background 0.18s ease;
 }
 
-
-
-/* An open category keeps its rule marked, so it stays findable once the grid
-   below it has grown to full height */
 .theme-section.is-collapsible:not(.is-collapsed) .category-toggle {
   border-bottom-color: var(--accent-border);
 }
 
-
-/* Name and count travel together */
 .category-toggle-main {
   display: inline-flex;
   align-items: center;
@@ -1369,13 +792,8 @@ h3.section-title {
 .category-count {
   flex-shrink: 0;
   font-family: var(--font-ui);
-  /* Just under the marker it sits beside, so the pill reads as an annotation
-     of the name rather than part of it */
   font-size: 11px;
   font-weight: var(--fw-medium);
-  /* Lining is already the page default, but a badge is exactly the case that
-     breaks without it, so it is stated where it matters. Tabular on top, so a
-     count going 99 -> 100 does not resize its own pill. */
   font-variant-numeric: lining-nums tabular-nums;
   letter-spacing: var(--tracking-normal);
   line-height: 1;
@@ -1385,10 +803,6 @@ h3.section-title {
   color: var(--text-muted);
 }
 
-/* Chronological view: the year and its count sit at the left edge, lined up
-   with the first column of works, rather than centred the way the category
-   names are. Two tracks instead of three - no mirror spacer is needed once the
-   group is not being centred. */
 #chronological-gallery .category-toggle {
   justify-content: flex-start;
 }
@@ -1404,9 +818,7 @@ h3.section-title {
 
 
 
-.theme-section.is-static /* Small shade under the rule. A gradient strip rather than a box-shadow,
-   because a shadow is cast by the whole box and would show at its sides and
-   top too; this only ever paints downward, and only under the line. */
+.theme-section.is-static
 .category-toggle::after {
   content: '';
   position: absolute;
@@ -1419,13 +831,6 @@ h3.section-title {
   transition: background 0.18s ease;
 }
 
-
-
-
-
-/* Softens the bottom edge of the preview so a clipped category reads as "there
-   is more here". Measured from the bottom in px, not in %: as a percentage the
-   fade scaled with the grid and washed out the whole second row of paintings. */
 .theme-section.is-collapsible.has-more .gallery {
   -webkit-mask-image: linear-gradient(to bottom,
     #000 calc(100% - 190px), rgba(0, 0, 0, 0.25) 100%);
@@ -1433,17 +838,12 @@ h3.section-title {
     #000 calc(100% - 190px), rgba(0, 0, 0, 0.25) 100%);
 }
 
-/* Works past the preview limit. A class, not inline display, because
-   style.display belongs to the filters (see refreshCategoryPreviews). */
 .art-block.is-preview-hidden {
   display: none;
 }
 
 .category-show-all {
   display: block;
-  /* .art-block already carries --masonry-gap of bottom margin, so this adds on
-     top of it; the button needs clear water under the last row in both states.
-     Left rather than centred, like every other control on the page. */
   margin: 26px auto 0 0;
   padding: 9px 20px;
   background: none;
@@ -1474,11 +874,9 @@ h3.section-title {
   display: none;
 }
 
-
-/* ===== LIGHTBOX - MINIMAL CHANGES ===== */
 .lightbox {
   position: fixed;
-  inset: 0; /* Covers full screen reliably including iOS browser chrome */
+  inset: 0;
   background: var(--lightbox-overlay);
   display: flex;
   flex-direction: column;
@@ -1492,18 +890,10 @@ h3.section-title {
   padding-bottom: max(20px, env(safe-area-inset-bottom));
   box-sizing: border-box;
   overflow: hidden;
-  /* Прокручивать внутри оверлея нечего - не отдаём жест странице под ним.
-     pinch-zoom, а не none: масштабирование работы двумя пальцами остаётся. */
   overscroll-behavior: none;
   touch-action: pinch-zoom;
 }
 
-/* Заморозка страницы, пока открыт lightbox.
-   overflow:hidden на <body> Safari на iOS игнорирует - фон продолжает
-   прокручиваться под пальцем и это видно сквозь полупрозрачный оверлей.
-   Работает только position:fixed со смещением на текущую прокрутку;
-   само смещение (top) и его восстановление - в lockPageScroll/unlockPageScroll
-   в lightbox.js. */
 body.scroll-locked {
   position: fixed;
   left: 0;
@@ -1523,36 +913,22 @@ body.scroll-locked {
   flex-direction: column;
   align-items: center;
   gap: 0;
-  /* 88vw, not 93: the 6vw of margin each side is what the prev/next arrows
-     stand in. At 93vw there were only ~50px there and a 60px arrow hung off
-     the edge of a squarish window. */
   max-width: min(1560px, 88vw);
   max-height: 93vh;
   position: relative;
   width: 100%;
-  /* One card holds the picture and its caption. The mount used to sit on the
-     <img> itself, so its width tracked the artwork and changed with every
-     work, while the caption below always ran the full frame - the two edges
-     never lined up. Moving the surface here makes both the same width. */
   background: var(--lb-mat);
   border-radius: 10px;
   box-shadow: 0 18px 50px -22px var(--lb-mat-shadow);
 }
 
-/* On a wide screen there is room to fit everything, so the picture gives way
-   instead of the frame gaining a scrollbar: min-height:0 lets the flex item
-   shrink below its intrinsic height, which it will not do by default. */
 .lightbox img {
   min-height: 0;
 }
 
 .lightbox img {
-  /* Fills the frame it is given rather than a separate 1200px cap of its own;
-     object-fit: contain keeps the proportions, and min-height: 0 below lets it
-     give way when the caption needs the room. */
   max-width: 100%;
   max-height: 82vh;
-  /* Breathing room inside the card; the card itself paints the mount */
   padding: 26px 20px 20px;
   cursor: zoom-out;
   object-fit: contain;
@@ -1561,11 +937,6 @@ body.scroll-locked {
   transition: opacity 0.3s ease, filter 0.3s ease;
 }
 
-/* ===== ZOOMED VIEW =====
-   Clicking the picture lifts it out of its frame to fill the whole viewport.
-   object-fit: contain over a full-viewport box is what makes it scale evenly -
-   it grows until one axis runs out and letterboxes the other, so the file's own
-   proportions are kept whatever the shape of the window. */
 .lightbox.is-zoomed img {
   position: fixed;
   inset: 0;
@@ -1583,8 +954,6 @@ body.scroll-locked {
   cursor: zoom-out;
 }
 
-/* Nothing else competes with the picture while it is zoomed; the close button
-   and the counter sit above it and stay */
 .lightbox.is-zoomed .lightbox-info,
 .lightbox.is-zoomed .lightbox-nav {
   display: none;
@@ -1594,29 +963,14 @@ body.scroll-locked {
   background: transparent;
 }
 
-/* Blur-up placeholder: shown while the full-res image loads over the thumbnail */
 .lightbox img.is-loading {
   filter: blur(10px);
   opacity: 0.7;
 }
 
-/* Counter. It used to be a fixed pill floating over the top-left of the
-   painting, which meant a chip sitting on the artwork at all times. It now
-   lives in the actions row at the foot of the caption, holding the left end of
-   the line that ends in Download and Share.
-
-   Same pill as Share - same height, radius and type - but lighter: the quiet
-   control fill rather than the filled one, and muted text. Share is the thing
-   you press; this is the thing you read.
-
-   Figures are the reason for the tabular setting: "7 / 73" keeps a fixed width
-   instead of twitching as the digits change, which matters more now that the
-   pill anchors the left edge of a row. */
 .lightbox-counter {
   display: inline-flex;
   align-items: center;
-  /* Holds the left end while download and Share stay grouped at the right, on
-     the row's own gap - space-between would have pushed those two apart too. */
   margin-right: auto;
   height: 34px;
   padding: 0 15px;
@@ -1631,9 +985,6 @@ body.scroll-locked {
   font-weight: var(--fw-semibold);
 }
 
-
-
-
 @keyframes swipeArrowLeft {
   0%, 100% { transform: translateX(0); }
   50% { transform: translateX(-8px); }
@@ -1644,12 +995,9 @@ body.scroll-locked {
   50% { transform: translateX(8px); }
 }
 
-
-/* Show swipe hint on mobile when lightbox is active */
 @media (max-width: 768px) and (hover: none) {
 }
 
-/* Loading spinner */
 .lightbox-loader {
   position: absolute;
   top: 50%;
@@ -1673,7 +1021,6 @@ body.scroll-locked {
   }
 }
 
-/* Close button - subtle and unobtrusive */
 .lightbox-close {
   position: fixed;
   top: 20px;
@@ -1712,7 +1059,6 @@ body.scroll-locked {
   border-color: var(--lb-control-fg);
 }
 
-/* Info box */
 .lightbox-info {
   width: 100%;
   padding: 16px 18px 24px;
@@ -1724,9 +1070,6 @@ body.scroll-locked {
   text-align: center;
 }
 
-/* The whole caption block was set well under 1em - readable on a desktop
-   monitor, squinting material on a phone. */
-/* Quiet download link, past the caption's closing rule and pushed right */
 .lightbox-actions {
   display: flex;
   align-items: center;
@@ -1768,7 +1111,6 @@ body.scroll-locked {
   position: relative;
 }
 
-/* Opens upward: the button lives at the bottom of the caption panel */
 .lightbox-share-menu {
   position: absolute;
   bottom: calc(100% + 8px);
@@ -1814,8 +1156,6 @@ body.scroll-locked {
   outline-offset: -2px;
 }
 
-/* Confirmation for Share, at the top of the overlay so it is clear the action
-   landed even though the button sits at the bottom */
 .lightbox-toast {
   position: fixed;
   top: 22px;
@@ -1843,8 +1183,6 @@ body.scroll-locked {
   transform: translate(-50%, 0);
 }
 
-/* Matched to Share's new height - the two sit shoulder to shoulder, and a 4px
-   step between adjacent controls reads as a mistake rather than a hierarchy. */
 .lightbox-download {
   display: inline-flex;
   align-items: center;
@@ -1872,18 +1210,10 @@ body.scroll-locked {
   outline-offset: 2px;
 }
 
-/* Whatever ends the caption should not leave a gap under itself */
 .lightbox-info > p:last-of-type {
   margin-bottom: 0;
 }
 
-/* One rhythm down the caption instead of the old 4px/2px/0 mixture with
-   stray right margins */
-/* The caption is the type system in miniature: the title and the description
-   speak, so they are Georgia; the date only labels, so it drops to a tracked
-   Arial cap and gets out of the way; the medium line comes back to Georgia
-   italic because "watercolour on cotton paper" is a description of the work,
-   not a field of metadata. */
 .lightbox-title {
   font-family: var(--font-display);
   font-size: clamp(19.2px, 1.6vw, 26px);
@@ -1920,8 +1250,6 @@ body.scroll-locked {
   border-top: 1px solid var(--lb-line);
 }
 
-
-/* Mobile responsive */
 @media (max-width: 1024px) {
   .lightbox-content {
     flex-direction: column;
@@ -1929,8 +1257,6 @@ body.scroll-locked {
   }
   
   .lightbox img {
-    /* 100%, not 90vw: the card is 88vw, and a viewport-relative cap made the
-       picture wider than the card it sits on */
     max-width: 100%;
     max-height: 60vh;
   }
@@ -1940,8 +1266,6 @@ body.scroll-locked {
     max-height: 30vh;
     margin-top: 16px;
   }
-  
-  /* Keep close button visible */
 
   .lightbox-close {
     top: 15px;
@@ -1953,11 +1277,6 @@ body.scroll-locked {
 }
 
 @media (max-width: 768px) {
-
-  /* The counter used to need its own dark chip here, because it floated over
-     the painting and a pale pill vanished on a bright one. Inside the caption
-     row it sits on a known surface and reads from the same tokens as every
-     other control, in both themes. */
   .lightbox-counter {
     height: 26px;
     padding: 0 10px;
@@ -1982,15 +1301,9 @@ body.scroll-locked {
   }
 }
 
-/* ===== SHARE BUTTONS IN LIGHTBOX ===== */
-
-/* ===== RESPONSIVE - LIGHTBOX ===== */
 @media (max-width: 768px) {
   .gallery {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    /* Shorthand `gap` would also set row-gap, and the masonry spans assume the
-       vertical spacing lives in each item's margin instead - with a row-gap on
-       top of it every span stretched into a 300px+ hole. */
     --masonry-gap: 10px;
     column-gap: var(--masonry-gap);
     row-gap: 0;
@@ -2005,9 +1318,6 @@ body.scroll-locked {
     max-height: 65vh;
   }
   
-  /* A tall painting plus a long caption genuinely will not fit on a phone, so
-     here the frame scrolls rather than squeezing the picture to nothing.
-     overscroll-behavior keeps that scroll from chaining to the page behind. */
   .lightbox-content {
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -2018,7 +1328,6 @@ body.scroll-locked {
     padding: 12px 16px 20px;
   }
 
-  /* Smaller controls on a phone - at full size they crowd a narrow caption */
   .lightbox-actions {
     gap: 8px;
     margin-top: 13px;
@@ -2043,10 +1352,6 @@ body.scroll-locked {
     height: 15px;
   }
 
-  /* A fixed frame instead of one that shrink-wraps each painting: with
-     max-height the box changed size with every work's proportions, so the
-     caption and its buttons jumped to a new place on each swipe. The picture
-     now flexes inside a constant frame and the caption stays put. */
   .lightbox-content {
     height: 90vh;
   }
@@ -2061,8 +1366,6 @@ body.scroll-locked {
     flex: 0 0 auto;
   }
   
-  /* A step below the desktop caption. The title's clamp already floors at
-     19.2px, so only the three lines under it need saying. */
   .lightbox-date {
     font-size: 9.5px;
     letter-spacing: 0.18em;
@@ -2090,15 +1393,10 @@ body.scroll-locked {
   .view-btn {
     padding: 10px 12px;
     font-size: 9.5px;
-    /* Three of these have to share a phone's width, and tracking is the first
-       thing that can be given back */
     letter-spacing: 0.14em;
   }
 }
 
-/* FOOTER */
-/* Same width as the prose blocks, so the rule under Commissions lines up with
-   the edges of the text above it */
 .footer-separator {
   margin: 18px auto 12px auto;
   border: none;
@@ -2112,11 +1410,6 @@ footer.contact-info {
   margin: 18px auto;
   text-align: left;
   font-family: var(--font-body);
-  /* No size of its own any more - the row inside sets 11.5px and the 1.1em
-     that used to be here only ever applied to whitespace. The colour is stated
-     because nothing in the chain did: this box was inheriting the browser's
-     pure black while every other piece of text on the page reads from the warm
-     ink ramp. */
   color: var(--text-primary);
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
@@ -2130,7 +1423,6 @@ footer.contact-info h2 {
   letter-spacing: var(--tracking-normal);
 }
 
-/* CONTACT INFO */
 .contact-row {
   display: flex;
   flex-wrap: wrap;
@@ -2149,10 +1441,6 @@ footer.contact-info h2 {
   gap: 8px;
   text-decoration: none;
   color: var(--text-primary);
-  /* The page's footer coordinates: a mail address and three service names, so
-     the label voice rather than the reading one - but left in sentence case,
-     because an email address set in caps is an email address nobody can read
-     back. */
   font-family: var(--font-ui);
   font-size: 11.5px;
   font-weight: var(--fw-regular);
@@ -2172,29 +1460,10 @@ footer.contact-info h2 {
   transition: filter 0.3s ease;
 }
 
-/* The contact icons are separate .svg files loaded through <img>, so `color`
-   and `fill` cannot reach inside them and they stayed solid black on the dark
-   background. All five (email, instagram, linkedin, github, telegram) are
-   monochrome black artwork, so inverting the whole image is exact rather than
-   approximate:
-   black glyphs turn white, and linkedin's white-on-black mark flips to
-   black-on-white, which is how that logo is meant to read on a dark ground. */
 [data-theme="dark"] .contact-row img {
   filter: invert(1);
 }
 
-/* NAVIGATION BAR
-   Full-bleed fixed bar. It used to be `position: sticky` inside
-   .content-with-sidebar and faked full width with margin-left: -280px +
-   padding-left: 280px; that only ever spanned the content column, and below
-   1024px (where the sidebar undocks) the negative margin pushed the bar's own
-   box off-screen. Fixed + inset removes the whole compensation dance.
-
-   header.js measures the real height into --nav-h and toggles .nav-hidden /
-   .nav-scrolled. Everything that has to clear the bar is written as
-   calc(var(--nav-h) + …), so a bar that grows a second row of links on a narrow
-   screen no longer needs its own breakpoint (this is what the old pairs of
-   scroll-margin-top: 90px / 130px were doing by hand). */
 nav.main-nav {
   position: fixed;
   top: 0;
@@ -2214,13 +1483,13 @@ nav.main-nav {
               background-color 0.3s ease;
 }
 
-/* Away from the very top: lift the bar off the artwork scrolling under it */
+
 nav.main-nav.nav-scrolled {
   border-bottom-color: var(--border-medium);
   box-shadow: 0 1px 14px rgba(0, 0, 0, 0.07);
 }
 
-/* Scrolling down - get out of the way; scrolling up brings it straight back */
+
 nav.main-nav.nav-hidden {
   transform: translateY(-100%);
 }
@@ -2230,23 +1499,9 @@ nav.main-nav.nav-hidden {
   nav.main-nav .sub-menu { transition: none; }
 }
 
-/* The bar reads from the page's own left edge, like everything under it: the
-   first menu item starts exactly where Commissions, Gallery and Statement
-   start, on the far side of the hairline. That is what the padding-left is -
-   the same two values .content-with-sidebar adds up to, restated here because
-   the bar is position: fixed and gets none of them.
-
-   The filter button steps out of the row to make that possible. In flow it
-   pushed the links to the right of itself by its own width and there was no
-   way to have both it and them on the left; taken out, it sits in the margin
-   OUTSIDE the rule, which is where a page's marginal marks belong anyway. */
 .nav-inner {
   position: relative;
   display: flex;
-  /* Buttons line up with the TOP of the link text, not with the centre of the
-     row. --nav-btn-lift is the link's own top padding plus its half-leading -
-     i.e. how far the first glyph sits below the top of the links box - so the
-     buttons drop by the same amount and their top edges meet the words. */
   align-items: flex-start;
   gap: 12px;
   padding: var(--nav-pad-top) var(--page-gutter) var(--nav-pad-bottom)
@@ -2271,17 +1526,11 @@ nav.main-nav li {
   position: relative;
 }
 
-/* The bar is the clearest statement of the UI voice: 14px, Medium, uppercase,
-   widely tracked. Lowercase serif at this size in a translucent bar over
-   artwork turns to mush; caps hold their shape, and the tracking is what makes
-   them read as quiet rather than shouted. */
 nav.main-nav a {
   display: inline-block;
   text-decoration: none;
   color: var(--text-secondary);
   font-family: var(--font-ui);
-  /* Bold at 10.5px, not because the bar should shout but because 0.22em of
-     tracking takes the weight back out of it again */
   font-weight: var(--fw-semibold);
   padding: 7px 10px;
   border-radius: 8px;
@@ -2304,7 +1553,6 @@ nav.main-nav a:focus-visible,
   outline-offset: 2px;
 }
 
-/* Caret marks the one entry that opens a submenu */
 nav.main-nav .has-dropdown > a::after {
   content: '▾';
   margin-left: 5px;
@@ -2312,9 +1560,6 @@ nav.main-nav .has-dropdown > a::after {
   opacity: 0.55;
 }
 
-/* Ko-fi support link in nav. Muted off Ko-fi's own #FF5E5B into a dusty
-   terracotta - the brand coral was the one saturated colour left on a page of
-   warm neutrals, and it pulled the eye away from the work. */
 .nav-support {
   color: var(--support-accent) !important;
   text-decoration: none;
@@ -2324,7 +1569,7 @@ nav.main-nav .has-dropdown > a::after {
   color: var(--support-accent-hover) !important;
 }
 
-/* Theme toggle in nav bar - right edge, mirrors the Filters button's shape */
+
 .nav-theme-toggle {
   margin-top: var(--nav-btn-lift);
   flex: 0 0 auto;
@@ -2351,23 +1596,13 @@ nav.main-nav .has-dropdown > a::after {
   transform: scale(0.94);
 }
 
-/* Show sun in dark mode, moon in light mode */
 .nav-light-icon { display: none; }
 .nav-dark-icon  { display: inline; }
 
 [data-theme="dark"] .nav-light-icon { display: inline; }
 [data-theme="dark"] .nav-dark-icon  { display: none; }
 
-/* Filters drawer toggle - pinned to the left edge of the bar at every width.
-   It used to be a mobile-only <li> that took a full flex row of its own below
-   1024px; now it is the bar's first item and the sidebar is reachable from the
-   header on desktop too.
-
-   Icon only, and squared off to the same 36px as the theme toggle at the other
-   end of the bar. The accessible name is on aria-label, not in the markup. */
 .nav-filter-btn {
-  /* Out of the flow and into the left margin - see .nav-inner. Below 768px the
-     margin is gone and it comes back into the row. */
   position: absolute;
   left: 14px;
   top: var(--nav-pad-top);
@@ -2403,16 +1638,12 @@ nav.main-nav .has-dropdown > a::after {
   transform: scale(0.97);
 }
 
-/* Something is filtered - the button carries the accent and the count */
 .nav-filter-btn.has-filters {
   color: var(--accent-primary);
   background: var(--accent-light);
   border-color: var(--accent-border);
 }
 
-/* Now that the button is icon-only the count rides its top-right corner, the
-   way a notification badge does, instead of sitting after the label. The ring
-   in the bar's own colour keeps it legible where it overlaps the border. */
 .nav-filter-badge {
   font-family: var(--font-ui);
   position: absolute;
@@ -2430,8 +1661,6 @@ nav.main-nav .has-dropdown > a::after {
   box-sizing: border-box;
   box-shadow: 0 0 0 2px var(--nav-bg);
   font-family: inherit;
-  /* 11px where the sans managed 10px, and lining figures: an old-style 3 in an
-     18px disc drops below the circle's centre and reads as a smudge. */
   font-size: 11px;
   font-weight: var(--fw-semibold);
   font-variant-numeric: lining-nums tabular-nums;
@@ -2439,12 +1668,6 @@ nav.main-nav .has-dropdown > a::after {
   pointer-events: none;
 }
 
-/* Dropdown submenu — centred under "Gallery".
-   list-style/margin have to be reset here and not only on .nav-links: this is a
-   nested <ul>, and with padding: 8px 0 its default markers render outside the
-   padding box, i.e. as bullets floating past the menu's left edge.
-   It fades and slides instead of appearing in one frame; display can't be
-   transitioned, so visibility + opacity + transform do the work. */
 nav.main-nav .sub-menu {
   list-style: none;
   margin: 0;
@@ -2458,7 +1681,6 @@ nav.main-nav .sub-menu {
   padding: 8px 0;
   z-index: 99;
   min-width: 240px;
-
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -2466,7 +1688,6 @@ nav.main-nav .sub-menu {
   transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
 }
 
-/* Keeps the pointer from falling through the gap between link and menu */
 nav.main-nav .has-dropdown::after {
   content: '';
   position: absolute;
@@ -2476,11 +1697,6 @@ nav.main-nav .has-dropdown::after {
   height: 10px;
 }
 
-/* Opening is driven by .is-open from header.js, not by :hover. :hover alone
-   misfired twice: a cursor that merely happened to rest over the bar while the
-   page loaded counted as a hover and the menu appeared unasked, and on touch
-   the emulated hover sticks to whatever was last tapped, so picking a category
-   left the menu sitting over the section it had just scrolled to. */
 nav.main-nav .has-dropdown.is-open > .sub-menu {
   opacity: 1;
   visibility: visible;
@@ -2492,19 +1708,12 @@ nav.main-nav .sub-menu li {
   width: 100%;
 }
 
-/* The markup has carried an empty <li class="dropdown-divider"> between the two
-   view links and the category list, but no rule ever drew it - so it was an
-   invisible gap, and before list-style was reset above it showed up as a lone
-   stray bullet. */
 nav.main-nav .sub-menu .dropdown-divider {
   height: 1px;
   margin: 6px 0;
   background: var(--border-medium);
 }
 
-/* Back to sentence case inside the menu. The bar holds five short words and
-   can carry caps; this list holds every category name on the site, and
-   "ECHOES OF DISTANCE" set in tracked caps is a headline, not a menu item. */
 nav.main-nav .sub-menu a {
   display: block;
   padding: 10px 18px;
@@ -2518,7 +1727,6 @@ nav.main-nav .sub-menu a {
 }
 
 
-/* ===== ACTIVITY VISUALIZATION ===== */
 .activity-container {
   max-width: var(--prose-max);
   width: 100%;
@@ -2594,10 +1802,6 @@ nav.main-nav .sub-menu a {
   overflow-x: auto;
   display: flex;
   flex-direction: column;
-  /* This is what was actually centring the chart - the timeline's own
-     `margin: 0 auto` was only half of it, and removing that alone changed
-     nothing. In a column flex container it is align-items that decides the
-     cross axis, which here is the horizontal one. */
   align-items: flex-start;
 }
 
@@ -2714,13 +1918,10 @@ nav.main-nav .sub-menu a {
   margin-top: -10px;
 }
 
-/* ===== LIGHTBOX NAVIGATION ARROWS ===== */
 .lightbox-nav {
   position: absolute;
   top: 50%;
   transform: translateY(-100%);
-  /* A faint disc behind the chevron: at 45% white on nothing these were easy to
-     miss against a bright painting */
   background: var(--lb-control-bg);
   border: 1px solid var(--lb-control-border);
   border-radius: 50%;
@@ -2755,9 +1956,6 @@ nav.main-nav .sub-menu a {
   transform: translateY(-100%) scale(1.08);
 }
 
-/* Just clear of the frame so they never sit on the artwork. The offset has to
-   fit inside the 6vw margin the frame leaves; below the width where that stops
-   being true they move inside (see the breakpoint further down). */
 .lightbox-nav.prev {
   left: -70px;
 }
@@ -2770,23 +1968,10 @@ nav.main-nav .sub-menu a {
   opacity: 1;
 }
 
-/* ===== SHARE BUTTONS IN LIGHTBOX ===== */
-
-
-
-
-/* ===== RESPONSIVE - LIGHTBOX ===== */
-/* Below ~768px the links wrap to a second row inside the bar. That is fine -
-   header.js measures the taller bar - but the padding is tightened so the two
-   rows cost as little vertical space as possible. */
 @media (max-width: 768px) {
-  /* Phones get the bigger nudge: without it the row sits right against the
-     browser chrome, which reads as cramped even though the buttons themselves
-     are the right size. */
   :root {
     --nav-pad-top: 20px;
     --nav-pad-bottom: 10px;
-    /* smaller type and tighter link padding here, so the drop is smaller too */
     --nav-btn-lift: 5px;
   }
 
@@ -2795,10 +1980,6 @@ nav.main-nav .sub-menu a {
     padding: var(--nav-pad-top) 8px var(--nav-pad-bottom);
   }
 
-  /* No left margin at this width, so the filter button comes back into the
-     row and the bar goes back to centring what is left of it - a five-link
-     menu pinned left with a button in front of it just looks pushed over on a
-     screen this narrow. */
   .nav-inner {
     padding-left: 16px;
     padding-right: 16px;
@@ -2814,12 +1995,6 @@ nav.main-nav .sub-menu a {
     justify-content: center;
   }
 
-  /* Uppercase and tracking cost width - together about a quarter more than the
-     same words in tracked lowercase - and five links plus a caret do not have
-     a quarter to spare on a 390px screen: at the desktop settings the bar grew
-     a third row. So the phone keeps the caps and pays for them here, in size,
-     tracking and the gaps between the links. The group rule sets no size of
-     its own any more; the links are on absolute px and would ignore it. */
   nav.main-nav ul.nav-links {
     gap: 0 clamp(3px, 1.2vw, 10px);
   }
@@ -2836,10 +2011,6 @@ nav.main-nav .sub-menu a {
     height: 38px;
   }
 
-  /* Centring a 240px menu under "Gallery" runs it off the right edge on a
-     phone. Making the <li> static hands the absolute menu to the nav itself
-     (which is fixed, so it is already a containing block), and the menu then
-     spans the bar with an 8px inset on both sides. */
   nav.main-nav li.has-dropdown {
     position: static;
   }
@@ -2858,9 +2029,6 @@ nav.main-nav .sub-menu a {
     transform: translateY(0);
   }
 
-  /* The section heading's clamp already lands it at 40px here, so only the
-     category marker needs a phone step - a long name in tracked caps wraps
-     early, and a notch off the tracking buys back most of a line. */
   .theme-section.is-collapsible .section-title {
     font-size: 13px;
     letter-spacing: 0.18em;
@@ -2873,25 +2041,18 @@ nav.main-nav .sub-menu a {
 
   .category-toggle {
     padding: 6px 2px 16px;
-    /* Long names wrap to two lines here; without this the headings would come
-       out at two different heights */
     min-height: 72px;
   }
 
-  /* Finger targets, not pointer targets. min-height rather than padding alone:
-     the submenu inherits the bar's reduced font size, so padding maths would
-     land a few pixels short of 44px. */
   nav.main-nav .sub-menu a {
     display: flex;
     align-items: center;
-    box-sizing: border-box;   /* no global border-box in this stylesheet */
+    box-sizing: border-box;
     min-height: 44px;
     padding: 6px 18px;
   }
 }
 
-/* 6vw of margin stops covering the 70px offset below ~1300px, so from here
-   down the arrows sit inside the frame instead of off the edge of the screen */
 @media (max-width: 1300px) {
   .lightbox-nav.prev { left: 8px; }
   .lightbox-nav.next { right: 8px; }
@@ -2900,9 +2061,6 @@ nav.main-nav .sub-menu a {
 @media (max-width: 768px) {
   .gallery {
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    /* Shorthand `gap` would also set row-gap, and the masonry spans assume the
-       vertical spacing lives in each item's margin instead - with a row-gap on
-       top of it every span stretched into a 300px+ hole. */
     --masonry-gap: 10px;
     column-gap: var(--masonry-gap);
     row-gap: 0;
@@ -2917,9 +2075,6 @@ nav.main-nav .sub-menu a {
     max-height: 65vh;
   }
   
-  /* A tall painting plus a long caption genuinely will not fit on a phone, so
-     here the frame scrolls rather than squeezing the picture to nothing.
-     overscroll-behavior keeps that scroll from chaining to the page behind. */
   .lightbox-content {
     overflow-y: auto;
     overscroll-behavior: contain;
@@ -2930,7 +2085,6 @@ nav.main-nav .sub-menu a {
     padding: 12px 16px 20px;
   }
 
-  /* Smaller controls on a phone - at full size they crowd a narrow caption */
   .lightbox-actions {
     gap: 8px;
     margin-top: 13px;
@@ -2955,10 +2109,6 @@ nav.main-nav .sub-menu a {
     height: 15px;
   }
 
-  /* A fixed frame instead of one that shrink-wraps each painting: with
-     max-height the box changed size with every work's proportions, so the
-     caption and its buttons jumped to a new place on each swipe. The picture
-     now flexes inside a constant frame and the caption stays put. */
   .lightbox-content {
     height: 90vh;
   }
@@ -2973,8 +2123,6 @@ nav.main-nav .sub-menu a {
     flex: 0 0 auto;
   }
   
-  /* A step below the desktop caption. The title's clamp already floors at
-     19.2px, so only the three lines under it need saying. */
   .lightbox-date {
     font-size: 9.5px;
     letter-spacing: 0.18em;
@@ -2988,12 +2136,6 @@ nav.main-nav .sub-menu a {
     font-size: 12px;
   }
   
-  
-  /* Tap as well as swipe, but only through two small discs low on the image:
-     anywhere higher and a pinch-to-zoom that starts with one finger down would
-     flip to the next work instead. --lb-img-bottom is the gap between the
-     bottom of the frame and the bottom of the picture, measured in
-     lightbox.js, so the discs sit on the picture and never on the caption. */
   .lightbox-nav {
     display: flex;
     top: auto;
@@ -3001,8 +2143,6 @@ nav.main-nav .sub-menu a {
     transform: none;
     width: 46px;
     height: 46px;
-    /* Barely there even while showing: they sit on top of the artwork, and the
-       point is only to confirm the tap registered */
     background: var(--lb-control-bg);
     border-color: var(--lb-control-border);
     color: var(--lb-control-fg);
@@ -3021,10 +2161,6 @@ nav.main-nav .sub-menu a {
   .lightbox-nav.prev { left: 12px; }
   .lightbox-nav.next { right: 12px; }
 
-  /* Invisible by default - the discs are only tap zones, and a permanent pair
-     of buttons over the picture is exactly the clutter a lightbox is for
-     avoiding. A tap navigates and flashes the disc so it is clear what
-     responded, then it fades back out (peekTouchNav in lightbox.js). */
   .lightbox.active .lightbox-nav {
     opacity: 0;
     pointer-events: auto;
@@ -3043,10 +2179,6 @@ nav.main-nav .sub-menu a {
   }
 }
 
-/* ===== SCROLL NAVIGATION BUTTONS ===== */
-/* Swapped with .back-to-top: the arrow that sends you down now lives at the
-   bottom of the screen and the one that sends you up at the top, which is the
-   direction each of them points. */
 .scroll-down {
   position: fixed;
   bottom: 80px;
@@ -3076,7 +2208,6 @@ nav.main-nav .sub-menu a {
   pointer-events: none;
 }
 
-/* Hide scroll buttons when lightbox is active */
 .lightbox.active ~ .scroll-down,
 .lightbox.active ~ .back-to-top {
   opacity: 0;
@@ -3085,9 +2216,6 @@ nav.main-nav .sub-menu a {
 
 .back-to-top {
   position: fixed;
-  /* Clears the fixed header rather than sitting under it - and rises to meet
-     the top of the screen whenever the header has retracted, which on a phone
-     is most of the time you can see this button at all */
   top: calc(var(--nav-h) + 20px);
   right: 40px;
   transition: top 0.28s cubic-bezier(0.22, 0.61, 0.36, 1),
@@ -3123,7 +2251,6 @@ body.nav-away .back-to-top {
 }
 
 @media (max-width: 768px) {
-  /* Hide scroll-down button on mobile - not needed and takes space */
   .scroll-down {
     display: none;
   }
@@ -3149,9 +2276,6 @@ body.nav-away .back-to-top {
   }
 }
 
-/* FOOTER */
-/* Same width as the prose blocks, so the rule under Commissions lines up with
-   the edges of the text above it */
 .footer-separator {
   margin: 18px auto 12px auto;
   border: none;
@@ -3165,11 +2289,6 @@ footer.contact-info {
   margin: 18px auto;
   text-align: left;
   font-family: var(--font-body);
-  /* No size of its own any more - the row inside sets 11.5px and the 1.1em
-     that used to be here only ever applied to whitespace. The colour is stated
-     because nothing in the chain did: this box was inheriting the browser's
-     pure black while every other piece of text on the page reads from the warm
-     ink ramp. */
   color: var(--text-primary);
   scroll-margin-top: calc(var(--nav-h) + 16px);
 }
@@ -3183,7 +2302,6 @@ footer.contact-info h2 {
   letter-spacing: var(--tracking-normal);
 }
 
-/* CONTACT INFO */
 .contact-row {
   display: flex;
   flex-wrap: wrap;
@@ -3202,10 +2320,6 @@ footer.contact-info h2 {
   gap: 8px;
   text-decoration: none;
   color: var(--text-primary);
-  /* The page's footer coordinates: a mail address and three service names, so
-     the label voice rather than the reading one - but left in sentence case,
-     because an email address set in caps is an email address nobody can read
-     back. */
   font-family: var(--font-ui);
   font-size: 11.5px;
   font-weight: var(--fw-regular);
@@ -3224,20 +2338,7 @@ footer.contact-info h2 {
   top: -2px;
 }
 
-
-/* ===== ACTIVITY VISUALIZATION - GRAY THEME ===== */
-
-/* Main container aligned with gallery width */
 .activity-container {
-  /* No frame, and the same width as everything else. This was the last panel
-     on the page - Commissions and the Statement gave theirs up - and once it
-     was the only one it stopped reading as a card and started reading as a
-     leftover. Without it the chart begins on the same left edge as its own
-     heading and as the gallery above.
-
-     The two rules that set this block are both left in place (an older one
-     sits further up the file); the border and the shadow have to be turned off
-     in both, since the later rule only ever overrode the background. */
   max-width: var(--prose-max);
   margin: 20px auto;
   padding: 0;
@@ -3246,15 +2347,9 @@ footer.contact-info h2 {
   border-radius: 0;
   border: 0;
   box-shadow: none;
-  /* Every piece of type in here is a label - month abbreviations, years,
-     counts, the legend - so the sans is set once on the container instead of
-     on the dozen rules inside it. The one exception is restated below. */
   font-family: var(--font-ui);
 }
 
-/* Activity heading */
-/* Same marker treatment as the year and category headings - this is a label
-   over a chart, not a heading with something to say. */
 .activity-container h3 {
   text-align: left;
   margin-bottom: 24px;
@@ -3266,7 +2361,6 @@ footer.contact-info h2 {
   letter-spacing: var(--tracking-caps-wide);
 }
 
-/* Legend */
 .activity-legend {
   display: flex;
   align-items: center;
@@ -3312,7 +2406,6 @@ footer.contact-info h2 {
   background: var(--activity-level-6);
 }
 
-/* Statistics - 3 cards in a row */
 .activity-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -3335,12 +2428,6 @@ footer.contact-info h2 {
   background: var(--bg-hover-strong);
 }
 
-/* A big figure in a Garamond does not need weight to carry - it is already the
-   largest thing in its card, and Bold in this face reads as a different tone
-   of voice rather than as emphasis. Regular, with lining tabular figures so
-   the three cards line up with each other. */
-/* The exception to the rule above: these are not labels but the largest
-   figures on the page, and they belong to the serif the headings are set in. */
 .stat-number {
   font-family: var(--font-display);
   font-size: 2em;
@@ -3360,13 +2447,10 @@ footer.contact-info h2 {
   letter-spacing: var(--tracking-caps);
 }
 
-/* Activity timeline - compact year-based visualization */
 .activity-timeline {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  /* Left, not centred. Inside a card the chart could float in the middle of
-     it; on the open page it has to start where the heading above it starts. */
   margin: 0;
   max-width: 100%;
 }
@@ -3423,9 +2507,6 @@ footer.contact-info h2 {
   z-index: 10;
 }
 
-/* Three characters and two digits inside a 36px square, so this is the one
-   place on the page that still needs weight rather than size to stay legible -
-   but SemiBold, not Bold; Bold in this face fills the square. */
 .month-abbr {
   font-weight: var(--fw-semibold);
   letter-spacing: var(--tracking-wide);
@@ -3442,7 +2523,6 @@ footer.contact-info h2 {
   margin-top: 2px;
 }
 
-/* Activity levels - gray scale */
 .month-box.empty {
   background: var(--activity-empty);
 }
@@ -3495,8 +2575,6 @@ footer.contact-info h2 {
   color: var(--bg-tertiary);
 }
 
-/* Tooltip for Activity. Lives at the end of <body> rather than inside the
-   container, so the label voice has to be restated here. */
 #activity-tooltip {
   font-family: var(--font-ui);
   position: absolute;
@@ -3513,7 +2591,6 @@ footer.contact-info h2 {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== DARK MODE TOGGLE BUTTON ===== */
 .dark-mode-toggle {
   width: 100%;
   padding: 10px 16px;
@@ -3560,7 +2637,6 @@ footer.contact-info h2 {
   font-weight: var(--fw-medium);
 }
 
-/* В светлом режиме показываем луну (клик переключит на темный) */
 .light-icon {
   opacity: 0;
   position: absolute;
@@ -3572,7 +2648,6 @@ footer.contact-info h2 {
   transform: rotate(0deg) scale(1);
 }
 
-/* В темном режиме показываем солнце (клик переключит на светлый) */
 [data-theme="dark"] .light-icon {
   opacity: 1;
   position: relative;
@@ -3585,13 +2660,11 @@ footer.contact-info h2 {
   transform: rotate(-180deg) scale(0.3);
 }
 
-/* Dark mode specific adjustments */
 [data-theme="dark"] .gallery img {
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
 }
 
-/* Lightbox in dark mode: remove the grey card — image floats on the black overlay */
 [data-theme="dark"] .lightbox-content {
   box-shadow: none;
 }
@@ -3605,9 +2678,6 @@ footer.contact-info h2 {
   backdrop-filter: blur(6px);
 }
 
-/* ===== RESPONSIVE BREAKPOINTS ===== */
-
-/* Tablets in landscape orientation */
 @media (min-width: 769px) and (max-width: 1024px) {
   .activity-container {
     max-width: 100%;
@@ -3632,7 +2702,6 @@ footer.contact-info h2 {
   }
 }
 
-/* Tablets in portrait orientation */
 @media (max-width: 768px) {
   .activity-container {
     padding: 0;
@@ -3680,16 +2749,12 @@ footer.contact-info h2 {
   }
 }
 
-/* Small mobile devices */
 @media (max-width: 480px) {
   .activity-container {
     padding: 0;
     margin: 16px 0;
   }
 
-  /* 1.35em dates from when this was a serif heading over a card. It is a 13px
-     tracked cap now, and the em was blowing it up to 21px on the one screen
-     where there is least room for it. */
   .activity-container h3 {
     font-size: 13px;
     margin-bottom: 20px;
@@ -3728,14 +2793,8 @@ footer.contact-info h2 {
   }
 }
 
-/* Very wide screens */
 @media (min-width: 1200px) {
   .activity-container {
-    /* "Like gallery" is now literally true: the same token the grid, the
-       prose and the header all read from, rather than a number that used to
-       approximate it. It was this rule, not the two base ones, that was
-       actually setting the width - and centring the chart 17px off the page's
-       own left edge in the process. */
     max-width: var(--prose-max);
   }
   

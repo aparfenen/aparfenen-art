@@ -1,15 +1,7 @@
-// ===== ACTIVITY VISUALIZATION =====
-
-// Activity data - будет заполнено из CSV
 let activityData = {};
 
-// Всего видимых работ - считается по всем visible=yes строкам, а не только по тем,
-// у которых распарсился show_date, чтобы "Total Works" совпадал со счётчиком в шапке
-// (и с len(df) в generate_index.py).
 let totalVisibleWorks = 0;
 
-// Правильный парсинг CSV с учетом кавычек, включая переносы строк внутри кавычек
-// (нельзя резать текст по '\n' заранее - многострочные description поломают выравнивание колонок)
 function parseCSV(text) {
   const rows = [];
   let row = [];
@@ -36,7 +28,6 @@ function parseCSV(text) {
       row.push(current.trim());
       current = '';
     } else if (char === '\r') {
-      // skip, handled by \n
     } else if (char === '\n') {
       row.push(current.trim());
       rows.push(row);
@@ -47,7 +38,6 @@ function parseCSV(text) {
     }
   }
 
-  // Последняя строка без завершающего \n
   if (current.length > 0 || row.length > 0) {
     row.push(current.trim());
     rows.push(row);
@@ -56,7 +46,6 @@ function parseCSV(text) {
   return rows.filter(r => r.some(cell => cell !== ''));
 }
 
-// Парсим show_date: "August 2025" → { month: 8, year: 2025 }
 function parseShowDate(showDate) {
   const months = {
     'january': 1, 'february': 2, 'march': 3, 'april': 4,
@@ -76,7 +65,6 @@ function parseShowDate(showDate) {
   return { month, year };
 }
 
-// 1) Загрузка данных из CSV
 async function loadActivityFromCSV() {
   try {
     const resp = await fetch('gallery_metadata.csv');
@@ -104,7 +92,6 @@ async function loadActivityFromCSV() {
     for (let i = 1; i < rows.length; i++) {
       const cols = rows[i];
 
-      // Проверяем visible = yes
       const visible = cols[visibleIndex]?.toLowerCase().trim();
       if (visible !== 'yes') {
         skipped++;
@@ -150,7 +137,6 @@ async function loadActivityFromCSV() {
   }
 }
 
-// Generate comprehensive timeline from first to last work
 function generateTimeline() {
   const sortedDates = Object.keys(activityData).sort();
   if (sortedDates.length === 0) return [];
@@ -165,14 +151,12 @@ function generateTimeline() {
   
   const timeline = [];
   
-  // Group by years for better visualization
   for (let year = startYear; year <= endYear; year++) {
     const yearData = {
       year: year,
       months: []
     };
     
-    // ИСПРАВЛЕНО: Всегда показываем ВСЕ 12 месяцев для каждого года
     for (let month = 0; month <= 11; month++) {
       const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
       yearData.months.push({
@@ -188,7 +172,6 @@ function generateTimeline() {
   return timeline;
 }
 
-// Determine activity level with better thresholds
 function getActivityLevel(count) {
   if (count === 0) return 'empty';
   if (count <= 1) return 'level-1';
@@ -199,14 +182,12 @@ function getActivityLevel(count) {
   return 'level-6';
 }
 
-// Get month name abbreviation
 function getMonthName(monthIndex) {
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
                   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   return months[monthIndex];
 }
 
-// Generate compact timeline visualization
 function generateActivityChart() {
   const chartContainer = document.getElementById('activity-chart');
   if (!chartContainer) {
@@ -223,9 +204,7 @@ function generateActivityChart() {
   
   let html = '<div class="activity-timeline">';
   
-  // Create year-based visualization - REVERSED ORDER (newest first)
   timeline.reverse().forEach(yearData => {
-    // Skip years with no activity at all
     const hasActivity = yearData.months.some(m => m.count > 0);
     if (!hasActivity && yearData.year < 2024) return;
     
@@ -263,7 +242,6 @@ function generateActivityChart() {
   console.log(`[Activity] Timeline visualization generated with ${timeline.length} years`);
 }
 
-// Update statistics
 function updateStats() {
   const counts = Object.values(activityData);
   if (counts.length === 0) {
@@ -271,12 +249,8 @@ function updateStats() {
     return;
   }
   
-  // Count total works
   const totalWorks = totalVisibleWorks || counts.reduce((sum, count) => sum + count, 0);
 
-  // Find most productive month. При равном количестве работ выигрывает более поздний
-  // месяц - иначе результат зависел бы от порядка строк в CSV и мог разойтись
-  // с цифрой, вшитой в разметку generate_index.py.
   let maxMonth = '';
   let maxCount = 0;
   for (const [month, count] of Object.entries(activityData)) {
@@ -288,14 +262,12 @@ function updateStats() {
   
   const [year, month] = maxMonth.split('-');
   const monthName = getMonthName(parseInt(month) - 1);
-  
-  // Count works for current year
+
   const currentYear = new Date().getFullYear();
   const currentYearCount = Object.entries(activityData)
     .filter(([date]) => date.startsWith(String(currentYear)))
     .reduce((sum, [, count]) => sum + count, 0);
   
-  // Update elements
   const totalElement = document.getElementById('total-works');
   const productiveElement = document.getElementById('most-productive-month');
   const yearElement = document.getElementById('current-year-count');
@@ -307,7 +279,6 @@ function updateStats() {
   console.log(`[Activity] Stats updated: ${totalWorks} total, peak ${monthName} ${year} (${maxCount}), this year ${currentYearCount}`);
 }
 
-// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', async () => {
   console.log('[Activity] Initializing...');
   await loadActivityFromCSV();
@@ -322,7 +293,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('[Activity] Visualization initialized successfully');
 });
 
-// Enhanced tooltip interaction
 document.addEventListener('mouseover', (e) => {
   if (e.target.classList.contains('month-box')) {
     const tooltip = document.getElementById('activity-tooltip');

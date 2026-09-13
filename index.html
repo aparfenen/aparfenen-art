@@ -3,20 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <!-- No webfont request, deliberately. The site used to pull EB Garamond and
-       Meie Script from Google Fonts, and when that request did not land - a
-       blocked CDN, a cold offline load, a slow connection past the swap
-       timeout - the whole page silently redrew itself in whatever the system
-       happened to offer, at sizes and tracking chosen for faces that were not
-       there. What is designed now is what is installed: Georgia for the
-       headings, titles and prose, Arial for the labels. See the TYPE block at
-       the top of style.css. -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="filter_styles.css" />
-  <!-- Icon filenames are the -16/-32 set, not the old -16x16/-32x32 one, and
-       every href stays RELATIVE: the site is served from the GitHub Pages
-       project path /aparfenen-art/, so a root-absolute "/favicon.ico" would
-       resolve against aparfenen.github.io and 404. -->
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
@@ -25,53 +13,32 @@
   <meta name="theme-color" content="#faf8f4">
   <title>aparfenen.art</title>
 
-  <!-- SEO.
-       These absolute URLs must match where the site is actually served, which
-       is the GitHub Pages project path. They used to point at aparfenen.art -
-       a host that does not resolve and has no CNAME in this repo - so every
-       share fetched a dead domain and no preview image ever appeared, and
-       search engines were handed a canonical they could not reach.
-       If the custom domain is ever set up: add a CNAME file containing
-       aparfenen.art and swap the four URLs below back. -->
   <meta name="description" content="aparfenen.art — watercolor, colored pencil and mixed media artworks by Anna Parfenenkova. Commissions open." />
   <meta name="author" content="Anna Parfenenkova" />
   <link rel="canonical" href="https://aparfenen.github.io/aparfenen-art/" />
 
-  <!-- Open Graph (Facebook, Telegram, WhatsApp, iMessage…) -->
   <meta property="og:type"        content="website" />
   <meta property="og:url"         content="https://aparfenen.github.io/aparfenen-art/" />
   <meta property="og:title"       content="aparfenen.art — art by Anna Parfenenkova" />
   <meta property="og:description" content="Watercolor, colored pencil and mixed media. Commissions open." />
-  <!-- Points at large/ rather than thumbnails/: grid thumbnails are capped at
-       600px (and this one used to be a stale 1000px file, which is where the
-       old 1000x1427 came from - it no longer matched the image it described). -->
+
   <meta property="og:image"       content="https://aparfenen.github.io/aparfenen-art/large/Between%20Waking/05-14-2026_gua1_cutted.jpg" />
   <meta property="og:image:width"  content="2400" />
   <meta property="og:image:height" content="3530" />
   <meta property="og:image:alt"    content="Crimson Regret and Betrayal of the Sun — gouache landscape of a crimson hillside above a green slope, under a clouded sunset sky" />
   <meta property="og:locale"      content="en_US" />
 
-  <!-- Twitter / X card -->
   <meta name="twitter:card"        content="summary_large_image" />
   <meta name="twitter:title"       content="aparfenen.art — art by Anna Parfenenkova" />
   <meta name="twitter:description" content="Watercolor, colored pencil and mixed media. Commissions open." />
   <meta name="twitter:image"       content="https://aparfenen.github.io/aparfenen-art/large/Between%20Waking/05-14-2026_gua1_cutted.jpg" />
 
   <script>
-    // Apply theme immediately (before body renders) to prevent flash.
-    // Inlined (rather than an external theme.js request) so it can't block
-    // first paint on a network round-trip. Rest of theme.js loads at the
-    // bottom with the other scripts.
     (function() {
       try {
         var stored = localStorage.getItem('theme');
         var theme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', theme);
-        // theme-color too, not just the attribute: ThemeManager only repaints it
-        // when the toggle is clicked, so a dark-theme page loaded fresh used to
-        // keep the light value shipped in the markup - a cream browser bar over
-        // a near-black page on mobile. Keep these two colours in sync with the
-        // pair in theme.js applyTheme().
         var bar = document.querySelector('meta[name="theme-color"]');
         if (bar) bar.setAttribute('content', theme === 'dark' ? '#1c1a17' : '#faf8f4');
       } catch (e) {}
@@ -79,15 +46,9 @@
   </script>
 </head>
 
-<!-- filters-collapsed from the start: the sidebar is opt-in, opened with the
-     Filters button in the header. Set here rather than by script so the layout
-     is already correct at first paint - toggling it later would make the
-     sidebar slide and the content reflow on every page load. -->
 <body class="filters-collapsed">
 
-<!--***** FILTER SIDEBAR *****-->
 <aside class="filter-sidebar" id="filter-sidebar">
-<!-- START FILTERS -->
     <div class="filter-header">
       <h2>Filters</h2>
       <span id="artwork-counter">350 works</span>
@@ -229,7 +190,6 @@
       </div>
     </div>
 
-<!-- END FILTERS -->
 
     <button id="dark-mode-toggle" class="dark-mode-toggle">
       <span class="toggle-icon" style="position:relative;">
@@ -240,16 +200,11 @@
     </button>
 </aside>
 
-<!--***** MAIN CONTENT *****-->
 <div class="content-with-sidebar">
 
-<!--***** NAVIGATION BAR *****-->
 <nav class="main-nav">
     <div class="nav-inner">
 
-      <!-- Left edge: opens the filter drawer. Icon only, so the accessible name
-           comes from aria-label (filter.js keeps it and the title in sync with
-           the active-filter count). -->
       <button type="button" class="nav-filter-btn" onclick="toggleFilterSidebar()"
               aria-controls="filter-sidebar" aria-expanded="false"
               aria-label="Filters" title="Filters">
@@ -273,7 +228,6 @@
             <li><a href="#" onclick="switchToChronological(); return false;">Chronological View</a></li>
             <li><a href="#" onclick="switchToThematic(); return false;">Thematic View</a></li>
             <li class="dropdown-divider"></li>
-<!-- START NAV CATEGORIES -->
             <li><a href="#nothing-more-than-human" onclick="switchToThematic('nothing-more-than-human'); return false;">Nothing more than Human</a></li>
             <li><a href="#animalia-forms" onclick="switchToThematic('animalia-forms'); return false;">Animalia Forms</a></li>
             <li><a href="#echoes-of-distance" onclick="switchToThematic('echoes-of-distance'); return false;">Echoes of Distance</a></li>
@@ -294,7 +248,6 @@
             <li><a href="#messages-to-nowhere" onclick="switchToThematic('messages-to-nowhere'); return false;">Messages to Nowhere</a></li>
             <li><a href="#and-this-is-still-life" onclick="switchToThematic('and-this-is-still-life'); return false;">And this is Still Life</a></li>
             <li><a href="#handmade" onclick="switchToThematic('handmade'); return false;">Handmade</a></li>
-<!-- END NAV CATEGORIES -->
           </ul>
         </li>
         <li><a href="#statement">Statement</a></li>
@@ -314,15 +267,7 @@
   </nav>
 
 
-<!--***** SITE HEADLINE *****-->
-  <!-- The page opens on a statement rather than on the wordmark. The name is
-       still carried by <title>, the canonical link and the OG tags, so nothing
-       is lost to a search engine or a share preview - but the first thing a
-       reader meets is what the archive is, not what it is called. -->
   <header class="site-header">
-    <!-- The mark returns, but as a masthead in the corner rather than as the
-         thing the page opens on: name, then what the site is, both held at the
-         left edge the prose and the gallery below already sit on. -->
     <div class="site-mark">
       <span class="site-mark-name">aparfenen.art</span>
       <span class="site-mark-line">An archive of works</span>
@@ -334,17 +279,6 @@
         <p class="site-subtitle">Drawings, paintings and studies that trace the patterns beneath experience &mdash; scientific, botanical, emotional and symbolic.</p>
       </div>
 
-      <!-- The drawing that sits between the headline and the epigraph. Its own
-           file rather than one of the gallery's: the scan's paper has been cut
-           away to real transparency, so the plant sits on the page instead of
-           in a white rectangle, and the same file works on cream and on the
-           dark theme with no blend-mode trickery either side.
-
-           Made by utils/make_hero_cutout.py from large/Fragile Systems/,
-           which is where to go to remake it. WebP only - a cut-out has to carry an
-           alpha channel, and the PNG that could do the same job costs four
-           times as much. The full-resolution work is one click away in the
-           gallery. -->
       <figure class="site-header-art">
         <img src="assets/hero-ipomea.webp"
              alt="Swirling Bloom - a morning glory drawn in coloured pencil, its stem curling into a spiral"
@@ -355,8 +289,6 @@
     </div>
   </header>
 
-
-<!--***** COMMISSIONS *****-->
   <h2 id="commissions" class="section-title">Commissions</h2>
   <div class="commissions">
     <p>
@@ -367,15 +299,11 @@
   </div>
 <hr class="footer-separator">
 
-
-<!--***** GALLERY *****-->
   <h2 id="gallery" class="section-title">Gallery</h2>
   
   <p class="gallery-intro">
     Start with a featured selection, or explore the gallery in chronological order or organized by themes. Use filters on the left to refine your view.
   </p>
-
-<!-- START GALLERY -->
 
   <div class="gallery-view-controls">
     <button id="featured-view-btn" class="view-btn">Featured</button>
@@ -20860,11 +20788,6 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
 
   </div>
 
-<!-- END GALLERY -->
-
-
-
-<!--***** STATEMENT *****-->
   <h2 id="statement" class="section-title">Statement</h2>
 
   <div class="statement">
@@ -20892,19 +20815,12 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
   </div>
 
 
-<!--***** CONTACT LINKS *****-->
 <footer class="contact-info">
   <div class="contact-row">
     <a href="mailto:ann.parfenen2018@gmail.com">
       <img src="icons/email.svg" alt="Email">
       ann.parfenen2018@gmail.com
     </a>
-    <!-- The art account, so it sits directly after the mail address and ahead
-         of the professional and code links. Href is the plain profile URL: the
-         one this was added from carried ?stkn=... and utm_source=qr, which are
-         a personal share token and a QR campaign tag from Instagram's own
-         share sheet - neither belongs in a link a stranger clicks, and the
-         token can stop working. -->
     <a href="https://www.instagram.com/aparfenen.art" target="_blank" rel="noopener">
       <img src="icons/instagram.svg" alt="Instagram">
       Instagram
@@ -20925,20 +20841,11 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
 </footer>
 <hr class="footer-separator">
 
-
-  <!--***** ACTIVITY VISUALIZATION - ИСПРАВЛЕННАЯ ВЕРСИЯ *****-->
 <h2 id="activity" class="section-title">Activity</h2>
 
 <div class="activity-container">
-  <!-- The inline rule is gone entirely: .activity-container h3 sets the
-       alignment, the spacing and the type, and the colour now comes from the
-       themed --text-tertiary. The hardcoded #444 that used to sit here
-       overrode the theme, so on a dark ground this heading was dark grey on
-       near-black - readable enough while it was a 24px serif, and not at all
-       once it became a 13px tracked cap. -->
   <h3>Creative Activity</h3>
   
-  <!-- Легенда -->
   <div class="activity-legend">
     <span style="margin-right: 8px;">Less</span>
     <div class="legend-box empty"></div>
@@ -20951,7 +20858,6 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
     <span style="margin-left: 8px;">More</span>
   </div>
   
-  <!-- Статистика - перемещена наверх перед графиком -->
   <div class="activity-stats">
     <div class="stat-item">
       <div class="stat-number" id="total-works">350</div>
@@ -20967,21 +20873,16 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
     </div>
   </div>
   
-  <!-- График активности - JavaScript сгенерирует сетку здесь -->
   <div id="activity-chart">
-    <!-- Generated by JavaScript -->
   </div>
   
 </div>
 
-<!-- Tooltip для графика -->
 <div id="activity-tooltip"></div>
 
-</div> <!-- End content-with-sidebar -->
-<!--***** LIGHTBOX *****-->
+</div>
 <div id="lightbox" class="lightbox">
   <div class="lightbox-content">
-    <!-- Navigation arrows -->
     <button class="lightbox-nav prev" aria-label="Previous image" onclick="navigateImage('prev')">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M15 18l-6-6 6-6"/>
@@ -20993,31 +20894,23 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
         <path d="M9 18l6-6-6-6"/>
       </svg>
     </button>
-    
-    <!-- Close button -->
+  
     <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">×</button>
-    
-    <!-- Confirmation for the Share button; role=status so it is announced -->
+
     <div class="lightbox-toast" role="status" aria-live="polite"></div>
 
-    <!-- Loading spinner -->
     <div class="lightbox-loader" style="display: none;">
       <div class="spinner"></div>
     </div>
 
-    <!-- Image -->
     <img src="" alt="Lightbox image" />
-    
-    <!-- Info box -->
+
     <div class="lightbox-info">
       <h3 class="lightbox-title"></h3>
       <p class="lightbox-date"></p>
       <p class="lightbox-description"></p>
       <p class="lightbox-metadata"></p>
-
-      <!-- Sits past the caption's closing rule. The counter holds the left end
-           of the row, download and Share the right. href and the filename are
-           filled in per artwork by updateLightboxMetadata(). -->
+  
       <div class="lightbox-actions">
         <div class="lightbox-counter"></div>
         <a class="lightbox-download" href="#" download
@@ -21044,7 +20937,6 @@ The name of the section derives from the Andoma River. Most likely, the hydronym
   </div>
 </div>
 
-<!-- My scripts -->
 <script src="theme.js"></script>
 <script src="header.js"></script>
 <script src="filter.js"></script>

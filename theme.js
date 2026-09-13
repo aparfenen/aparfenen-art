@@ -1,7 +1,3 @@
-// ===== DARK MODE THEME MANAGER =====
-// Note: the flash-prevention snippet that used to live here now runs inline
-// in index.html's <head> (before first paint, without an extra network request).
-
 class ThemeManager {
   constructor() {
     this.theme = this.getStoredTheme() || this.getSystemTheme();

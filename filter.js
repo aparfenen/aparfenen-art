@@ -1,10 +1,4 @@
-// ===== MULTI-DIMENSIONAL FILTER SYSTEM WITH SEARCH =====
-// ПРОВЕРЕНО И ОПТИМИЗИРОВАНО: Улучшена производительность и надежность
-
 const FILTER_GROUPS = ['category', 'year', 'medium', 'tags'];
-// Каждый вид держится на соглашении об именах: кнопка `${view}-view-btn`,
-// контейнер `${view}-gallery`. Добавить вид = добавить сюда строку и выдать
-// эти два элемента из generate_index.py.
 const VIEWS = ['featured', 'chronological', 'thematic'];
 const DEFAULT_VIEW = 'chronological';
 const MAX_SEARCH_LENGTH = 100;
@@ -13,7 +7,7 @@ class GalleryFilter {
   constructor() {
     this.allArtworks = [];
     this.activeFilters = {
-      category: [],  // ИСПРАВЛЕНО: используем category вместо subject/mood/themes
+      category: [],
       year: [],
       medium: [],
       tags: []
@@ -21,13 +15,8 @@ class GalleryFilter {
     this.searchQuery = '';
     this.currentView = DEFAULT_VIEW;
 
-    // Заголовок страницы без фильтров - к нему возвращаемся при сбросе
     this.baseTitle = document.title;
-    // Допустимые значения каждой группы (по чекбоксам в разметке), чтобы не
-    // принимать из URL мусор. Заполняется в collectKnownFilterValues().
     this.knownValues = {};
-    // Набор символов в поиске не должен плодить записи в истории: подряд идущие
-    // правки строки поиска пишутся через replaceState (см. syncURL).
     this.lastSyncWasSearch = false;
 
     this.init();
@@ -51,8 +40,6 @@ class GalleryFilter {
     this.setupCategorySections();
     this.setupViewSwitcher();
 
-    // Число колонок сетки меняется с шириной окна, а от него зависит размер
-    // превью - пересчитываем, но не чаще, чем раз в 150мс
     let previewResizeTimer;
     window.addEventListener('resize', () => {
       clearTimeout(previewResizeTimer);
@@ -63,26 +50,13 @@ class GalleryFilter {
       }, 150);
     });
 
-    // Восстанавливаем вид, фильтры и поиск из URL. applyState сам собирает
-    // артворки и применяет фильтры, поэтому отдельный collectArtworks() тут
-    // не нужен. 'replace' приводит адрес к каноничному виду (выбрасывает
-    // неизвестные значения) не создавая лишнюю запись в истории.
     this.applyState(this.readStateFromURL(), { updateURL: 'replace' });
 
-    // Кнопки "назад"/"вперёд" возвращают ровно то состояние фильтров,
-    // которое было записано в адрес
     window.addEventListener('popstate', () => this.handlePopState());
 
     console.log(`✅ [Gallery Filter] Initialized with ${this.allArtworks.length} unique artworks`);
   }
 
-  // ===== URL-СОСТОЯНИЕ =====
-  // Фильтры, поиск и вид живут в query-строке:
-  //   ?category=Fragile+Systems&year=2026&q=leaf&view=thematic
-  // Несколько значений одной группы разделяются запятой - в самих значениях
-  // запятой быть не может: теги в CSV как раз разбиваются по ней
-  // (generate_index.py), а категории и годы - цельные поля.
-  // Hash (#id работы) остаётся за лайтбоксом и здесь всегда сохраняется.
 
   collectKnownFilterValues() {
     FILTER_GROUPS.forEach(group => {
@@ -121,7 +95,6 @@ class GalleryFilter {
     return { filters, q: this.searchQuery, view: this.currentView };
   }
 
-  // Строка для сравнения двух состояний (порядок групп фиксирован)
   stateKey(state) {
     return JSON.stringify([
       FILTER_GROUPS.map(group => state.filters[group] || []),
@@ -141,13 +114,10 @@ class GalleryFilter {
     if (this.searchQuery) {
       params.set('q', this.searchQuery);
     }
-    // Хронологический вид - значение по умолчанию, в адрес его не пишем
     if (this.currentView !== DEFAULT_VIEW) {
       params.set('view', this.currentView);
     }
 
-    // URLSearchParams кодирует запятую как %2C; в query-строке она допустима,
-    // и ссылка со списком категорий читается человеком гораздо лучше
     const query = params.toString().replace(/%2C/g, ',');
     return query ? `?${query}` : '';
   }
@@ -155,9 +125,6 @@ class GalleryFilter {
   syncURL(mode = 'push') {
     const url = `${window.location.pathname}${this.buildQueryString()}${window.location.hash}`;
     const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-
-    // Ничего не изменилось (например, "Clear All" при пустых фильтрах) -
-    // не плодим одинаковые записи в истории
     if (url === current) return;
 
     if (mode === 'replace') {
@@ -173,9 +140,6 @@ class GalleryFilter {
     });
     this.searchQuery = state.q;
 
-    // Приводим контролы в соответствие состоянию.
-    // Идём по самим чекбоксам, а не по селектору со значением: значения -
-    // произвольный текст из CSV (кавычки, апострофы) и в селектор не годятся.
     const searchInput = document.getElementById('filter-search');
     if (searchInput) {
       searchInput.value = state.q;
@@ -186,7 +150,6 @@ class GalleryFilter {
         this.activeFilters[group].includes(checkbox.value));
     });
 
-    // setView пересобирает артворки активной галереи и применяет фильтры
     this.setView(state.view, { updateURL: false });
 
     this.updateDocumentTitle();
@@ -198,16 +161,12 @@ class GalleryFilter {
   handlePopState() {
     const state = this.readStateFromURL();
 
-    // Лайтбокс меняет только hash (#id работы), фильтры при этом те же -
-    // перефильтровывать всю сетку на каждый шаг навигации по картинкам не нужно
     if (this.stateKey(state) === this.stateKey(this.currentState())) return;
 
     this.applyState(state);
     this.lastSyncWasSearch = false;
   }
 
-  // Заголовок вкладки отражает выбранную подборку: так её видно в истории
-  // браузера, в закладках и во вкладках с несколькими открытыми подборками
   updateDocumentTitle() {
     const parts = [];
     FILTER_GROUPS.forEach(group => {
@@ -227,7 +186,6 @@ class GalleryFilter {
   setupSearch() {
     const searchInput = document.getElementById('filter-search');
     if (searchInput) {
-      // ОПТИМИЗАЦИЯ: Добавляем debounce для поиска
       let searchTimeout;
       searchInput.addEventListener('input', (e) => {
         clearTimeout(searchTimeout);
@@ -236,25 +194,18 @@ class GalleryFilter {
           this.applyFilters();
           this.updateCounter();
           this.updateDocumentTitle();
-          // Правка уже введённого запроса заменяет текущую запись в истории:
-          // иначе "назад" пришлось бы жать по разу на каждое слово
           this.syncURL(this.lastSyncWasSearch ? 'replace' : 'push');
           this.lastSyncWasSearch = true;
-        }, 300); // Задержка 300ms для оптимизации
+        }, 300);
       });
     }
   }
   
-  // Контейнер активного вида. Вьюх стало три, и три одинаковых тернарника по
-  // файлу разъезжались бы при добавлении четвёртой.
   activeGalleryElement() {
     return document.getElementById(`${this.currentView}-gallery`);
   }
 
   setupViewSwitcher() {
-    // Вид, у которого нет кнопки, просто не подключается: Featured пропадает
-    // из разметки, если ни у одной работы нет тега (generate_index.py), и
-    // остальные переключатели от этого страдать не должны.
     const wired = VIEWS.filter(view => {
       const btn = document.getElementById(`${view}-view-btn`);
       if (!btn) return false;
@@ -267,12 +218,7 @@ class GalleryFilter {
     }
   }
 
-  // Единая точка переключения вида: используется и кнопками, и восстановлением
-  // состояния из URL (там updateURL: false, чтобы не перезаписывать адрес,
-  // который мы только что прочитали)
   setView(view, { updateURL = true } = {}) {
-    // Вид без контейнера в разметке (Featured без отмеченных работ) не должен
-    // оставлять страницу с пустой галереей - откатываемся к виду по умолчанию.
     const requested = VIEWS.includes(view) ? view : DEFAULT_VIEW;
     this.currentView = document.getElementById(`${requested}-gallery`) ? requested : DEFAULT_VIEW;
 
@@ -287,7 +233,6 @@ class GalleryFilter {
       if (gallery) gallery.classList.toggle('active', isActive);
     });
 
-    // applyFilters() сам обновляет массив изображений для lightbox
     this.collectArtworks();
     this.applyFilters();
     this.updateCounter();
@@ -310,10 +255,6 @@ class GalleryFilter {
         if (img) {
           this.allArtworks.push({
             element: block,
-            // Слаг работы, одинаковый у всех её копий на странице. В виде
-            // "By Category" отмеченные работы стоят и в секции Featured, и в
-            // своей категории, поэтому пересчёт идёт по этому полю, а не по
-            // числу блоков.
             id: img.dataset.id || '',
             category: img.dataset.category || '',
             year: img.dataset.year || '',
@@ -341,12 +282,7 @@ class GalleryFilter {
       console.log(`[Gallery Filter] Setup ${checkboxes.length} checkboxes for ${group}`);
     });
   }
-  
-  // Кнопка "Copy link" под "Clear All": теперь, когда подборка целиком описана
-  // адресом, её можно отправить как ссылку - но об этом надо сказать явно,
-  // адресную строку на телефоне никто не открывает.
-  // Кнопка создаётся здесь, а не в generate_index.py, чтобы разметка галереи
-  // не зависела от этой части UI (так же сделаны кнопки прокрутки в lightbox.js).
+
   setupShareLink() {
     const clearButton = document.getElementById('clear-filters');
     if (!clearButton) return;
@@ -358,7 +294,6 @@ class GalleryFilter {
     clearButton.insertAdjacentElement('afterend', button);
 
     button.addEventListener('click', () => {
-      // Без hash: ссылка ведёт на подборку, а не на конкретную работу
       const url = `${window.location.origin}${window.location.pathname}${this.buildQueryString()}`;
 
       const confirmCopy = () => {
@@ -411,10 +346,6 @@ class GalleryFilter {
   }
   
   applyFilters() {
-    // Артворки уже собраны через collectArtworks() при init() и при переключении
-    // вида (setupViewSwitcher). Пересборка на каждый клик/символ поиска не нужна
-    // (DOM статический) и раньше сводила на нет кеш _searchText ниже, так как
-    // collectArtworks() создавал новые объекты артворков без него на каждый вызов.
     let visibleCount = 0;
     let hiddenCount = 0;
     
@@ -434,19 +365,13 @@ class GalleryFilter {
     
     console.log(`[Gallery Filter] Applied filters: ${visibleCount} visible, ${hiddenCount} hidden`);
 
-    // Порядок важен: сначала фильтры проставили style.display, теперь превью
-    // решает, сколько из уцелевших работ показать, и только после этого можно
-    // собирать список для лайтбокса - иначе в навигацию попадут работы,
-    // спрятанные под свёрнутой категорией.
     this.refreshCategoryPreviews();
 
     layoutMasonry();
 
-    // Обновляем массив изображений для lightbox навигации
     if (typeof updateGalleryImagesArray === 'function') {
       updateGalleryImagesArray();
     } else {
-      // Fallback если функция недоступна
       const activeGallery = this.activeGalleryElement();
       
       if (activeGallery && window) {
@@ -457,11 +382,9 @@ class GalleryFilter {
           });
       }
     }
-    
-    // Секции есть в обоих видах: категории в тематическом, годы в хронологическом
+  
     this.updateThemeSectionsVisibility();
     
-    // Показываем сообщение если нет результатов
     this.updateNoResultsMessage(visibleCount);
     
     return visibleCount;
@@ -470,7 +393,6 @@ class GalleryFilter {
   matchesSearch(artwork) {
     if (!this.searchQuery) return true;
     
-    // ОПТИМИЗАЦИЯ: Кешируем строку поиска
     if (!artwork._searchText) {
       artwork._searchText = [
         artwork.title,
@@ -484,35 +406,28 @@ class GalleryFilter {
   }
   
   matchesAllFilters(artwork) {
-    // Если нет активных фильтров, показываем всё
     const hasActiveFilters = Object.values(this.activeFilters).some(arr => arr.length > 0);
     if (!hasActiveFilters) {
       return true;
     }
     
-    // Проверяем каждую группу фильтров (OR внутри группы, AND между группами)
     for (const [group, values] of Object.entries(this.activeFilters)) {
-      if (values.length === 0) continue; // Пропускаем пустые группы
+      if (values.length === 0) continue;
       
       const artworkValue = artwork[group];
-      
-      // ИСПРАВЛЕНИЕ: Если у артворка нет значения для активного фильтра, скрываем его
+
       if (!artworkValue) {
         return false;
       }
-      
-      // Проверяем соответствие хотя бы одному значению в группе
+
       const matches = values.some(filterValue => {
         if (group === 'tags') {
-          // Для тегов проверяем каждый тег отдельно
           const artworkTags = artworkValue.split(',').map(t => t.trim());
           return artworkTags.includes(filterValue);
         }
-        // Для остальных - точное совпадение
         return artworkValue === filterValue;
       });
-      
-      // Если не совпадает ни одно значение в группе, артворк не проходит
+    
       if (!matches) {
         return false;
       }
@@ -522,10 +437,6 @@ class GalleryFilter {
   }
   
   updateCounter() {
-    // Считаем работы, а не блоки: одна работа может стоять в виде дважды
-    // (секция Featured + её собственная категория), и счётчик показывал 371
-    // при 347 работах. Блок без data-id считается сам по себе - лучше
-    // посчитать лишнее, чем схлопнуть всё в одну запись.
     const seen = new Set();
     let visibleCount = 0;
     this.allArtworks.forEach(artwork => {
@@ -542,12 +453,10 @@ class GalleryFilter {
       counterElement.textContent = `${visibleCount} work${visibleCount !== 1 ? 's' : ''}`;
     }
 
-    // Update filter badge on nav row button
     const totalActive = Object.values(this.activeFilters).reduce((sum, arr) => sum + arr.length, 0)
       + (this.searchQuery ? 1 : 0);
 
-    // Только бейдж, без перезаписи innerHTML: в кнопке нет текста, есть svg
-    // с иконкой фильтров, которую сборка строки затирала бы на каждый клик.
+
     const navFilterBtn = document.querySelector('.nav-filter-btn');
     if (navFilterBtn) {
       let badge = navFilterBtn.querySelector('.nav-filter-badge');
@@ -563,8 +472,6 @@ class GalleryFilter {
         if (badge) badge.remove();
         navFilterBtn.classList.remove('has-filters');
       }
-      // Подписи у кнопки нет, поэтому имя для скринридера и всплывающая
-      // подсказка - единственное, что объясняет иконку и счётчик на ней
       const label = totalActive > 0 ? `Filters (${totalActive} active)` : 'Filters';
       navFilterBtn.setAttribute('aria-label', label);
       navFilterBtn.setAttribute('title', label);
@@ -594,15 +501,7 @@ class GalleryFilter {
     }
   }
   
-  // ===== СВОРАЧИВАЕМЫЕ КАТЕГОРИИ (тематический вид) =====
-  // Все категории закрыты изначально; видно заголовок, число работ и первый
-  // ряд миниатюр как превью. Клик по заголовку раскрывает остальное.
-  // Разметку кнопки строим здесь, а не в generate_index.py, по той же причине,
-  // что и "Copy link" выше: сгенерированная сетка не должна зависеть от этой
-  // части UI.
   setupCategorySections() {
-    // Оба вида: тематический сгруппирован по категориям, хронологический -
-    // по годам, но разметка секций одна и та же, поэтому и механика общая
     document.querySelectorAll('.gallery-container .theme-section').forEach(section => {
       if (section.dataset.collapsibleReady) return;
       section.dataset.collapsibleReady = '1';
@@ -612,12 +511,8 @@ class GalleryFilter {
       if (!heading || !gallery) return;
 
       const title = heading.textContent.trim();
-      // id заголовка - это якорь категории (#boston), его трогать нельзя;
-      // сетке даём свой, чтобы связать с кнопкой через aria-controls
       if (!gallery.id) gallery.id = `${heading.id || title.toLowerCase().replace(/\s+/g, '-')}-works`;
 
-      // Заголовок - только подпись со счётчиком, не элемент управления:
-      // раскрытием заведует одна кнопка "Show all / Show less" под превью.
       const headingRow = document.createElement('div');
       headingRow.className = 'category-toggle';
       headingRow.innerHTML =
@@ -642,8 +537,6 @@ class GalleryFilter {
       more.addEventListener('click', () => {
         const wasCollapsed = section.classList.contains('is-collapsed');
         this.setCategoryExpanded(section, wasCollapsed);
-        // Сворачивая снизу, человек оказался бы посреди следующей категории -
-        // возвращаем его к заголовку той, которую только что закрыл
         if (!wasCollapsed) heading.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
@@ -659,9 +552,6 @@ class GalleryFilter {
     if (typeof updateGalleryImagesArray === 'function') updateGalleryImagesArray();
   }
 
-  // Сколько работ показывать в свёрнутом виде: два ряда сетки. Число колонок
-  // читаем у самой сетки, поэтому оно верное на любой ширине и не требует
-  // отдельных брейкпоинтов (8 работ на десктопе, 6 на планшете, 4 на телефоне).
   previewCount(gallery) {
     const columns = getComputedStyle(gallery).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
     return columns * 2;
@@ -671,16 +561,12 @@ class GalleryFilter {
     const activeGallery = document.querySelector('.gallery-container.active');
     if (!activeGallery) return;
 
-    // Прятать результаты поиска за свёрнутой категорией нельзя - человек уже
-    // сказал, что именно он ищет, поэтому при активном запросе всё раскрыто.
     const forceOpen = Boolean(this.searchQuery);
 
     activeGallery.querySelectorAll('.theme-section.is-collapsible').forEach(section => {
       const gallery = section.querySelector('.gallery');
       if (!gallery) return;
 
-      // style.display принадлежит фильтрам; превью пользуется отдельным
-      // классом, чтобы эти два механизма не перетирали друг друга
       const matching = Array.from(gallery.querySelectorAll('.art-block'))
         .filter(block => block.style.display !== 'none');
 
@@ -692,21 +578,15 @@ class GalleryFilter {
         block.classList.toggle('is-preview-hidden', i >= limit);
       });
 
-      // Категория целиком помещается в превью - разворачивать нечего, поэтому
-      // и шеврон, и кнопка внизу для неё бессмысленны
       const expandable = matching.length > previewLimit;
       section.classList.toggle('is-static', !expandable);
       section.classList.toggle('has-more', collapsed && expandable);
 
       const count = section.querySelector('.category-count');
       if (count) count.textContent = `${matching.length}`;
-
-      // Кнопка внизу - переключатель, а не только "развернуть": после
-      // раскрытия категории на 70+ работ заголовок с шевроном уезжает далеко
-      // вверх, и свернуть обратно было нечем, не отлистав назад.
+  
       const more = section.querySelector('.category-show-all');
       if (more) {
-        // Прятать её имеет смысл, только когда превью и так показывает всё
         more.hidden = !expandable || forceOpen;
         more.textContent = collapsed ? `Show all ${matching.length} works` : 'Show less';
         more.setAttribute('aria-expanded', String(!collapsed));
@@ -740,20 +620,17 @@ class GalleryFilter {
   
   clearAllFilters() {
     console.log('[Gallery Filter] Clearing all filters');
-    
-    // Очищаем поисковой запрос
+
     const searchInput = document.getElementById('filter-search');
     if (searchInput) {
       searchInput.value = '';
       this.searchQuery = '';
     }
     
-    // Снимаем все чекбоксы
     document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
       checkbox.checked = false;
     });
     
-    // Очищаем активные фильтры
     this.activeFilters = {
       category: [],
       year: [],
@@ -761,7 +638,6 @@ class GalleryFilter {
       tags: []
     };
     
-    // Применяем (показываем всё)
     this.applyFilters();
     this.updateCounter();
     this.updateDocumentTitle();
@@ -785,12 +661,6 @@ class GalleryFilter {
   }
 }
 
-// ===== МАСОНРИ-РАСКЛАДКА =====
-// Работы больше не обрезаются под общий формат 3/4, поэтому высота у каждой
-// своя. Сетка в style.css задаёт мелкий шаг строк (--masonry-unit), а здесь
-// каждому блоку проставляется, сколько таких строк он занимает - так соседние
-// колонки смыкаются без рваных провалов, которые дал бы обычный grid, где
-// строка высотой с самую высокую ячейку.
 function layoutMasonry() {
   const container = document.querySelector('.gallery-container.active');
   if (!container) return;
@@ -804,10 +674,6 @@ function layoutMasonry() {
       .filter(block => block.style.display !== 'none'
         && !block.classList.contains('is-preview-hidden'));
 
-    // Сначала читаем все высоты, потом пишем все span: вперемешку это заставило
-    // бы браузер пересчитывать раскладку на каждый из 300+ блоков.
-    // Высота известна ещё до загрузки картинки - width/height у <img>
-    // проставляет generate_index.py, и браузер резервирует место сам.
     const heights = blocks.map(block => block.getBoundingClientRect().height);
 
     blocks.forEach((block, i) => {
@@ -817,21 +683,15 @@ function layoutMasonry() {
   });
 }
 
-// Инициализация системы фильтров при готовности DOM
 let galleryFilter;
 document.addEventListener('DOMContentLoaded', () => {
   galleryFilter = new GalleryFilter();
   console.log('[Gallery Filter] System initialized');
 });
 
-// ===== FILTER SIDEBAR TOGGLE =====
-// Кнопка "Filters" живёт в шапке на всех ширинах. Ниже 1024px сайдбар выезжает
-// поверх страницы (.mobile-open), выше - он закреплён слева и кнопка только
-// подсвечивает состояние фильтров, ничего не сдвигая.
 const DOCKED_SIDEBAR_QUERY = '(min-width: 1025px)';
 
 function sidebarIsDocked() {
-  // Тот же порог, что и в @media (max-width: 1024px) в filter_styles.css
   return window.matchMedia
     ? window.matchMedia(DOCKED_SIDEBAR_QUERY).matches
     : window.innerWidth > 1024;
@@ -857,7 +717,6 @@ function toggleFilterSidebar() {
   setFilterButtonExpanded(isOpen);
 }
 
-// Открыт ли сейчас блок фильтров - в любом из двух его видов
 function filtersAreOpen() {
   const sidebar = document.querySelector('.filter-sidebar');
   if (!sidebar) return false;
@@ -878,15 +737,10 @@ function closeFilterSidebar() {
   setFilterButtonExpanded(false);
 }
 
-// Клик вне блока фильтров закрывает его - и выехавшую панель, и закреплённую
-// слева. Кнопка в шапке исключена: она сама переключатель, иначе открытие и
-// закрытие пришлись бы на один и тот же клик.
 document.addEventListener('click', (e) => {
   const sidebar = document.querySelector('.filter-sidebar');
   if (!sidebar || !filtersAreOpen()) return;
 
-  // Пока открыт лайтбокс, он перекрывает страницу целиком - клики по нему
-  // к фильтрам отношения не имеют
   const lightboxEl = document.getElementById('lightbox');
   if (lightboxEl && lightboxEl.classList.contains('active')) return;
 
@@ -897,8 +751,6 @@ document.addEventListener('click', (e) => {
   closeFilterSidebar();
 });
 
-// Esc закрывает блок фильтров в любом из двух его видов. Если открыт лайтбокс,
-// Esc принадлежит ему.
 document.addEventListener('keydown', (e) => {
   if (e.key !== 'Escape' || !filtersAreOpen()) return;
   const lightboxEl = document.getElementById('lightbox');
@@ -906,9 +758,6 @@ document.addEventListener('keydown', (e) => {
   closeFilterSidebar();
 });
 
-// У кнопки два режима (выезжающая панель / свёрнутый закреплённый сайдбар).
-// При переходе через 1024px состояние другого режима надо сбросить, иначе
-// сайдбар может остаться скрытым на ширине, где скрывать его нечем.
 (function syncSidebarAcrossBreakpoint() {
   const apply = () => {
     const docked = sidebarIsDocked();
@@ -918,9 +767,6 @@ document.addEventListener('keydown', (e) => {
       document.body.classList.remove('filter-open');
       setFilterButtonExpanded(!document.body.classList.contains('filters-collapsed'));
     } else {
-      // filters-collapsed намеренно не сбрасываем: ниже 1025px это правило
-      // ничего не делает, а свёрнутое состояние - значение по умолчанию, и
-      // возврат на широкий экран не должен внезапно раскрывать сайдбар
       const sidebar = document.querySelector('.filter-sidebar');
       setFilterButtonExpanded(Boolean(sidebar && sidebar.classList.contains('mobile-open')));
     }
@@ -934,9 +780,6 @@ document.addEventListener('keydown', (e) => {
   document.addEventListener('DOMContentLoaded', apply);
 })();
 
-// ===== GLOBAL VIEW SWITCHING FUNCTIONS =====
-// Клик по кнопке, а не setView(): кнопка - единственная точка, где вид
-// меняется вместе с записью в историю, и меню не должно её дублировать.
 function activateView(view) {
   if (!galleryFilter) return;
   const btn = document.getElementById(`${view}-view-btn`);
@@ -961,12 +804,6 @@ function switchToFeatured() {
 
 function switchToThematic(targetId) {
   activateView('thematic');
-  // Category-specific nav links pass their own section id so we scroll straight
-  // there; the plain "Thematic View" link passes nothing and lands on #gallery.
-  // Without this, every category link's native #anchor jump used to get
-  // overridden 100ms later by a hardcoded scroll back to the top of the gallery.
-  // Переход по конкретной категории из меню должен сразу показывать её работы,
-  // иначе ссылка приводит к свёрнутому заголовку и требует лишнего клика
   const target = targetId ? document.getElementById(targetId) : document.getElementById('gallery');
   if (galleryFilter && targetId && target) {
     galleryFilter.setCategoryExpanded(target.closest('.theme-section'), true);
