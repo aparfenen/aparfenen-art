@@ -26,6 +26,10 @@
   body:not(.filters-collapsed) .nav-inner {
     padding-left: calc(280px + var(--page-rule-inset) + var(--page-rule-clear));
   }
+
+  body:not(.filters-collapsed) nav.main-nav {
+    background-image: none;
+  }
 }
 
 .filter-header {

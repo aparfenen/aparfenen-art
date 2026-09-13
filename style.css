@@ -16,16 +16,15 @@
   --tracking-caps: 0.22em;
   --tracking-caps-wide: 0.26em;
 
-  --page-gutter: clamp(28px, 6.5vw, 128px);
-  --page-rule-inset: clamp(28px, 4.4vw, 80px);
-  --page-rule-clear: clamp(22px, 3.4vw, 60px);
+  --page-gutter: clamp(24px, 4vw, 72px);
+  --page-rule-inset: clamp(54px, 4vw, 64px);
+  --page-rule-clear: clamp(20px, 1.6vw, 28px);
   --nav-h: 60px;
-  --gallery-max: 1520px;
+  --gallery-max: 1320px;
   --prose-max: var(--gallery-max);
 
   --nav-pad-top: 15px;
   --nav-pad-bottom: 11px;
-  --nav-btn-lift: 11px;
   --nav-bg: rgba(250, 248, 244, 0.92);
   --bg-primary: #faf8f4;
   --bg-secondary: #f2eee6;
@@ -232,7 +231,7 @@ body {
   box-sizing: border-box;
   width: 100%;
   max-width: var(--prose-max);
-  margin: 0 auto;
+  margin: 0;
   padding: 22px 0 16px;
 }
 
@@ -263,11 +262,10 @@ body {
 
 .site-header-body {
   display: grid;
-  grid-template-columns: auto minmax(220px, 1fr) minmax(240px, 380px);
+  grid-template-columns: 1fr minmax(200px, min(338px, 29%)) 1fr;
   grid-template-rows: auto 1fr;
-  column-gap: 56px;
+  column-gap: 48px;
   align-items: start;
-  padding-right: clamp(0px, 4vw, 80px);
 }
 
 .site-header-lead,
@@ -292,11 +290,12 @@ body {
 .site-header-art img {
   display: block;
   width: 100%;
-  max-width: 376px;
+  max-width: 338px;
   height: auto;
-  margin-top: -88px;
+  margin-top: -80px;
   margin-bottom: 0;
-  opacity: 0.85;
+  transform: translateX(-12%);
+  opacity: 0.6;
   filter: saturate(0.8);
   -webkit-mask-image: radial-gradient(ellipse 88% 78% at 50% 30%, #000 0%, rgba(0, 0, 0, 0.97) 36%, rgba(0, 0, 0, 0.72) 62%, rgba(0, 0, 0, 0.32) 84%, transparent 100%);
   mask-image: radial-gradient(ellipse 88% 78% at 50% 30%, #000 0%, rgba(0, 0, 0, 0.97) 36%, rgba(0, 0, 0, 0.72) 62%, rgba(0, 0, 0, 0.32) 84%, transparent 100%);
@@ -323,6 +322,7 @@ body {
 .site-commissions {
   grid-column: 3;
   grid-row: 1;
+  max-width: 380px;
   padding-top: 4px;
 }
 
@@ -346,7 +346,6 @@ body {
 
   .site-header-body {
     display: block;
-    padding-right: 0;
   }
 
   .site-header-lead,
@@ -362,6 +361,7 @@ body {
   .site-header-art img {
     max-width: 262px;
     margin-top: -18px;
+    transform: none;
   }
 
   .site-header-aside {
@@ -415,8 +415,8 @@ h1 {
 h2.section-title {
   text-align: left;
   max-width: var(--prose-max);
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 0;
+  margin-right: 0;
   font-family: var(--font-display);
   font-size: clamp(23px, 2.1vw, 34px);
   font-weight: var(--fw-regular);
@@ -465,7 +465,7 @@ h3.section-title {
 
 .category-description {
   max-width: var(--prose-max);
-  margin: 0 auto 1.9em auto;
+  margin: 0 0 1.9em;
   text-align: left;
   font-family: var(--font-ui);
   font-size: 13px;
@@ -486,7 +486,7 @@ h3.section-title {
   font-variant-numeric: lining-nums;
   color: var(--text-violet);
   max-width: var(--prose-max);
-  margin: 18px auto 0;
+  margin: 18px 0 0;
   padding: 0;
   box-sizing: border-box;
   columns: 21em 2;
@@ -525,7 +525,7 @@ h3.section-title {
   font-variant-numeric: lining-nums;
   color: var(--text-violet);
   max-width: var(--prose-max);
-  margin: 10px auto 0;
+  margin: 10px 0 0;
   padding: 0;
   box-sizing: border-box;
 }
@@ -565,7 +565,7 @@ h3.section-title {
 
 .gallery-intro {
   max-width: var(--prose-max);
-  margin: 10px auto 16px auto;
+  margin: 10px 0 16px;
   text-align: left;
   font-family: var(--font-ui);
   font-size: 13px;
@@ -586,7 +586,7 @@ h3.section-title {
   display: flex;
   justify-content: flex-start;
   gap: 12px;
-  margin: 14px auto 10px auto;
+  margin: 14px 0 10px;
   max-width: var(--gallery-max);
 }
 
@@ -632,7 +632,7 @@ h3.section-title {
 
 .gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   --masonry-unit: 4px;
   --masonry-gap: 16px;
   column-gap: var(--masonry-gap);
@@ -640,9 +640,15 @@ h3.section-title {
   grid-auto-rows: var(--masonry-unit);
   max-width: var(--gallery-max);
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   align-items: start;
   box-sizing: border-box;
+}
+
+@media (min-width: 1025px) {
+  .gallery {
+    grid-template-columns: repeat(6, 1fr);
+  }
 }
 
 .art-block {
@@ -730,7 +736,7 @@ h3.section-title {
   position: relative;
   width: 100%;
   max-width: var(--gallery-max);
-  margin: 0 auto;
+  margin: 0;
   box-sizing: border-box;
   padding: 8px 4px 12px;
   background: none;
@@ -811,7 +817,7 @@ h3.section-title {
 
 .category-show-all {
   display: block;
-  margin: 26px 0 0 max(0px, calc((100% - var(--gallery-max)) / 2));
+  margin: 26px 0 0;
   padding: 9px 20px;
   background: none;
   border: 1px solid var(--border-medium);
@@ -1256,7 +1262,7 @@ body.scroll-locked {
 }
 
 .footer-separator {
-  margin: 18px auto 12px auto;
+  margin: 18px 0 12px;
   border: none;
   border-top: 1px solid var(--border-medium);
   max-width: var(--prose-max);
@@ -1265,7 +1271,7 @@ body.scroll-locked {
 
 footer.contact-info {
   max-width: var(--prose-max);
-  margin: 18px auto;
+  margin: 18px 0;
   text-align: left;
   font-family: var(--font-body);
   color: var(--text-primary);
@@ -1290,7 +1296,7 @@ footer.contact-info h2 {
   padding: 10px 0;
   max-width: var(--prose-max);
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
 }
 
 .contact-row a {
@@ -1331,6 +1337,10 @@ nav.main-nav {
   box-sizing: border-box;
   padding-top: env(safe-area-inset-top, 0px);
   background-color: var(--nav-bg);
+  background-image: linear-gradient(var(--border-medium), var(--border-medium));
+  background-repeat: no-repeat;
+  background-size: 1px 100%;
+  background-position: left var(--page-rule-inset) top;
   -webkit-backdrop-filter: saturate(180%) blur(16px);
   backdrop-filter: saturate(180%) blur(16px);
   border-bottom: 1px solid transparent;
@@ -1358,7 +1368,7 @@ nav.main-nav.nav-hidden {
 .nav-inner {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   padding: var(--nav-pad-top) var(--page-gutter) var(--nav-pad-bottom)
            calc(var(--page-rule-inset) + var(--page-rule-clear));
@@ -1367,7 +1377,7 @@ nav.main-nav.nav-hidden {
 
 nav.main-nav ul.nav-links {
   list-style: none;
-  margin: 0;
+  margin: 0 0 0 -10px;
   padding: 0;
   flex: 1 1 auto;
   min-width: 0;
@@ -1426,13 +1436,12 @@ nav.main-nav .has-dropdown > a::after {
 }
 
 .nav-theme-toggle {
-  margin-top: var(--nav-btn-lift);
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   background: none;
   border: 1px solid var(--border-medium);
   border-radius: 11px;
@@ -1459,15 +1468,16 @@ nav.main-nav .has-dropdown > a::after {
 
 .nav-filter-btn {
   position: absolute;
-  left: 14px;
-  top: var(--nav-pad-top);
-  margin-top: var(--nav-btn-lift);
+  left: calc(var(--page-rule-inset) - 46px);
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   background: var(--bg-hover);
   border: 1px solid var(--border-medium);
@@ -1643,7 +1653,10 @@ nav.main-nav .sub-menu a {
   :root {
     --nav-pad-top: 20px;
     --nav-pad-bottom: 10px;
-    --nav-btn-lift: 5px;
+  }
+
+  nav.main-nav {
+    background-image: none;
   }
 
   .nav-inner {
@@ -1655,10 +1668,13 @@ nav.main-nav .sub-menu a {
     position: relative;
     left: auto;
     top: auto;
+    bottom: auto;
+    margin: 0;
   }
 
   nav.main-nav ul.nav-links {
     justify-content: center;
+    margin-left: 0;
     gap: 0 clamp(3px, 1.2vw, 10px);
   }
 
@@ -1666,12 +1682,6 @@ nav.main-nav .sub-menu a {
     padding: 5px 4px;
     font-size: 9.5px;
     letter-spacing: 0.13em;
-  }
-
-  .nav-filter-btn,
-  .nav-theme-toggle {
-    width: 38px;
-    height: 38px;
   }
 
   nav.main-nav li.has-dropdown {
@@ -1927,7 +1937,7 @@ body.nav-away .back-to-top {
 
 .activity-container {
   max-width: var(--prose-max);
-  margin: 20px auto;
+  margin: 20px 0;
   padding: 0;
   box-sizing: border-box;
   background: transparent;

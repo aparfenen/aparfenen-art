@@ -16,7 +16,7 @@ IMG_DIR = "img"
 THUMB_DIR = "thumbnails"          # 600px - 2x displays
 THUMB_SMALL_DIR = "thumbnails-300"  # 300px - 1x displays and phones
 
-GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1200px) 34vw, 368px"
+GALLERY_SIZES = "(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 210px"
 
 START_MARKER = "<!-- START GALLERY -->"
 END_MARKER = "<!-- END GALLERY -->"
