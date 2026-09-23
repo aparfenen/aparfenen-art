@@ -159,7 +159,8 @@ function positionTouchNav() {
   const contentRect = lightboxContent.getBoundingClientRect();
   const imgRect = lightboxImg.getBoundingClientRect();
   if (!imgRect.height) return;
-  const fromBottom = Math.max(0, Math.round(contentRect.bottom - imgRect.bottom));
+  const scrolled = lightboxContent.scrollTop || 0;
+  const fromBottom = Math.max(0, Math.round(contentRect.bottom - imgRect.bottom - scrolled));
   lightboxContent.style.setProperty('--lb-img-bottom', `${fromBottom}px`);
 }
 
@@ -236,6 +237,7 @@ function openLightbox(img, { fromHistory = false } = {}) {
 
   lightbox.classList.add("active");
   lockPageScroll();
+  lightboxContent.scrollTop = 0;
 
   loadImageWithLoader(img, updateLightboxMetadata);
 
@@ -264,6 +266,7 @@ function navigateImage(direction) {
   if (newImg) {
     setZoomed(false);
     updateCounter();
+    lightboxContent.scrollTop = 0;
 
     loadImageWithLoader(newImg, updateLightboxMetadata);
 
@@ -623,11 +626,22 @@ lightboxContent.addEventListener('touchstart', (e) => {
   touchStartY = e.changedTouches[0].screenY;
 }, { passive: true });
 
+function hasScrollableAncestor(target) {
+  let el = target;
+  while (el && el !== lightbox) {
+    if (el.scrollHeight > el.clientHeight) {
+      const overflowY = getComputedStyle(el).overflowY;
+      if (overflowY === 'auto' || overflowY === 'scroll') return true;
+    }
+    el = el.parentElement;
+  }
+  return false;
+}
+
 lightbox.addEventListener('touchmove', (e) => {
   if (!lightbox.classList.contains('active') || e.touches.length !== 1) return;
 
-  const scroller = e.target.closest && e.target.closest('.lightbox-content');
-  if (scroller && scroller.scrollHeight > scroller.clientHeight) return;
+  if (hasScrollableAncestor(e.target)) return;
 
   e.preventDefault();
 }, { passive: false });
