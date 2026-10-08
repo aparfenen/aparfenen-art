@@ -2336,13 +2336,25 @@ body.nav-away .back-to-top {
     margin-bottom: 8px;
   }
   
-  .year-months {
+  .activity-timeline {
     width: 100%;
   }
+
+  .year-months {
+    width: 100%;
+    gap: 3px;
+    flex-wrap: nowrap;
+  }
   
+  /* 12 months share the row width so a year never wraps onto two lines */
   .month-box {
-    width: 28px;
-    height: 28px;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 36px;
+    width: auto;
+    height: auto;
+    aspect-ratio: 1;
+    box-sizing: border-box;
     font-size: 0.7em;
   }
   
@@ -2374,8 +2386,6 @@ body.nav-away .back-to-top {
   }
   
   .month-box {
-    width: 24px;
-    height: 24px;
     font-size: 0.65em;
   }
   
