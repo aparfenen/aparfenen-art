@@ -2014,8 +2014,8 @@ body.nav-away .back-to-top {
 }
 
 .stat-item {
-  text-align: center;
-  padding: 16px;
+  text-align: left;
+  padding: 16px 20px;
   background: var(--bg-hover);
   border-radius: 8px;
   transition: transform 0.2s ease, background 0.2s ease;
@@ -2398,7 +2398,7 @@ body.nav-away .back-to-top {
   }
   
   .stat-item {
-    padding: 14px;
+    padding: 14px 16px;
   }
   
   .stat-number {
