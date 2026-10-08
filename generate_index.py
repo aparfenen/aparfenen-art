@@ -182,6 +182,25 @@ if 'visible' in df.columns:
     print(f"✓ Filtered to {len(df)} visible artworks")
 
 # ===== STEP 3: Parse and sort by dates =====
+def expand_two_digit_year(year):
+    """Numbers exports dates as M/D/YY; treat a 2-digit year as 20YY."""
+    return 2000 + year if year < 100 else year
+
+
+def parse_date_finished(value):
+    """Parse date_finished given as M/D/YYYY or M/D/YY. Returns datetime or None."""
+    if not value or value.lower() == 'nan' or '/' not in value:
+        return None
+    parts = value.split('/')
+    if len(parts) != 3:
+        return None
+    try:
+        month, day, year = int(parts[0]), int(parts[1]), int(parts[2])
+        return datetime(expand_two_digit_year(year), month, day)
+    except (ValueError, IndexError):
+        return None
+
+
 def parse_date(row):
     """
     Parse date with priority:
@@ -194,17 +213,10 @@ def parse_date(row):
     show_date = str(row.get('show_date', '')).strip()
     year_str = str(row.get('year', '')).strip()
 
-    # Priority 1: date_finished (format: M/D/YYYY or MM/DD/YYYY)
-    if date_finished and '/' in date_finished:
-        parts = date_finished.split('/')
-        if len(parts) == 3:  # M/D/YYYY
-            try:
-                month = int(parts[0])
-                day = int(parts[1])
-                year = int(parts[2])
-                return datetime(year, month, day)
-            except (ValueError, IndexError):
-                pass
+    # Priority 1: date_finished (format: M/D/YYYY or M/D/YY)
+    exact = parse_date_finished(date_finished)
+    if exact:
+        return exact
 
     # Priority 2: date_created (format: M/YY - month/year, e.g., "12/25" = December 2025)
     if date_created and '/' in date_created:
@@ -214,7 +226,7 @@ def parse_date(row):
                 month = int(parts[0])
                 year_short = int(parts[1])
                 # Convert YY to YYYY (25 -> 2025, 26 -> 2026)
-                year = 2000 + year_short if year_short < 100 else year_short
+                year = expand_two_digit_year(year_short)
                 return datetime(year, month, 1)
             except (ValueError, IndexError):
                 pass
@@ -245,16 +257,8 @@ def format_exact_date(row):
     month/year and show_date is text, so both are left to the existing
     data-date attribute. Returns "" when there is no day-level date.
     """
-    date_finished = str(row.get('date_finished', '')).strip()
-    if not date_finished or date_finished.lower() == 'nan' or '/' not in date_finished:
-        return ""
-    parts = date_finished.split('/')
-    if len(parts) != 3:
-        return ""
-    try:
-        month, day, year = int(parts[0]), int(parts[1]), int(parts[2])
-        dt = datetime(year, month, day)
-    except (ValueError, IndexError):
+    dt = parse_date_finished(str(row.get('date_finished', '')).strip())
+    if not dt:
         return ""
     return f"{dt.strftime('%B')} {dt.day}, {dt.year}"
 
