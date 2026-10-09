@@ -33,7 +33,9 @@ function findImageById(id) {
   }
 
   const artBlock = document.getElementById(id);
-  return artBlock ? artBlock.querySelector('img') : null;
+  return artBlock && artBlock.matches('.art-block')
+    ? artBlock.querySelector('img')
+    : null;
 }
 
 let lockedScrollY = 0;

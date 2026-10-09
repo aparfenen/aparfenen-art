@@ -40,3 +40,7 @@ venv/
 
 # Local dated copies of the metadata (see backups/)
 backups/
+
+# Generated catalog working files (published PDF lives in downloads/)
+tmp/pdfs/
+output/pdf/
